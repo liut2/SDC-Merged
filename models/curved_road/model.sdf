@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<sdf version="1.0">
+  <model name="curved_road">
+    <static>true</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>models/curved_road/curved_road.dae</uri>
+             <scale>3 3 .01</scale>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <mesh>
+            <uri>models/curved_road/curved_road.dae</uri>
+            <scale>3 3 .01</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>models/curved_road/materials/scripts</uri>
+            <uri>models/curved_road/materials/textures</uri>
+            <name>curved_road</name>
+          </script>
+
+
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
