@@ -6,13 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcWaypoint.cc
+/Accounts/youj/Desktop/SDC-Merged/sdcWaypoint.cc
 stdio.h
 -
 sdcWaypoint.hh
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcWaypoint.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcWaypoint.hh
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcWaypoint.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcWaypoint.hh
 iostream
 -
 vector

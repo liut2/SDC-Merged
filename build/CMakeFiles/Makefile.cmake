@@ -70,16 +70,24 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+  "CMakeFiles/sdcCameraSensor.dir/DependInfo.cmake"
   "CMakeFiles/sdcCar.dir/DependInfo.cmake"
   "CMakeFiles/sdcWaypoint.dir/DependInfo.cmake"
+  "CMakeFiles/sdcSideLidarSensor.dir/DependInfo.cmake"
+  "CMakeFiles/sdcFrontLidarSensor.dir/DependInfo.cmake"
   "CMakeFiles/sdcSensorData.dir/DependInfo.cmake"
+  "CMakeFiles/sdcGpsSensor.dir/DependInfo.cmake"
   "CMakeFiles/sdcVisibleObject.dir/DependInfo.cmake"
+  "CMakeFiles/sdcFlyingBox.dir/DependInfo.cmake"
   "CMakeFiles/sdcIntersection.dir/DependInfo.cmake"
-  "CMakeFiles/sdcManager.dir/DependInfo.cmake"
-  "CMakeFiles/manager.dir/DependInfo.cmake"
-  "CMakeFiles/sdcLidarSensorInfo.dir/DependInfo.cmake"
-  "CMakeFiles/instruction.dir/DependInfo.cmake"
+  "CMakeFiles/sdcBackLidarSensor.dir/DependInfo.cmake"
+  "CMakeFiles/sdcTopLidarSensor.dir/DependInfo.cmake"
   "CMakeFiles/request.dir/DependInfo.cmake"
   "CMakeFiles/sdcAngle.dir/DependInfo.cmake"
+  "CMakeFiles/manager.dir/DependInfo.cmake"
+  "CMakeFiles/sdcBox.dir/DependInfo.cmake"
+  "CMakeFiles/sdcManager.dir/DependInfo.cmake"
+  "CMakeFiles/sdcLidarSensorInfo.dir/DependInfo.cmake"
+  "CMakeFiles/instruction.dir/DependInfo.cmake"
   "CMakeFiles/sdcLidarRay.dir/DependInfo.cmake"
   )

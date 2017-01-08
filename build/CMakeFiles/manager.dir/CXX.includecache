@@ -6,25 +6,25 @@
 
 #IncludeRegexTransform: 
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/instruction.hh
+/Accounts/youj/Desktop/SDC-Merged/instruction.hh
 iostream
 -
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/manager.cc
+/Accounts/youj/Desktop/SDC-Merged/manager.cc
 manager.hh
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/manager.hh
+/Accounts/youj/Desktop/SDC-Merged/manager.hh
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/manager.hh
+/Accounts/youj/Desktop/SDC-Merged/manager.hh
 iostream
 -
 vector
 -
 request.hh
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/request.hh
+/Accounts/youj/Desktop/SDC-Merged/request.hh
 instruction.hh
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/instruction.hh
+/Accounts/youj/Desktop/SDC-Merged/instruction.hh
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/request.hh
+/Accounts/youj/Desktop/SDC-Merged/request.hh
 iostream
 -
 

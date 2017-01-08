@@ -22,6 +22,7 @@
 #include <vector>
 #include <exception>
 
+
 #include <stdlib.h>
 #include <time.h>
 #include <random>
@@ -33,10 +34,12 @@
 #include "sdcAngle.hh"
 #include "sdcWaypoint.hh"
 #include "sdcIntersection.hh"
+
 #include "sdcFrontLidarSensor.hh"
 #include "manager.hh"
 #include "request.hh"
 #include "instruction.hh"
+
 
 namespace gazebo {
 
@@ -66,18 +69,22 @@ namespace gazebo {
 
         // The velocity of the car
         math::Vector3 velocity;
-        
+
+
         //WAYPOINTS for intersection driving
         std::vector<sdcWaypoint> WAYPOINT_VEC;
         std::vector<sdcIntersection> intersections;
         //sensorData object
         sdcSensorData sensorData;
-        
+
         //sdcFrontLidarSensor frontSensor;
 
         // These variables are mostly set in the SDF for the car and relate to the
         // physical parameters of the vehicle
-        
+
+
+        // These variables are mostly set in the SDF for the car and relate to the
+        // physical parameters of the vehicle
         double frontPower, rearPower;
         double maxSpeed;
         double wheelRadius;
@@ -135,14 +142,15 @@ namespace gazebo {
 
         // Position/rotation variables
         sdcAngle yaw;
-        
 
         // Waypoint variables
         int waypointProgress;
 
         // Intersection variables
+
         bool inIntersection;
         int destDirection;
+
         bool stoppedAtSign;
         int ignoreStopSignsCounter;
         int atIntersection;
@@ -182,11 +190,13 @@ namespace gazebo {
         int frontLidarLastUpdate;
 
         // The x and y position of the car
+
         bool laneStopped;
         int carId;
         int fromDir;
         bool toldToStop;
         static int carIdCount;
+
         double x;
         double y;
 
@@ -205,6 +215,7 @@ namespace gazebo {
         void initializeGraph();
         void insertWaypointTypes(Direction startDir);
 
+
         // Driving algorithms
         void LanedDriving();
         void GridTurning(int turn);
@@ -216,6 +227,7 @@ namespace gazebo {
 
         // Helper methods
         int genRand(int max);
+
         void FrontLidarUpdate();
         void UpdateFrontObjects(std::vector<sdcVisibleObject> newObjects);
 
@@ -232,7 +244,6 @@ namespace gazebo {
         sdcAngle GetDirection();
         sdcAngle GetOrientation();
         void GetNSEW();
-        
 
         // Control methods
         void Accelerate(double amt = 1, double rate = 1.0);

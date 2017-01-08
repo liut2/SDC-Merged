@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcIntersection.cc
+/Accounts/youj/Desktop/SDC-Merged/sdcIntersection.cc
 sdcIntersection.hh
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcIntersection.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcIntersection.hh
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcIntersection.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcIntersection.hh
 vector
 -
 iostream
@@ -18,9 +18,9 @@ iostream
 limits
 -
 sdcWaypoint.hh
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcWaypoint.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcWaypoint.hh
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcWaypoint.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcWaypoint.hh
 iostream
 -
 vector

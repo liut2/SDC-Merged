@@ -6,13 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcAngle.cc
+/Accounts/youj/Desktop/SDC-Merged/sdcAngle.cc
 stdio.h
 -
 sdcAngle.hh
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcAngle.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcAngle.hh
 
-/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcAngle.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcAngle.hh
 math.h
 -
 iostream

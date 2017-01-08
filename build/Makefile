@@ -48,10 +48,10 @@ RM = /usr/local/Cellar/cmake/3.6.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Accounts/mawbye/Desktop/SDC16_17/sdc_intersection
+CMAKE_SOURCE_DIR = /Accounts/youj/Desktop/SDC-Merged
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/build
+CMAKE_BINARY_DIR = /Accounts/youj/Desktop/SDC-Merged/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/build/CMakeFiles /Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles /Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named sdcCameraSensor
+
+# Build rule for target.
+sdcCameraSensor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcCameraSensor
+.PHONY : sdcCameraSensor
+
+# fast build rule for target.
+sdcCameraSensor/fast:
+	$(MAKE) -f CMakeFiles/sdcCameraSensor.dir/build.make CMakeFiles/sdcCameraSensor.dir/build
+.PHONY : sdcCameraSensor/fast
+
+#=============================================================================
 # Target rules for targets named sdcCar
 
 # Build rule for target.
@@ -137,6 +150,32 @@ sdcWaypoint/fast:
 .PHONY : sdcWaypoint/fast
 
 #=============================================================================
+# Target rules for targets named sdcSideLidarSensor
+
+# Build rule for target.
+sdcSideLidarSensor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcSideLidarSensor
+.PHONY : sdcSideLidarSensor
+
+# fast build rule for target.
+sdcSideLidarSensor/fast:
+	$(MAKE) -f CMakeFiles/sdcSideLidarSensor.dir/build.make CMakeFiles/sdcSideLidarSensor.dir/build
+.PHONY : sdcSideLidarSensor/fast
+
+#=============================================================================
+# Target rules for targets named sdcFrontLidarSensor
+
+# Build rule for target.
+sdcFrontLidarSensor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcFrontLidarSensor
+.PHONY : sdcFrontLidarSensor
+
+# fast build rule for target.
+sdcFrontLidarSensor/fast:
+	$(MAKE) -f CMakeFiles/sdcFrontLidarSensor.dir/build.make CMakeFiles/sdcFrontLidarSensor.dir/build
+.PHONY : sdcFrontLidarSensor/fast
+
+#=============================================================================
 # Target rules for targets named sdcSensorData
 
 # Build rule for target.
@@ -148,6 +187,19 @@ sdcSensorData: cmake_check_build_system
 sdcSensorData/fast:
 	$(MAKE) -f CMakeFiles/sdcSensorData.dir/build.make CMakeFiles/sdcSensorData.dir/build
 .PHONY : sdcSensorData/fast
+
+#=============================================================================
+# Target rules for targets named sdcGpsSensor
+
+# Build rule for target.
+sdcGpsSensor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcGpsSensor
+.PHONY : sdcGpsSensor
+
+# fast build rule for target.
+sdcGpsSensor/fast:
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/build
+.PHONY : sdcGpsSensor/fast
 
 #=============================================================================
 # Target rules for targets named sdcVisibleObject
@@ -163,6 +215,19 @@ sdcVisibleObject/fast:
 .PHONY : sdcVisibleObject/fast
 
 #=============================================================================
+# Target rules for targets named sdcFlyingBox
+
+# Build rule for target.
+sdcFlyingBox: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcFlyingBox
+.PHONY : sdcFlyingBox
+
+# fast build rule for target.
+sdcFlyingBox/fast:
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/build
+.PHONY : sdcFlyingBox/fast
+
+#=============================================================================
 # Target rules for targets named sdcIntersection
 
 # Build rule for target.
@@ -176,56 +241,30 @@ sdcIntersection/fast:
 .PHONY : sdcIntersection/fast
 
 #=============================================================================
-# Target rules for targets named sdcManager
+# Target rules for targets named sdcBackLidarSensor
 
 # Build rule for target.
-sdcManager: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 sdcManager
-.PHONY : sdcManager
+sdcBackLidarSensor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcBackLidarSensor
+.PHONY : sdcBackLidarSensor
 
 # fast build rule for target.
-sdcManager/fast:
-	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/build
-.PHONY : sdcManager/fast
+sdcBackLidarSensor/fast:
+	$(MAKE) -f CMakeFiles/sdcBackLidarSensor.dir/build.make CMakeFiles/sdcBackLidarSensor.dir/build
+.PHONY : sdcBackLidarSensor/fast
 
 #=============================================================================
-# Target rules for targets named manager
+# Target rules for targets named sdcTopLidarSensor
 
 # Build rule for target.
-manager: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 manager
-.PHONY : manager
+sdcTopLidarSensor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcTopLidarSensor
+.PHONY : sdcTopLidarSensor
 
 # fast build rule for target.
-manager/fast:
-	$(MAKE) -f CMakeFiles/manager.dir/build.make CMakeFiles/manager.dir/build
-.PHONY : manager/fast
-
-#=============================================================================
-# Target rules for targets named sdcLidarSensorInfo
-
-# Build rule for target.
-sdcLidarSensorInfo: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 sdcLidarSensorInfo
-.PHONY : sdcLidarSensorInfo
-
-# fast build rule for target.
-sdcLidarSensorInfo/fast:
-	$(MAKE) -f CMakeFiles/sdcLidarSensorInfo.dir/build.make CMakeFiles/sdcLidarSensorInfo.dir/build
-.PHONY : sdcLidarSensorInfo/fast
-
-#=============================================================================
-# Target rules for targets named instruction
-
-# Build rule for target.
-instruction: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 instruction
-.PHONY : instruction
-
-# fast build rule for target.
-instruction/fast:
-	$(MAKE) -f CMakeFiles/instruction.dir/build.make CMakeFiles/instruction.dir/build
-.PHONY : instruction/fast
+sdcTopLidarSensor/fast:
+	$(MAKE) -f CMakeFiles/sdcTopLidarSensor.dir/build.make CMakeFiles/sdcTopLidarSensor.dir/build
+.PHONY : sdcTopLidarSensor/fast
 
 #=============================================================================
 # Target rules for targets named request
@@ -252,6 +291,71 @@ sdcAngle: cmake_check_build_system
 sdcAngle/fast:
 	$(MAKE) -f CMakeFiles/sdcAngle.dir/build.make CMakeFiles/sdcAngle.dir/build
 .PHONY : sdcAngle/fast
+
+#=============================================================================
+# Target rules for targets named manager
+
+# Build rule for target.
+manager: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 manager
+.PHONY : manager
+
+# fast build rule for target.
+manager/fast:
+	$(MAKE) -f CMakeFiles/manager.dir/build.make CMakeFiles/manager.dir/build
+.PHONY : manager/fast
+
+#=============================================================================
+# Target rules for targets named sdcBox
+
+# Build rule for target.
+sdcBox: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcBox
+.PHONY : sdcBox
+
+# fast build rule for target.
+sdcBox/fast:
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/build
+.PHONY : sdcBox/fast
+
+#=============================================================================
+# Target rules for targets named sdcManager
+
+# Build rule for target.
+sdcManager: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcManager
+.PHONY : sdcManager
+
+# fast build rule for target.
+sdcManager/fast:
+	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/build
+.PHONY : sdcManager/fast
+
+#=============================================================================
+# Target rules for targets named sdcLidarSensorInfo
+
+# Build rule for target.
+sdcLidarSensorInfo: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcLidarSensorInfo
+.PHONY : sdcLidarSensorInfo
+
+# fast build rule for target.
+sdcLidarSensorInfo/fast:
+	$(MAKE) -f CMakeFiles/sdcLidarSensorInfo.dir/build.make CMakeFiles/sdcLidarSensorInfo.dir/build
+.PHONY : sdcLidarSensorInfo/fast
+
+#=============================================================================
+# Target rules for targets named instruction
+
+# Build rule for target.
+instruction: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 instruction
+.PHONY : instruction
+
+# fast build rule for target.
+instruction/fast:
+	$(MAKE) -f CMakeFiles/instruction.dir/build.make CMakeFiles/instruction.dir/build
+.PHONY : instruction/fast
 
 #=============================================================================
 # Target rules for targets named sdcLidarRay
@@ -374,6 +478,87 @@ sdcAngle.cc.s:
 	$(MAKE) -f CMakeFiles/sdcAngle.dir/build.make CMakeFiles/sdcAngle.dir/sdcAngle.cc.s
 .PHONY : sdcAngle.cc.s
 
+sdcBackLidarSensor.o: sdcBackLidarSensor.cc.o
+
+.PHONY : sdcBackLidarSensor.o
+
+# target to build an object file
+sdcBackLidarSensor.cc.o:
+	$(MAKE) -f CMakeFiles/sdcBackLidarSensor.dir/build.make CMakeFiles/sdcBackLidarSensor.dir/sdcBackLidarSensor.cc.o
+.PHONY : sdcBackLidarSensor.cc.o
+
+sdcBackLidarSensor.i: sdcBackLidarSensor.cc.i
+
+.PHONY : sdcBackLidarSensor.i
+
+# target to preprocess a source file
+sdcBackLidarSensor.cc.i:
+	$(MAKE) -f CMakeFiles/sdcBackLidarSensor.dir/build.make CMakeFiles/sdcBackLidarSensor.dir/sdcBackLidarSensor.cc.i
+.PHONY : sdcBackLidarSensor.cc.i
+
+sdcBackLidarSensor.s: sdcBackLidarSensor.cc.s
+
+.PHONY : sdcBackLidarSensor.s
+
+# target to generate assembly for a file
+sdcBackLidarSensor.cc.s:
+	$(MAKE) -f CMakeFiles/sdcBackLidarSensor.dir/build.make CMakeFiles/sdcBackLidarSensor.dir/sdcBackLidarSensor.cc.s
+.PHONY : sdcBackLidarSensor.cc.s
+
+sdcBox.o: sdcBox.cpp.o
+
+.PHONY : sdcBox.o
+
+# target to build an object file
+sdcBox.cpp.o:
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/sdcBox.cpp.o
+.PHONY : sdcBox.cpp.o
+
+sdcBox.i: sdcBox.cpp.i
+
+.PHONY : sdcBox.i
+
+# target to preprocess a source file
+sdcBox.cpp.i:
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/sdcBox.cpp.i
+.PHONY : sdcBox.cpp.i
+
+sdcBox.s: sdcBox.cpp.s
+
+.PHONY : sdcBox.s
+
+# target to generate assembly for a file
+sdcBox.cpp.s:
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/sdcBox.cpp.s
+.PHONY : sdcBox.cpp.s
+
+sdcCameraSensor.o: sdcCameraSensor.cc.o
+
+.PHONY : sdcCameraSensor.o
+
+# target to build an object file
+sdcCameraSensor.cc.o:
+	$(MAKE) -f CMakeFiles/sdcCameraSensor.dir/build.make CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o
+.PHONY : sdcCameraSensor.cc.o
+
+sdcCameraSensor.i: sdcCameraSensor.cc.i
+
+.PHONY : sdcCameraSensor.i
+
+# target to preprocess a source file
+sdcCameraSensor.cc.i:
+	$(MAKE) -f CMakeFiles/sdcCameraSensor.dir/build.make CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.i
+.PHONY : sdcCameraSensor.cc.i
+
+sdcCameraSensor.s: sdcCameraSensor.cc.s
+
+.PHONY : sdcCameraSensor.s
+
+# target to generate assembly for a file
+sdcCameraSensor.cc.s:
+	$(MAKE) -f CMakeFiles/sdcCameraSensor.dir/build.make CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.s
+.PHONY : sdcCameraSensor.cc.s
+
 sdcCar.o: sdcCar.cc.o
 
 .PHONY : sdcCar.o
@@ -400,6 +585,87 @@ sdcCar.s: sdcCar.cc.s
 sdcCar.cc.s:
 	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/sdcCar.cc.s
 .PHONY : sdcCar.cc.s
+
+sdcFlyingBox.o: sdcFlyingBox.cc.o
+
+.PHONY : sdcFlyingBox.o
+
+# target to build an object file
+sdcFlyingBox.cc.o:
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/sdcFlyingBox.cc.o
+.PHONY : sdcFlyingBox.cc.o
+
+sdcFlyingBox.i: sdcFlyingBox.cc.i
+
+.PHONY : sdcFlyingBox.i
+
+# target to preprocess a source file
+sdcFlyingBox.cc.i:
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/sdcFlyingBox.cc.i
+.PHONY : sdcFlyingBox.cc.i
+
+sdcFlyingBox.s: sdcFlyingBox.cc.s
+
+.PHONY : sdcFlyingBox.s
+
+# target to generate assembly for a file
+sdcFlyingBox.cc.s:
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/sdcFlyingBox.cc.s
+.PHONY : sdcFlyingBox.cc.s
+
+sdcFrontLidarSensor.o: sdcFrontLidarSensor.cc.o
+
+.PHONY : sdcFrontLidarSensor.o
+
+# target to build an object file
+sdcFrontLidarSensor.cc.o:
+	$(MAKE) -f CMakeFiles/sdcFrontLidarSensor.dir/build.make CMakeFiles/sdcFrontLidarSensor.dir/sdcFrontLidarSensor.cc.o
+.PHONY : sdcFrontLidarSensor.cc.o
+
+sdcFrontLidarSensor.i: sdcFrontLidarSensor.cc.i
+
+.PHONY : sdcFrontLidarSensor.i
+
+# target to preprocess a source file
+sdcFrontLidarSensor.cc.i:
+	$(MAKE) -f CMakeFiles/sdcFrontLidarSensor.dir/build.make CMakeFiles/sdcFrontLidarSensor.dir/sdcFrontLidarSensor.cc.i
+.PHONY : sdcFrontLidarSensor.cc.i
+
+sdcFrontLidarSensor.s: sdcFrontLidarSensor.cc.s
+
+.PHONY : sdcFrontLidarSensor.s
+
+# target to generate assembly for a file
+sdcFrontLidarSensor.cc.s:
+	$(MAKE) -f CMakeFiles/sdcFrontLidarSensor.dir/build.make CMakeFiles/sdcFrontLidarSensor.dir/sdcFrontLidarSensor.cc.s
+.PHONY : sdcFrontLidarSensor.cc.s
+
+sdcGpsSensor.o: sdcGpsSensor.cc.o
+
+.PHONY : sdcGpsSensor.o
+
+# target to build an object file
+sdcGpsSensor.cc.o:
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/sdcGpsSensor.cc.o
+.PHONY : sdcGpsSensor.cc.o
+
+sdcGpsSensor.i: sdcGpsSensor.cc.i
+
+.PHONY : sdcGpsSensor.i
+
+# target to preprocess a source file
+sdcGpsSensor.cc.i:
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/sdcGpsSensor.cc.i
+.PHONY : sdcGpsSensor.cc.i
+
+sdcGpsSensor.s: sdcGpsSensor.cc.s
+
+.PHONY : sdcGpsSensor.s
+
+# target to generate assembly for a file
+sdcGpsSensor.cc.s:
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/sdcGpsSensor.cc.s
+.PHONY : sdcGpsSensor.cc.s
 
 sdcIntersection.o: sdcIntersection.cc.o
 
@@ -512,6 +778,60 @@ sdcSensorData.cc.s:
 	$(MAKE) -f CMakeFiles/sdcSensorData.dir/build.make CMakeFiles/sdcSensorData.dir/sdcSensorData.cc.s
 .PHONY : sdcSensorData.cc.s
 
+sdcSideLidarSensor.o: sdcSideLidarSensor.cc.o
+
+.PHONY : sdcSideLidarSensor.o
+
+# target to build an object file
+sdcSideLidarSensor.cc.o:
+	$(MAKE) -f CMakeFiles/sdcSideLidarSensor.dir/build.make CMakeFiles/sdcSideLidarSensor.dir/sdcSideLidarSensor.cc.o
+.PHONY : sdcSideLidarSensor.cc.o
+
+sdcSideLidarSensor.i: sdcSideLidarSensor.cc.i
+
+.PHONY : sdcSideLidarSensor.i
+
+# target to preprocess a source file
+sdcSideLidarSensor.cc.i:
+	$(MAKE) -f CMakeFiles/sdcSideLidarSensor.dir/build.make CMakeFiles/sdcSideLidarSensor.dir/sdcSideLidarSensor.cc.i
+.PHONY : sdcSideLidarSensor.cc.i
+
+sdcSideLidarSensor.s: sdcSideLidarSensor.cc.s
+
+.PHONY : sdcSideLidarSensor.s
+
+# target to generate assembly for a file
+sdcSideLidarSensor.cc.s:
+	$(MAKE) -f CMakeFiles/sdcSideLidarSensor.dir/build.make CMakeFiles/sdcSideLidarSensor.dir/sdcSideLidarSensor.cc.s
+.PHONY : sdcSideLidarSensor.cc.s
+
+sdcTopLidarSensor.o: sdcTopLidarSensor.cc.o
+
+.PHONY : sdcTopLidarSensor.o
+
+# target to build an object file
+sdcTopLidarSensor.cc.o:
+	$(MAKE) -f CMakeFiles/sdcTopLidarSensor.dir/build.make CMakeFiles/sdcTopLidarSensor.dir/sdcTopLidarSensor.cc.o
+.PHONY : sdcTopLidarSensor.cc.o
+
+sdcTopLidarSensor.i: sdcTopLidarSensor.cc.i
+
+.PHONY : sdcTopLidarSensor.i
+
+# target to preprocess a source file
+sdcTopLidarSensor.cc.i:
+	$(MAKE) -f CMakeFiles/sdcTopLidarSensor.dir/build.make CMakeFiles/sdcTopLidarSensor.dir/sdcTopLidarSensor.cc.i
+.PHONY : sdcTopLidarSensor.cc.i
+
+sdcTopLidarSensor.s: sdcTopLidarSensor.cc.s
+
+.PHONY : sdcTopLidarSensor.s
+
+# target to generate assembly for a file
+sdcTopLidarSensor.cc.s:
+	$(MAKE) -f CMakeFiles/sdcTopLidarSensor.dir/build.make CMakeFiles/sdcTopLidarSensor.dir/sdcTopLidarSensor.cc.s
+.PHONY : sdcTopLidarSensor.cc.s
+
 sdcVisibleObject.o: sdcVisibleObject.cc.o
 
 .PHONY : sdcVisibleObject.o
@@ -573,18 +893,26 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... sdcCameraSensor"
 	@echo "... sdcCar"
 	@echo "... sdcWaypoint"
 	@echo "... rebuild_cache"
+	@echo "... sdcSideLidarSensor"
+	@echo "... sdcFrontLidarSensor"
 	@echo "... sdcSensorData"
+	@echo "... sdcGpsSensor"
 	@echo "... sdcVisibleObject"
+	@echo "... sdcFlyingBox"
 	@echo "... sdcIntersection"
-	@echo "... sdcManager"
-	@echo "... manager"
-	@echo "... sdcLidarSensorInfo"
-	@echo "... instruction"
+	@echo "... sdcBackLidarSensor"
+	@echo "... sdcTopLidarSensor"
 	@echo "... request"
 	@echo "... sdcAngle"
+	@echo "... manager"
+	@echo "... sdcBox"
+	@echo "... sdcManager"
+	@echo "... sdcLidarSensorInfo"
+	@echo "... instruction"
 	@echo "... sdcLidarRay"
 	@echo "... instruction.o"
 	@echo "... instruction.i"
@@ -598,9 +926,27 @@ help:
 	@echo "... sdcAngle.o"
 	@echo "... sdcAngle.i"
 	@echo "... sdcAngle.s"
+	@echo "... sdcBackLidarSensor.o"
+	@echo "... sdcBackLidarSensor.i"
+	@echo "... sdcBackLidarSensor.s"
+	@echo "... sdcBox.o"
+	@echo "... sdcBox.i"
+	@echo "... sdcBox.s"
+	@echo "... sdcCameraSensor.o"
+	@echo "... sdcCameraSensor.i"
+	@echo "... sdcCameraSensor.s"
 	@echo "... sdcCar.o"
 	@echo "... sdcCar.i"
 	@echo "... sdcCar.s"
+	@echo "... sdcFlyingBox.o"
+	@echo "... sdcFlyingBox.i"
+	@echo "... sdcFlyingBox.s"
+	@echo "... sdcFrontLidarSensor.o"
+	@echo "... sdcFrontLidarSensor.i"
+	@echo "... sdcFrontLidarSensor.s"
+	@echo "... sdcGpsSensor.o"
+	@echo "... sdcGpsSensor.i"
+	@echo "... sdcGpsSensor.s"
 	@echo "... sdcIntersection.o"
 	@echo "... sdcIntersection.i"
 	@echo "... sdcIntersection.s"
@@ -613,6 +959,12 @@ help:
 	@echo "... sdcSensorData.o"
 	@echo "... sdcSensorData.i"
 	@echo "... sdcSensorData.s"
+	@echo "... sdcSideLidarSensor.o"
+	@echo "... sdcSideLidarSensor.i"
+	@echo "... sdcSideLidarSensor.s"
+	@echo "... sdcTopLidarSensor.o"
+	@echo "... sdcTopLidarSensor.i"
+	@echo "... sdcTopLidarSensor.s"
 	@echo "... sdcVisibleObject.o"
 	@echo "... sdcVisibleObject.i"
 	@echo "... sdcVisibleObject.s"

@@ -38,7 +38,7 @@ void sdcFrontLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sd
     // Make sure the parent sensor is active.
     this->parentSensor->SetActive(true);
 
-    sdcSensorData::InitLidar(FRONT, this->parentSensor->AngleMin().Radian(), this->parentSensor->GetAngleResolution(), this->parentSensor->GetRangeMax(), this->parentSensor->GetRayCount());
+    //this->sdcSensorData.InitLidar(FRONT, this->parentSensor->AngleMin().Radian(), this->parentSensor->GetAngleResolution(), this->parentSensor->GetRangeMax(), this->parentSensor->GetRayCount());
 }
 
 // Called by the world update start event
@@ -47,5 +47,5 @@ void sdcFrontLidarSensor::OnUpdate(){
     for (unsigned int i = 0; i < this->parentSensor->GetRayCount(); ++i){
         rays->push_back(this->parentSensor->GetRange(i));
     }
-    sdcSensorData::UpdateLidar(FRONT, rays);
+    //this->sdcSensorData.UpdateLidar(FRONT, rays);
 }

@@ -7,7 +7,7 @@ material comps_road
 		{
 			texture_unit
 			{
-				texture road.png
+				texture plainroad.png
 				scale 1 .1
 			}
 		}
