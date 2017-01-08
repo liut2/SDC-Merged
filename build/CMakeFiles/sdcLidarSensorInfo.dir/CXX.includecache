@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcAngle.hh
+math.h
+-
+iostream
+-
+
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcLidarSensorInfo.cc
+stdio.h
+-
+sdcLidarSensorInfo.hh
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcLidarSensorInfo.hh
+
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcLidarSensorInfo.hh
+sdcAngle.hh
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcAngle.hh
+

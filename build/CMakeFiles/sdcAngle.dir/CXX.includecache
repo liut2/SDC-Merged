@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcAngle.cc
+stdio.h
+-
+sdcAngle.hh
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcAngle.hh
+
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcAngle.hh
+math.h
+-
+iostream
+-
+

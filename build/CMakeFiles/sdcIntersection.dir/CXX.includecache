@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcIntersection.cc
+sdcIntersection.hh
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcIntersection.hh
+
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcIntersection.hh
+vector
+-
+iostream
+-
+limits
+-
+sdcWaypoint.hh
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcWaypoint.hh
+
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/sdcWaypoint.hh
+iostream
+-
+vector
+-
+

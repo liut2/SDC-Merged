@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/instruction.cc
+instruction.hh
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/instruction.hh
+
+/Accounts/mawbye/Desktop/SDC16_17/sdc_intersection/instruction.hh
+iostream
+-
+
