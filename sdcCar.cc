@@ -137,7 +137,7 @@ void sdcCar::Drive()
 
 //          this->Accelerate();
         //  this->Stop();
-
+           // printf("inWaypoint\n");
             this->WaypointDriving(WAYPOINT_VEC);
         break;
 
@@ -181,7 +181,9 @@ void sdcCar::Drive()
         break;
     }
 
-
+    this->MatchTargetDirection();
+    // Attempts to match the target speed
+    this->MatchTargetSpeed();
     // Attempts to turn towards the target direction
 }
 
@@ -217,7 +219,7 @@ void sdcCar::MatchTargetDirection(){
     }
 
 
-    this->steeringAmount = this->sensorData.GetNewSteeringMagnitude();
+    //this->steeringAmount = this->sensorData.GetNewSteeringMagnitude();
 
 }
 
@@ -334,7 +336,6 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
     //printf("waypointvec size: %lu \n", WAYPOINT_VEC.size());
     if(progress < WAYPOINT_VEC.size()){
         // Pull the next waypoint and set the car to drive towards it
-
         //printf("waypointvec.size: %i", WAYPOINT_VEC.size());
         this->Accelerate();
 
@@ -369,15 +370,11 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
             this->SetTargetDirection(targetAngle);
             // this->LanedDriving();
         }
-    } else if(this->isFixingParking){
-        this->isFixingParking = false;
-
-        this->currentState = parking;
-        this->currentPerpendicularState = straightPark;
     } else {
 
         this->currentState = stop;
     }
+
 }
 
 /*
@@ -907,8 +904,11 @@ bool sdcCar::IsObjectTooFurious(sdcVisibleObject obj){
  * Default rate: 1.0
  */
 void sdcCar::Accelerate(double amt, double rate){
+    
     this->SetTargetSpeed(this->GetSpeed() + amt);
+    //printf("targetSpeed: %f\n",this->targetSpeed);
     this->SetAccelRate(rate);
+    fflush(stdout);
 }
 
 /*
@@ -987,6 +987,7 @@ void sdcCar::SetTargetSteeringAmount(double a){
  */
 void sdcCar::SetTargetSpeed(double s){
     this->targetSpeed = fmax(fmin(s, this->maxCarSpeed), 0);
+    //printf("--stopping bool: %i--", this->stopping);
     this->stopping = (this->targetSpeed == 0);
     this->SetAccelRate();
     this->SetBrakeRate();
@@ -1145,7 +1146,7 @@ void sdcCar::OnUpdate()
     // Check if the front lidars have been updated, and if they have update
     // the car's list
     if(this->frontLidarLastUpdate != this->sensorData.GetLidarLastUpdate(FRONT)){
-        //printf("updating front objects\n");
+        printf("updating front objects\n");
         std::vector<sdcVisibleObject> v = this->sensorData.GetObjectsInFront();
         //printf("visibleobjects size: %lu\n", v.size());
         fflush(stdout);
