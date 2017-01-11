@@ -92,7 +92,7 @@ void sdcCar::Drive()
 
 //     If not in avoidance, check if we should start following the thing
 //     in front of us. If following is done, kick out to default state
-    if(this->currentState != intersection && this->currentState != avoidance){
+    if(this->currentState != intersection){
         //printf("in if\n");
         // If there's a stop sign, assume we're at an intersection
 //        if(this->ignoreStopSignsCounter == 0 && sdcSensorData::stopSignFrameCount > 5){
@@ -100,17 +100,17 @@ void sdcCar::Drive()
 //        }
 
         // If something is ahead of us, default to trying to follow it
-        if (this->ObjectDirectlyAhead()){
-            printf("currentstate = follow\n");
-            this->currentState = follow;
-        }else if(this->currentState == follow && !this->isTrackingObject){
-            this->currentState = waypoint;;
-        }
+//        if (this->ObjectDirectlyAhead()){
+//            printf("currentstate = follow\n");
+//            this->currentState = follow;
+//        }else if(this->currentState == follow && !this->isTrackingObject){
+//            this->currentState = waypoint;;
+//        }
 
         // Look for objects in danger of colliding with us, react appropriately
-        if (this->ObjectOnCollisionCourse()){
-            this->currentState = avoidance;
-        }
+//        if (this->ObjectOnCollisionCourse()){
+//            this->currentState = avoidance;
+//        }
     } else {
       // road-driving
       //currentState = road-driving;
@@ -139,21 +139,22 @@ void sdcCar::Drive()
         //  this->Stop();
            // printf("inWaypoint\n");
             this->WaypointDriving(WAYPOINT_VEC);
+            
         break;
 
         // At a stop sign, performing a turn
         case intersection:
-
-            if(this->stoppedAtSign && this->stationaryCount > 2000){
-                this->currentState = DEFAULT_STATE;
-                this->ignoreStopSignsCounter = 3000;
-            }else if(this->stoppedAtSign && this->GetSpeed() < 0.5){
-                this->stationaryCount++;
-            }else if(!this->stoppedAtSign && this->sensorData.sizeOfStopSign > 6000){
-                this->Stop();
-                this->stoppedAtSign = true;
-                this->stationaryCount = 0;
-        }
+//            printf("in intersection case\n");
+//            if(this->stoppedAtSign && this->stationaryCount > 2000){
+//                this->currentState = DEFAULT_STATE;
+//                this->ignoreStopSignsCounter = 3000;
+//            }else if(this->stoppedAtSign && this->GetSpeed() < 0.5){
+//                this->stationaryCount++;
+//            }else if(!this->stoppedAtSign && this->sensorData.sizeOfStopSign > 6000){
+//                this->Stop();
+//                this->stoppedAtSign = true;
+//                this->stationaryCount = 0;
+//        }
 
         break;
 
@@ -165,26 +166,14 @@ void sdcCar::Drive()
         break;
 
         // Smarter way to avoid objects; stopping, swerving, etc.
-        case avoidance:
-        // Cases: stop, swerve, go around
-//            this->Avoidance();
+        case laneDriving:
+            //printf("its driving in a lane\n");
         break;
 
-        // Parks the car
-        case parking:
-            //this->PerpendicularPark();
-            // this->ParallelPark();
-
-            this->MatchTargetDirection();
-            // Attempts to match the target speed
-            this->MatchTargetSpeed();
-        break;
     }
-
     this->MatchTargetDirection();
     // Attempts to match the target speed
     this->MatchTargetSpeed();
-    // Attempts to turn towards the target direction
 }
 
 /*
@@ -194,32 +183,38 @@ void sdcCar::Drive()
 void sdcCar::MatchTargetDirection(){
 
     //std::cout << "match target direction" << std::endl;
-
-    sdcAngle directionAngleChange = this->GetDirection() - this->targetDirection;
-    // If the car needs to turn, set the target steering amount
-    if (!directionAngleChange.WithinMargin(DIRECTION_MARGIN_OF_ERROR)) {
-        // The steering amount scales based on how far we have to turn, with upper and lower limits
-        double proposedSteeringAmount = fmax(fmin(-this->turningLimit*tan(directionAngleChange.angle/-2), this->turningLimit), -this->turningLimit);
-
-        // When reversing, steering directions are inverted
-        if(!this->reversing){
-            this->SetTargetSteeringAmount(proposedSteeringAmount);
-        }else{
-            this->SetTargetSteeringAmount(-proposedSteeringAmount);
+    if(this->currentState == waypoint){
+        sdcAngle directionAngleChange = this->GetDirection() - this->targetDirection;
+        // If the car needs to turn, set the target steering amount
+        if (!directionAngleChange.WithinMargin(DIRECTION_MARGIN_OF_ERROR)) {
+            // The steering amount scales based on how far we have to turn, with upper and lower limits
+            double proposedSteeringAmount = fmax(fmin(-this->turningLimit*tan(directionAngleChange.angle/-2), this->turningLimit), -this->turningLimit);
+            
+            // When reversing, steering directions are inverted
+            if(!this->reversing){
+                this->SetTargetSteeringAmount(proposedSteeringAmount);
+            }else{
+                this->SetTargetSteeringAmount(-proposedSteeringAmount);
+            }
         }
-    }
-
-    // Check if the car needs to steer, and apply a small turn in the corresponding direction
-    if (!(std::abs(this->targetSteeringAmount - this->steeringAmount) < STEERING_MARGIN_OF_ERROR)) {
-        if (this->steeringAmount < this->targetSteeringAmount) {
-            this->steeringAmount = this->steeringAmount + STEERING_ADJUSTMENT_RATE;
-        }else{
-            this->steeringAmount = this->steeringAmount - STEERING_ADJUSTMENT_RATE;
+        
+        // Check if the car needs to steer, and apply a small turn in the corresponding direction
+        if (!(std::abs(this->targetSteeringAmount - this->steeringAmount) < STEERING_MARGIN_OF_ERROR)) {
+            if (this->steeringAmount < this->targetSteeringAmount) {
+                this->steeringAmount = this->steeringAmount + STEERING_ADJUSTMENT_RATE;
+            }else{
+                this->steeringAmount = this->steeringAmount - STEERING_ADJUSTMENT_RATE;
+            }
         }
+        
+
     }
-
-
-    //this->steeringAmount = this->sensorData.GetNewSteeringMagnitude();
+    else{
+        printf("gettingsteeringmagnitude\n");
+        this->steeringAmount = this->sensorData.GetNewSteeringMagnitude();
+    }
+   
+    
 
 }
 
@@ -1070,6 +1065,24 @@ void sdcCar::Init()
  */
 void sdcCar::OnUpdate()
 {
+    //REMEMBER TO CHANGE THIS
+    int crudeSwitch = 0; //in merged world use 0
+                        //in lanedriving use 1
+                        //in intersection world use 2
+    
+    if (crudeSwitch == 0) {
+        if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
+            //printf("starting at %f,%f \n", this->x, this->y);
+            this->currentState = waypoint;
+        }
+    } else if (crudeSwitch == 1){
+        if((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10)){
+            //printf("starting at %f,%f \n", this->x, this->y);
+            this->currentState = laneDriving;
+        }
+    } else if (crudeSwitch == 2) {
+        printf("hi \n");
+    }
 //    if(this->stopping){
 //        printf("stopping\n");
 //        printf("%f",this->velocity.y);
@@ -1105,6 +1118,7 @@ void sdcCar::OnUpdate()
                 if(this->y > 55){
                     manager::stopSignCarLeft(this->carId);
                     this->inIntersection = false;
+                   // this->currentState == waypoint;
                     printf("exited north\n");
                 }
                 break;
@@ -1239,6 +1253,7 @@ void sdcCar::OnUpdate()
             this->chassis->AddForceAtWorldPosition(axis * -amt, p.pos);
         }
     }
+ //    printf("current state: %u\n",this->currentState);
 }
 
 /*
