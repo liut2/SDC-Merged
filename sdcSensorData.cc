@@ -50,7 +50,7 @@ sdcSensorData::sdcSensorData() {
     this->stopSignInLeftCamera = false;
     this->stopSignInRightCamera = false;
     this->lanePosition = 0;
-    this->newSteerMagnitude = 10;
+    //this->newSteerMagnitude = -1;
 
     // GPS variables
     this->gpsX = 0;
@@ -140,7 +140,8 @@ int sdcSensorData::LanePosition() {
 }
 
 void sdcSensorData::UpdateSteeringMagnitude(double steerMag) {
-    this->newSteerMagnitude = steerMag;
+    //this->newSteerMagnitude = steerMag;
+    newSteerMagnitude = steerMag;
 }
 
 double sdcSensorData::GetNewSteeringMagnitude() {

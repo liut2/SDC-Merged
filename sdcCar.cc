@@ -139,7 +139,7 @@ void sdcCar::Drive()
         //  this->Stop();
            // printf("inWaypoint\n");
             this->WaypointDriving(WAYPOINT_VEC);
-            
+
         break;
 
         // At a stop sign, performing a turn
@@ -183,13 +183,14 @@ void sdcCar::Drive()
 void sdcCar::MatchTargetDirection(){
 
     //std::cout << "match target direction" << std::endl;
+    /*
     if(this->currentState == waypoint){
         sdcAngle directionAngleChange = this->GetDirection() - this->targetDirection;
         // If the car needs to turn, set the target steering amount
         if (!directionAngleChange.WithinMargin(DIRECTION_MARGIN_OF_ERROR)) {
             // The steering amount scales based on how far we have to turn, with upper and lower limits
             double proposedSteeringAmount = fmax(fmin(-this->turningLimit*tan(directionAngleChange.angle/-2), this->turningLimit), -this->turningLimit);
-            
+
             // When reversing, steering directions are inverted
             if(!this->reversing){
                 this->SetTargetSteeringAmount(proposedSteeringAmount);
@@ -197,7 +198,7 @@ void sdcCar::MatchTargetDirection(){
                 this->SetTargetSteeringAmount(-proposedSteeringAmount);
             }
         }
-        
+
         // Check if the car needs to steer, and apply a small turn in the corresponding direction
         if (!(std::abs(this->targetSteeringAmount - this->steeringAmount) < STEERING_MARGIN_OF_ERROR)) {
             if (this->steeringAmount < this->targetSteeringAmount) {
@@ -206,15 +207,15 @@ void sdcCar::MatchTargetDirection(){
                 this->steeringAmount = this->steeringAmount - STEERING_ADJUSTMENT_RATE;
             }
         }
-        
+
 
     }
     else{
-        printf("gettingsteeringmagnitude\n");
-        this->steeringAmount = this->sensorData.GetNewSteeringMagnitude();
-    }
-   
-    
+        // printf("gettingsteeringmagnitude\n");
+
+    }*/
+    this->steeringAmount = this->sensorData.GetNewSteeringMagnitude();
+
 
 }
 
@@ -899,7 +900,7 @@ bool sdcCar::IsObjectTooFurious(sdcVisibleObject obj){
  * Default rate: 1.0
  */
 void sdcCar::Accelerate(double amt, double rate){
-    
+
     this->SetTargetSpeed(this->GetSpeed() + amt);
     //printf("targetSpeed: %f\n",this->targetSpeed);
     this->SetAccelRate(rate);
@@ -1066,10 +1067,10 @@ void sdcCar::Init()
 void sdcCar::OnUpdate()
 {
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 0; //in merged world use 0
+    int crudeSwitch = 1; //in merged world use 0
                         //in lanedriving use 1
                         //in intersection world use 2
-    
+
     if (crudeSwitch == 0) {
         if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
             //printf("starting at %f,%f \n", this->x, this->y);

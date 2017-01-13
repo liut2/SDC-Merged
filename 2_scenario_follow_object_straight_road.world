@@ -22,7 +22,7 @@
         <uri>/models/sdcCar</uri>
         <!-- <pose>-10 2 0 0 0 0</pose> -->
         <!-- The format for pose is: xpos (move car forwards/backwards), ypos (car shifts side to side), zpos (height of the car), roll(rotated onto side), pitch (how much like a ramp it looks), yaw(turned left (+), right(-)) -->
-        <pose> 3 2 0 0 0 .15 </pose>
+        <pose> 0 -2 0 0 0 0 </pose>
     </include>
 
 
