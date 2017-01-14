@@ -206,11 +206,9 @@ void sdcCar::MatchTargetDirection(){
                 this->steeringAmount = this->steeringAmount - STEERING_ADJUSTMENT_RATE;
             }
         }
-        
-
     }
     else{
-        printf("gettingsteeringmagnitude\n");
+        
         this->steeringAmount = this->sensorData.GetNewSteeringMagnitude();
     }
    
@@ -1074,6 +1072,8 @@ void sdcCar::OnUpdate()
         if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
             //printf("starting at %f,%f \n", this->x, this->y);
             this->currentState = waypoint;
+        }else{
+            this->currentState = laneDriving;
         }
     } else if (crudeSwitch == 1){
         if((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10)){
@@ -1268,7 +1268,7 @@ sdcCar::sdcCar(){
     this->carId = this->carIdCount;
     this->inIntersection = false;
     this->destDirection = -1;
-    this->sensorData = sdcSensorData();
+    this->sensorData = manager::getSensorData(carId);
     //this->frontSensor = sdcFrontLidarSensor();
 
     this->joints.resize(4);

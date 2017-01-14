@@ -43,10 +43,10 @@ RM = /usr/local/Cellar/cmake/3.6.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Accounts/youj/Desktop/SDC-Merged
+CMAKE_SOURCE_DIR = /Accounts/trank/Desktop/SDC-Merged
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Accounts/youj/Desktop/SDC-Merged/build
+CMAKE_BINARY_DIR = /Accounts/trank/Desktop/SDC-Merged/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/sdcManager.dir/depend.make
@@ -57,38 +57,38 @@ include CMakeFiles/sdcManager.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/sdcManager.dir/flags.make
 
-CMakeFiles/sdcManager.dir/sdcIntersection.cc.o: CMakeFiles/sdcManager.dir/flags.make
-CMakeFiles/sdcManager.dir/sdcIntersection.cc.o: ../sdcIntersection.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/sdcManager.dir/sdcIntersection.cc.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/sdcManager.dir/sdcIntersection.cc.o -c /Accounts/youj/Desktop/SDC-Merged/sdcIntersection.cc
+CMakeFiles/sdcManager.dir/sdcManager.cc.o: CMakeFiles/sdcManager.dir/flags.make
+CMakeFiles/sdcManager.dir/sdcManager.cc.o: ../sdcManager.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/sdcManager.dir/sdcManager.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/sdcManager.dir/sdcManager.cc.o -c /Accounts/trank/Desktop/SDC-Merged/sdcManager.cc
 
-CMakeFiles/sdcManager.dir/sdcIntersection.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sdcManager.dir/sdcIntersection.cc.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Accounts/youj/Desktop/SDC-Merged/sdcIntersection.cc > CMakeFiles/sdcManager.dir/sdcIntersection.cc.i
+CMakeFiles/sdcManager.dir/sdcManager.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sdcManager.dir/sdcManager.cc.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Accounts/trank/Desktop/SDC-Merged/sdcManager.cc > CMakeFiles/sdcManager.dir/sdcManager.cc.i
 
-CMakeFiles/sdcManager.dir/sdcIntersection.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sdcManager.dir/sdcIntersection.cc.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Accounts/youj/Desktop/SDC-Merged/sdcIntersection.cc -o CMakeFiles/sdcManager.dir/sdcIntersection.cc.s
+CMakeFiles/sdcManager.dir/sdcManager.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sdcManager.dir/sdcManager.cc.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Accounts/trank/Desktop/SDC-Merged/sdcManager.cc -o CMakeFiles/sdcManager.dir/sdcManager.cc.s
 
-CMakeFiles/sdcManager.dir/sdcIntersection.cc.o.requires:
+CMakeFiles/sdcManager.dir/sdcManager.cc.o.requires:
 
-.PHONY : CMakeFiles/sdcManager.dir/sdcIntersection.cc.o.requires
+.PHONY : CMakeFiles/sdcManager.dir/sdcManager.cc.o.requires
 
-CMakeFiles/sdcManager.dir/sdcIntersection.cc.o.provides: CMakeFiles/sdcManager.dir/sdcIntersection.cc.o.requires
-	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/sdcIntersection.cc.o.provides.build
-.PHONY : CMakeFiles/sdcManager.dir/sdcIntersection.cc.o.provides
+CMakeFiles/sdcManager.dir/sdcManager.cc.o.provides: CMakeFiles/sdcManager.dir/sdcManager.cc.o.requires
+	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/sdcManager.cc.o.provides.build
+.PHONY : CMakeFiles/sdcManager.dir/sdcManager.cc.o.provides
 
-CMakeFiles/sdcManager.dir/sdcIntersection.cc.o.provides.build: CMakeFiles/sdcManager.dir/sdcIntersection.cc.o
+CMakeFiles/sdcManager.dir/sdcManager.cc.o.provides.build: CMakeFiles/sdcManager.dir/sdcManager.cc.o
 
 
 # Object files for target sdcManager
 sdcManager_OBJECTS = \
-"CMakeFiles/sdcManager.dir/sdcIntersection.cc.o"
+"CMakeFiles/sdcManager.dir/sdcManager.cc.o"
 
 # External object files for target sdcManager
 sdcManager_EXTERNAL_OBJECTS =
 
-libsdcManager.dylib: CMakeFiles/sdcManager.dir/sdcIntersection.cc.o
+libsdcManager.dylib: CMakeFiles/sdcManager.dir/sdcManager.cc.o
 libsdcManager.dylib: CMakeFiles/sdcManager.dir/build.make
 libsdcManager.dylib: libmanager.dylib
 libsdcManager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
@@ -134,6 +134,11 @@ libsdcManager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgrePaging.dylib
 libsdcManager.dylib: /usr/local/Cellar/ignition-math2/2.5.0/lib/libignition-math2.dylib
 libsdcManager.dylib: libinstruction.dylib
 libsdcManager.dylib: librequest.dylib
+libsdcManager.dylib: libsdcSensorData.dylib
+libsdcManager.dylib: libsdcVisibleObject.dylib
+libsdcManager.dylib: libsdcLidarRay.dylib
+libsdcManager.dylib: libsdcLidarSensorInfo.dylib
+libsdcManager.dylib: libsdcAngle.dylib
 libsdcManager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
 libsdcManager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_client.dylib
 libsdcManager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_building.dylib
@@ -179,7 +184,7 @@ libsdcManager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreMain.dylib
 libsdcManager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreTerrain.dylib
 libsdcManager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgrePaging.dylib
 libsdcManager.dylib: CMakeFiles/sdcManager.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX shared library libsdcManager.dylib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX shared library libsdcManager.dylib"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/sdcManager.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -187,7 +192,7 @@ CMakeFiles/sdcManager.dir/build: libsdcManager.dylib
 
 .PHONY : CMakeFiles/sdcManager.dir/build
 
-CMakeFiles/sdcManager.dir/requires: CMakeFiles/sdcManager.dir/sdcIntersection.cc.o.requires
+CMakeFiles/sdcManager.dir/requires: CMakeFiles/sdcManager.dir/sdcManager.cc.o.requires
 
 .PHONY : CMakeFiles/sdcManager.dir/requires
 
@@ -196,6 +201,6 @@ CMakeFiles/sdcManager.dir/clean:
 .PHONY : CMakeFiles/sdcManager.dir/clean
 
 CMakeFiles/sdcManager.dir/depend:
-	cd /Accounts/youj/Desktop/SDC-Merged/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Accounts/youj/Desktop/SDC-Merged /Accounts/youj/Desktop/SDC-Merged /Accounts/youj/Desktop/SDC-Merged/build /Accounts/youj/Desktop/SDC-Merged/build /Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles/sdcManager.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Accounts/trank/Desktop/SDC-Merged/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Accounts/trank/Desktop/SDC-Merged /Accounts/trank/Desktop/SDC-Merged /Accounts/trank/Desktop/SDC-Merged/build /Accounts/trank/Desktop/SDC-Merged/build /Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles/sdcManager.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/sdcManager.dir/depend
 

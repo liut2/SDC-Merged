@@ -43,10 +43,10 @@ RM = /usr/local/Cellar/cmake/3.6.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Accounts/youj/Desktop/SDC-Merged
+CMAKE_SOURCE_DIR = /Accounts/trank/Desktop/SDC-Merged
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Accounts/youj/Desktop/SDC-Merged/build
+CMAKE_BINARY_DIR = /Accounts/trank/Desktop/SDC-Merged/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/sdcCameraSensor.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/sdcCameraSensor.dir/flags.make
 
 CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o: CMakeFiles/sdcCameraSensor.dir/flags.make
 CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o: ../sdcCameraSensor.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o -c /Accounts/youj/Desktop/SDC-Merged/sdcCameraSensor.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o -c /Accounts/trank/Desktop/SDC-Merged/sdcCameraSensor.cc
 
 CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Accounts/youj/Desktop/SDC-Merged/sdcCameraSensor.cc > CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Accounts/trank/Desktop/SDC-Merged/sdcCameraSensor.cc > CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.i
 
 CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Accounts/youj/Desktop/SDC-Merged/sdcCameraSensor.cc -o CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Accounts/trank/Desktop/SDC-Merged/sdcCameraSensor.cc -o CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.s
 
 CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o.requires:
 
@@ -90,7 +90,7 @@ sdcCameraSensor_EXTERNAL_OBJECTS =
 
 libsdcCameraSensor.dylib: CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o
 libsdcCameraSensor.dylib: CMakeFiles/sdcCameraSensor.dir/build.make
-libsdcCameraSensor.dylib: libsdcSensorData.dylib
+libsdcCameraSensor.dylib: libmanager.dylib
 libsdcCameraSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
 libsdcCameraSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_client.dylib
 libsdcCameraSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_building.dylib
@@ -137,10 +137,13 @@ libsdcCameraSensor.dylib: /usr/local/lib/libopencv_ts.a
 libsdcCameraSensor.dylib: /usr/local/lib/libopencv_superres.2.4.13.dylib
 libsdcCameraSensor.dylib: /usr/local/lib/libopencv_stitching.2.4.13.dylib
 libsdcCameraSensor.dylib: /usr/local/lib/libopencv_contrib.2.4.13.dylib
+libsdcCameraSensor.dylib: libsdcSensorData.dylib
 libsdcCameraSensor.dylib: libsdcVisibleObject.dylib
 libsdcCameraSensor.dylib: libsdcLidarRay.dylib
 libsdcCameraSensor.dylib: libsdcLidarSensorInfo.dylib
 libsdcCameraSensor.dylib: libsdcAngle.dylib
+libsdcCameraSensor.dylib: libinstruction.dylib
+libsdcCameraSensor.dylib: librequest.dylib
 libsdcCameraSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
 libsdcCameraSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_client.dylib
 libsdcCameraSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_building.dylib
@@ -200,7 +203,7 @@ libsdcCameraSensor.dylib: /usr/local/lib/libopencv_imgproc.2.4.13.dylib
 libsdcCameraSensor.dylib: /usr/local/lib/libopencv_flann.2.4.13.dylib
 libsdcCameraSensor.dylib: /usr/local/lib/libopencv_core.2.4.13.dylib
 libsdcCameraSensor.dylib: CMakeFiles/sdcCameraSensor.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX shared library libsdcCameraSensor.dylib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX shared library libsdcCameraSensor.dylib"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/sdcCameraSensor.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -217,6 +220,6 @@ CMakeFiles/sdcCameraSensor.dir/clean:
 .PHONY : CMakeFiles/sdcCameraSensor.dir/clean
 
 CMakeFiles/sdcCameraSensor.dir/depend:
-	cd /Accounts/youj/Desktop/SDC-Merged/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Accounts/youj/Desktop/SDC-Merged /Accounts/youj/Desktop/SDC-Merged /Accounts/youj/Desktop/SDC-Merged/build /Accounts/youj/Desktop/SDC-Merged/build /Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles/sdcCameraSensor.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Accounts/trank/Desktop/SDC-Merged/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Accounts/trank/Desktop/SDC-Merged /Accounts/trank/Desktop/SDC-Merged /Accounts/trank/Desktop/SDC-Merged/build /Accounts/trank/Desktop/SDC-Merged/build /Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles/sdcCameraSensor.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/sdcCameraSensor.dir/depend
 

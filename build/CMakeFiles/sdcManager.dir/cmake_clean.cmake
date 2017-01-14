@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/sdcManager.dir/sdcIntersection.cc.o"
+  "CMakeFiles/sdcManager.dir/sdcManager.cc.o"
   "libsdcManager.pdb"
   "libsdcManager.dylib"
 )

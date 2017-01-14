@@ -43,10 +43,10 @@ RM = /usr/local/Cellar/cmake/3.6.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Accounts/youj/Desktop/SDC-Merged
+CMAKE_SOURCE_DIR = /Accounts/trank/Desktop/SDC-Merged
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Accounts/youj/Desktop/SDC-Merged/build
+CMAKE_BINARY_DIR = /Accounts/trank/Desktop/SDC-Merged/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/manager.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/manager.dir/flags.make
 
 CMakeFiles/manager.dir/manager.cc.o: CMakeFiles/manager.dir/flags.make
 CMakeFiles/manager.dir/manager.cc.o: ../manager.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/manager.dir/manager.cc.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/manager.dir/manager.cc.o -c /Accounts/youj/Desktop/SDC-Merged/manager.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/manager.dir/manager.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/manager.dir/manager.cc.o -c /Accounts/trank/Desktop/SDC-Merged/manager.cc
 
 CMakeFiles/manager.dir/manager.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/manager.dir/manager.cc.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Accounts/youj/Desktop/SDC-Merged/manager.cc > CMakeFiles/manager.dir/manager.cc.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Accounts/trank/Desktop/SDC-Merged/manager.cc > CMakeFiles/manager.dir/manager.cc.i
 
 CMakeFiles/manager.dir/manager.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/manager.dir/manager.cc.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Accounts/youj/Desktop/SDC-Merged/manager.cc -o CMakeFiles/manager.dir/manager.cc.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Accounts/trank/Desktop/SDC-Merged/manager.cc -o CMakeFiles/manager.dir/manager.cc.s
 
 CMakeFiles/manager.dir/manager.cc.o.requires:
 
@@ -92,6 +92,52 @@ libmanager.dylib: CMakeFiles/manager.dir/manager.cc.o
 libmanager.dylib: CMakeFiles/manager.dir/build.make
 libmanager.dylib: libinstruction.dylib
 libmanager.dylib: librequest.dylib
+libmanager.dylib: libsdcSensorData.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_client.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_building.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_viewers.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_model.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_sensors.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_rendering.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_selection_buffer.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_physics_bullet.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_physics_simbody.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_physics_ode.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_physics.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_ode.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_transport.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_msgs.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_util.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_common.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_skyx.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gimpact.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_opcode.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_opende_ou.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_math.dylib
+libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_ccd.dylib
+libmanager.dylib: /usr/local/lib/libboost_thread-mt.dylib
+libmanager.dylib: /usr/local/lib/libboost_signals-mt.dylib
+libmanager.dylib: /usr/local/lib/libboost_system-mt.dylib
+libmanager.dylib: /usr/local/lib/libboost_filesystem-mt.dylib
+libmanager.dylib: /usr/local/lib/libboost_program_options-mt.dylib
+libmanager.dylib: /usr/local/lib/libboost_regex-mt.dylib
+libmanager.dylib: /usr/local/lib/libboost_iostreams-mt.dylib
+libmanager.dylib: /usr/local/lib/libboost_date_time-mt.dylib
+libmanager.dylib: /usr/local/lib/libboost_chrono-mt.dylib
+libmanager.dylib: /usr/local/lib/libboost_atomic-mt.dylib
+libmanager.dylib: /usr/local/lib/libprotobuf.dylib
+libmanager.dylib: /usr/local/Cellar/sdformat3/3.7.0/lib/libsdformat.dylib
+libmanager.dylib: /usr/local/Cellar/ignition-math2/2.5.0/lib/libignition-math2.dylib
+libmanager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreMain.dylib
+libmanager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreTerrain.dylib
+libmanager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgrePaging.dylib
+libmanager.dylib: /usr/local/Cellar/ignition-math2/2.5.0/lib/libignition-math2.dylib
+libmanager.dylib: libsdcVisibleObject.dylib
+libmanager.dylib: libsdcLidarRay.dylib
+libmanager.dylib: libsdcLidarSensorInfo.dylib
+libmanager.dylib: libsdcAngle.dylib
 libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
 libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_client.dylib
 libmanager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_building.dylib
@@ -137,7 +183,7 @@ libmanager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreMain.dylib
 libmanager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreTerrain.dylib
 libmanager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgrePaging.dylib
 libmanager.dylib: CMakeFiles/manager.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX shared library libmanager.dylib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX shared library libmanager.dylib"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/manager.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -154,6 +200,6 @@ CMakeFiles/manager.dir/clean:
 .PHONY : CMakeFiles/manager.dir/clean
 
 CMakeFiles/manager.dir/depend:
-	cd /Accounts/youj/Desktop/SDC-Merged/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Accounts/youj/Desktop/SDC-Merged /Accounts/youj/Desktop/SDC-Merged /Accounts/youj/Desktop/SDC-Merged/build /Accounts/youj/Desktop/SDC-Merged/build /Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles/manager.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Accounts/trank/Desktop/SDC-Merged/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Accounts/trank/Desktop/SDC-Merged /Accounts/trank/Desktop/SDC-Merged /Accounts/trank/Desktop/SDC-Merged/build /Accounts/trank/Desktop/SDC-Merged/build /Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles/manager.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/manager.dir/depend
 

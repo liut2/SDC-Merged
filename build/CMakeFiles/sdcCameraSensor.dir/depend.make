@@ -3,6 +3,9 @@
 
 CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o: ../FADBAD++/fadbad.h
 CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o: ../FADBAD++/fadiff.h
+CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o: ../instruction.hh
+CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o: ../manager.hh
+CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o: ../request.hh
 CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o: ../sdcAngle.hh
 CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o: ../sdcCameraSensor.cc
 CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o: ../sdcCameraSensor.hh

@@ -20,9 +20,9 @@ add_library(instruction SHARED instruction.cc)
 target_link_libraries(instruction ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(manager SHARED manager.cc)
-target_link_libraries(manager instruction request ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(manager instruction request sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
-add_library(sdcManager SHARED sdcIntersection.cc)
+add_library(sdcManager SHARED sdcManager.cc)
 target_link_libraries(sdcManager manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcBox SHARED sdcBox.cpp)
@@ -75,4 +75,4 @@ add_library(sdcGpsSensor SHARED sdcGpsSensor.cc)
 target_link_libraries(sdcGpsSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcCameraSensor SHARED sdcCameraSensor.cc)
-target_link_libraries(sdcCameraSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(sdcCameraSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})

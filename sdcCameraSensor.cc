@@ -46,7 +46,11 @@ F<double> delG(const F<double>& x, const F<double>& y) {
 	return dG;
 }
 
+
 void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
+    this->sensorData = manager::getSensorData(1);
+    //sdcSensorData();
+    //manager::getSensorData(1);
 		std::cout << "load the camera sensor" << std::endl;
 		// Get the parent sensor.
 		this->parentSensor =
@@ -68,6 +72,7 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 		if(!cpu_stop_sign.load(cascade_file_path)) {
 			std::cout << "Unable to load cascade classifier xml file!" << std::endl;
 		}
+    
 }
 
 // Called by the world update start event

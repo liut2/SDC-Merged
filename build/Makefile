@@ -48,10 +48,10 @@ RM = /usr/local/Cellar/cmake/3.6.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Accounts/youj/Desktop/SDC-Merged
+CMAKE_SOURCE_DIR = /Accounts/trank/Desktop/SDC-Merged
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Accounts/youj/Desktop/SDC-Merged/build
+CMAKE_BINARY_DIR = /Accounts/trank/Desktop/SDC-Merged/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles /Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles /Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/youj/Desktop/SDC-Merged/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -674,7 +674,6 @@ sdcIntersection.o: sdcIntersection.cc.o
 # target to build an object file
 sdcIntersection.cc.o:
 	$(MAKE) -f CMakeFiles/sdcIntersection.dir/build.make CMakeFiles/sdcIntersection.dir/sdcIntersection.cc.o
-	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/sdcIntersection.cc.o
 .PHONY : sdcIntersection.cc.o
 
 sdcIntersection.i: sdcIntersection.cc.i
@@ -684,7 +683,6 @@ sdcIntersection.i: sdcIntersection.cc.i
 # target to preprocess a source file
 sdcIntersection.cc.i:
 	$(MAKE) -f CMakeFiles/sdcIntersection.dir/build.make CMakeFiles/sdcIntersection.dir/sdcIntersection.cc.i
-	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/sdcIntersection.cc.i
 .PHONY : sdcIntersection.cc.i
 
 sdcIntersection.s: sdcIntersection.cc.s
@@ -694,7 +692,6 @@ sdcIntersection.s: sdcIntersection.cc.s
 # target to generate assembly for a file
 sdcIntersection.cc.s:
 	$(MAKE) -f CMakeFiles/sdcIntersection.dir/build.make CMakeFiles/sdcIntersection.dir/sdcIntersection.cc.s
-	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/sdcIntersection.cc.s
 .PHONY : sdcIntersection.cc.s
 
 sdcLidarRay.o: sdcLidarRay.cc.o
@@ -750,6 +747,33 @@ sdcLidarSensorInfo.s: sdcLidarSensorInfo.cc.s
 sdcLidarSensorInfo.cc.s:
 	$(MAKE) -f CMakeFiles/sdcLidarSensorInfo.dir/build.make CMakeFiles/sdcLidarSensorInfo.dir/sdcLidarSensorInfo.cc.s
 .PHONY : sdcLidarSensorInfo.cc.s
+
+sdcManager.o: sdcManager.cc.o
+
+.PHONY : sdcManager.o
+
+# target to build an object file
+sdcManager.cc.o:
+	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/sdcManager.cc.o
+.PHONY : sdcManager.cc.o
+
+sdcManager.i: sdcManager.cc.i
+
+.PHONY : sdcManager.i
+
+# target to preprocess a source file
+sdcManager.cc.i:
+	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/sdcManager.cc.i
+.PHONY : sdcManager.cc.i
+
+sdcManager.s: sdcManager.cc.s
+
+.PHONY : sdcManager.s
+
+# target to generate assembly for a file
+sdcManager.cc.s:
+	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/sdcManager.cc.s
+.PHONY : sdcManager.cc.s
 
 sdcSensorData.o: sdcSensorData.cc.o
 
@@ -956,6 +980,9 @@ help:
 	@echo "... sdcLidarSensorInfo.o"
 	@echo "... sdcLidarSensorInfo.i"
 	@echo "... sdcLidarSensorInfo.s"
+	@echo "... sdcManager.o"
+	@echo "... sdcManager.i"
+	@echo "... sdcManager.s"
 	@echo "... sdcSensorData.o"
 	@echo "... sdcSensorData.i"
 	@echo "... sdcSensorData.s"

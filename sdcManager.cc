@@ -27,7 +27,7 @@ void sdcManager::Init()
     printf("init");
 }
 
-sdcIntersection::sdcManager(){
+sdcManager::sdcManager(){
     printf("manager creating: \n");
     //printf(manager.id+3);
     manager::manager(3);

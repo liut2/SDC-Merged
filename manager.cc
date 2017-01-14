@@ -12,6 +12,7 @@ std::vector<int> manager::carNorthQueue = std::vector<int>();
 std::vector<int> manager::carEastQueue = std::vector<int>();
 std::vector<int> manager::carSouthQueue = std::vector<int>();
 std::vector<int> manager::carWestQueue = std::vector<int>();
+std::vector<gazebo::sdcSensorData> manager::sensorDataList = std::vector<gazebo::sdcSensorData>();
 manager::manager(int id){
     printf("created manager");
     printf("%d", id);
@@ -235,4 +236,12 @@ bool manager::shouldStop(int carId, int fromDir) {
 void manager::stopSignCarLeft(int carId) {
     carList.erase(std::remove(carList.begin(), carList.end(), carId), carList.end());
     carAmt--;
+}
+
+gazebo::sdcSensorData manager::getSensorData(int carId) {
+    if (sensorDataList.size() < carId) {
+        auto temp = gazebo::sdcSensorData();
+        sensorDataList.push_back(temp);
+    }
+    return sensorDataList.at(carId-1);
 }
