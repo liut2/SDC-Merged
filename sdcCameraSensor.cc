@@ -236,9 +236,9 @@ void sdcCameraSensor::OnUpdate() {
 			// update the turn angle
 			double newAngle = getNewTurningAngle(createLine(vanishPoint.x, vanishPoint.y, midPoint.x, midPoint.y + offset[i]*row/15));
             //this->sensorData.UpdateSteeringMagnitude(newAngle);
-            this->sensorData.UpdateSteeringMagnitude(newAngle);
+            sdcSensorData::UpdateSteeringMagnitude(newAngle);
             printf("new angle calculated = %f\n ",newAngle);
-						printf("new magnitude updated = %f\n",this->sensorData.GetNewSteeringMagnitude());
+						printf("new magnitude updated = %f\n",sdcSensorData::GetNewSteeringMagnitude());
 		}
 
 		line(imageROI, Point(leftLine[0], leftLine[1] + offset[i]*row/15), Point(leftLine[2], leftLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);

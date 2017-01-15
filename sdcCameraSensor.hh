@@ -29,7 +29,7 @@ namespace gazebo
         public: double getNewTurningAngle(cv::Vec4i midLine);
         private: sensors::MultiCameraSensorPtr parentSensor;
         private: event::ConnectionPtr updateConnection;
-        public: sdcSensorData sensorData;
+        //public: sdcSensorData sensorData;
     };
 }
 

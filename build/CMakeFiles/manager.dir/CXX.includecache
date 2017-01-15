@@ -6,25 +6,25 @@
 
 #IncludeRegexTransform: 
 
-/Accounts/youj/Desktop/SDC-Merged/instruction.hh
+/Accounts/liut2/Desktop/SDC-Merged/instruction.hh
 iostream
 -
 
-/Accounts/youj/Desktop/SDC-Merged/manager.cc
+/Accounts/liut2/Desktop/SDC-Merged/manager.cc
 manager.hh
-/Accounts/youj/Desktop/SDC-Merged/manager.hh
+/Accounts/liut2/Desktop/SDC-Merged/manager.hh
 
-/Accounts/youj/Desktop/SDC-Merged/manager.hh
+/Accounts/liut2/Desktop/SDC-Merged/manager.hh
 iostream
 -
 vector
 -
 request.hh
-/Accounts/youj/Desktop/SDC-Merged/request.hh
+/Accounts/liut2/Desktop/SDC-Merged/request.hh
 instruction.hh
-/Accounts/youj/Desktop/SDC-Merged/instruction.hh
+/Accounts/liut2/Desktop/SDC-Merged/instruction.hh
 
-/Accounts/youj/Desktop/SDC-Merged/request.hh
+/Accounts/liut2/Desktop/SDC-Merged/request.hh
 iostream
 -
 

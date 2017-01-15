@@ -22,7 +22,7 @@
         <uri>/models/sdcCar</uri>
         <!-- <pose>-10 2 0 0 0 0</pose> -->
         <!-- The format for pose is: xpos (move car forwards/backwards), ypos (car shifts side to side), zpos (height of the car), roll(rotated onto side), pitch (how much like a ramp it looks), yaw(turned left (+), right(-)) -->
-        <pose> 0 -2 0 0 0 0 </pose>
+        <pose> 0 1 0 0 0 0.15 </pose>
     </include>
 
 
@@ -60,13 +60,13 @@
     </model>
 
     <model name='road_2_0_1'>
-      <pose>50 1 0.05 0 0 0</pose>
+      <pose>50 1 -0.05 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision">
           <geometry>
             <box>
-              <size>100 5 .05</size>
+              <size>100 5 .0001</size>
             </box>
           </geometry>
         </collision>
@@ -74,7 +74,7 @@
           <cast_shadows>false</cast_shadows>
           <geometry>
             <box>
-              <size>100 5 .05</size>
+              <size>100 5 .0001</size>
             </box>
           </geometry>
         <material>
@@ -90,13 +90,13 @@
 
     <model name='road_2_0_2'>
       <!--<pose>148 -6 0.05 0 0 3</pose>-->
-      <pose>147 -11.25 0.05 0 0 -.25</pose>
+      <pose>147 -11.25 -0.05 0 0 -.25</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision">
           <geometry>
             <box>
-              <size>100 5 .05</size>
+              <size>100 5 .0001</size>
             </box>
           </geometry>
         </collision>
@@ -104,7 +104,7 @@
           <cast_shadows>false</cast_shadows>
           <geometry>
             <box>
-              <size>100 5 .05</size>
+              <size>100 5 .0001</size>
             </box>
           </geometry>
         <material>
