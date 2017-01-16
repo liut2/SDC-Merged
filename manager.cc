@@ -238,10 +238,19 @@ void manager::stopSignCarLeft(int carId) {
     carAmt--;
 }
 
-gazebo::sdcSensorData manager::getSensorData(int carId) {
+gazebo::sdcSensorData *manager::getSensorData(int carId) {
+   // printf("in manager\n");
+    //printf("car id: %i\n", carId);
+    fflush(stdout);
     if (sensorDataList.size() < carId) {
-        auto temp = gazebo::sdcSensorData();
+      //  printf("in manager and creating sensordata\n");
+        gazebo::sdcSensorData temp = gazebo::sdcSensorData(carId);
         sensorDataList.push_back(temp);
+        
     }
-    return sensorDataList.at(carId-1);
+    //printf("car Id: %i", carId);
+    //printf("sensorId is: %d\n",sensorDataList.at(carId-1)->sensorId);
+ //   gazebo::sdcSensorData tempSensor = sensorDataList.at(carId-1);
+//    sensorDataList.at(carId-1).UpdateSteeringMagnitude(0.0);
+    return &sensorDataList.at(carId-1);
 }

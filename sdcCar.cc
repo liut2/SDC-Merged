@@ -207,9 +207,9 @@ void sdcCar::MatchTargetDirection(){
             }
         }
     }
-    else{
-        
-        this->steeringAmount = this->sensorData.GetNewSteeringMagnitude();
+    else if(this->currentState == laneDriving){
+        this->steeringAmount = this->sensorData->GetNewSteeringMagnitude();
+        //printf("sensorData id in car: %i\n", sensorData->sensorId);
     }
    
     
@@ -364,7 +364,7 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
             // this->LanedDriving();
         }
     } else {
-
+        printf("should stop!\n");
         this->currentState = stop;
     }
 
@@ -375,8 +375,8 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
  * as possible to the midpoint.
  */
 void sdcCar::LanedDriving() {
-    int lanePos = this->sensorData.LanePosition();
-    this->SetTurningLimit(this->sensorData.GetNewSteeringMagnitude());
+    int lanePos = this->sensorData->LanePosition();
+    this->SetTurningLimit(this->sensorData->GetNewSteeringMagnitude());
 
     if (!(lanePos > 320 || lanePos < -320)) {
         // It's beautiful don't question it
@@ -1063,8 +1063,10 @@ void sdcCar::Init()
  */
 void sdcCar::OnUpdate()
 {
+    //printf("\nin onupdate\n");
+    this->sensorData = manager::getSensorData(carId);
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 0; //in merged world use 0
+    int crudeSwitch = 1; //in merged world use 0
                         //in lanedriving use 1
                         //in intersection world use 2
     
@@ -1073,6 +1075,7 @@ void sdcCar::OnUpdate()
             //printf("starting at %f,%f \n", this->x, this->y);
             this->currentState = waypoint;
         }else{
+            
             this->currentState = laneDriving;
         }
     } else if (crudeSwitch == 1){
@@ -1080,9 +1083,11 @@ void sdcCar::OnUpdate()
             //printf("starting at %f,%f \n", this->x, this->y);
             this->currentState = laneDriving;
         }
+        this->currentState = laneDriving;
     } else if (crudeSwitch == 2) {
-        printf("hi \n");
+        //printf("Crude switch == 2 : for intersection worlds");
     }
+
 //    if(this->stopping){
 //        printf("stopping\n");
 //        printf("%f",this->velocity.y);
@@ -1092,22 +1097,23 @@ void sdcCar::OnUpdate()
 //    }
 //
 //     Get the current velocity of the car
-
-    if(manager::shouldStop(carId, fromDir)){
-        if(!laneStopped){
-            //printf("told to stop\n");
-            this->currentState = stop;
-            this->toldToStop = true;
+    if(this->currentState!=laneDriving){
+        if(manager::shouldStop(carId, fromDir)){
+            if(!laneStopped){
+                //printf("told to stop\n");
+                this->currentState = stop;
+                this->toldToStop = true;
+            }
+        }
+        else{
+            if(this->toldToStop){
+                this->currentState = waypoint;
+                this->toldToStop = false;
+            }
         }
     }
-    else{
-        if(this->toldToStop){
-            this->currentState = waypoint;
-            this->toldToStop = false;
-        }
-    }
-
-
+   
+   
     if(this->inIntersection){
         //if outside intersection
         //printf("direction: %i\n", this->destDirection);
@@ -1159,14 +1165,16 @@ void sdcCar::OnUpdate()
 
     // Check if the front lidars have been updated, and if they have update
     // the car's list
-    if(this->frontLidarLastUpdate != this->sensorData.GetLidarLastUpdate(FRONT)){
-        printf("updating front objects\n");
-        std::vector<sdcVisibleObject> v = this->sensorData.GetObjectsInFront();
-        //printf("visibleobjects size: %lu\n", v.size());
-        fflush(stdout);
-        this->UpdateFrontObjects(v);
-        this->frontLidarLastUpdate = this->sensorData.GetLidarLastUpdate(FRONT);
-    }
+   // printf("\nin onupdate\n");
+//    if(this->frontLidarLastUpdate != this->sensorData->GetLidarLastUpdate(FRONT)){
+//        printf("updating front objects\n");
+//        std::vector<sdcVisibleObject> v = this->sensorData->GetObjectsInFront();
+//        //printf("visibleobjects size: %lu\n", v.size());
+//        fflush(stdout);
+//        this->UpdateFrontObjects(v);
+//        this->frontLidarLastUpdate = this->sensorData->GetLidarLastUpdate(FRONT);
+//    }
+  //  printf("\nafter lidar\n");
 
     // Call our Drive function, which is the brain for the car
     //printf("going to drive\n");
@@ -1184,7 +1192,7 @@ void sdcCar::OnUpdate()
 
     // Call our Drive function, which is the brain for the car
     this->Drive();
-
+     //printf("after drive\n");
 
     ////////////////////////////
     // GAZEBO PHYSICS METHODS //
@@ -1269,6 +1277,8 @@ sdcCar::sdcCar(){
     this->inIntersection = false;
     this->destDirection = -1;
     this->sensorData = manager::getSensorData(carId);
+    //printf("sdcCar Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
+    //printf("sdcCar sensorId: %i\n",this->sensorData->sensorId);
     //this->frontSensor = sdcFrontLidarSensor();
 
     this->joints.resize(4);

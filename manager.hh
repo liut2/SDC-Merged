@@ -26,7 +26,7 @@ class manager{
         static void stopSignCarLeft(int carId);
         static bool stopSignQueue(int carId, int fromDir);
         static bool shouldStop(int carId, int fromDir);
-        static gazebo::sdcSensorData getSensorData(int carId);
+        static gazebo::sdcSensorData *getSensorData(int carId);
     private:
         static int carAmt;
         static std::vector<int> carList;

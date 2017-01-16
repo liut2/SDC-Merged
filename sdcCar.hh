@@ -75,7 +75,7 @@ namespace gazebo {
         std::vector<sdcWaypoint> WAYPOINT_VEC;
         std::vector<sdcIntersection> intersections;
         //sensorData object
-        sdcSensorData sensorData;
+        sdcSensorData *sensorData;
 
         //sdcFrontLidarSensor frontSensor;
 

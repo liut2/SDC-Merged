@@ -25,6 +25,7 @@ namespace gazebo
         // Lidar variables and methods
     public:
         sdcSensorData();
+        sdcSensorData(int id);
         void InitLidar(LidarPos lidar, double minAngle, double angleResolution, double maxRange, int numRays);
         void UpdateLidar(LidarPos lidar, std::vector<double>* newRays);
         std::vector<double> GetLidarRays(LidarPos lidar);
@@ -59,10 +60,12 @@ namespace gazebo
         // GPS variables and methods
         double gpsX;
         double gpsY;
+        int sensorId;
         sdcAngle gpsYaw;
 
         math::Vector2d GetPosition();
         sdcAngle GetYaw();
+        
         void UpdateGPS(double x, double y, double yaw);
 
     private:
@@ -80,6 +83,7 @@ namespace gazebo
         std::vector<double>* sideRightBackLidarRays;
 
         std::map<LidarPos, sdcLidarSensorInfo> lidarInfoMap;
+        
     };
 }
 

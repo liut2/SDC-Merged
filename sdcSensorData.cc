@@ -22,8 +22,11 @@ using namespace gazebo;
 /*
  * Initializes the lidar in the given position to store its minimum angle, as well as the resolution
  */
-
 sdcSensorData::sdcSensorData() {
+    
+}
+sdcSensorData::sdcSensorData(int id) {
+    this->sensorId = id;
     // Angle information for each lidar
     this->lidarInfoMap = std::map<LidarPos, sdcLidarSensorInfo>();
 
@@ -140,10 +143,16 @@ int sdcSensorData::LanePosition() {
 }
 
 void sdcSensorData::UpdateSteeringMagnitude(double steerMag) {
+  //  printf("newSteerMagnitude: %f\n", this->newSteerMagnitude);
+   // printf("steerMag: %f\n", steerMag);
+   // printf("Update mag sensorID: %i\n", this->sensorId);
     this->newSteerMagnitude = steerMag;
+    //printf("newSteerMagnitude: %f\n", this->newSteerMagnitude);
 }
 
 double sdcSensorData::GetNewSteeringMagnitude() {
+    //printf("sensorData steering mag: %f\n", this->newSteerMagnitude);
+    //printf("GET mag sensorID: %i\n", this->sensorId);
     return this->newSteerMagnitude;
 }
 

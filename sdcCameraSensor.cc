@@ -48,10 +48,14 @@ F<double> delG(const F<double>& x, const F<double>& y) {
 
 
 void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
-    this->sensorData = manager::getSensorData(1);
+    this->cameraCnt++;
+    this->cameraId = this->cameraCnt;
+    this->sensorData = manager::getSensorData(cameraId);
+    //printf("sdcCamera Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
+   // printf("sdcCamera sensorId: %i\n",this->sensorData->sensorId);
     //sdcSensorData();
     //manager::getSensorData(1);
-		std::cout << "load the camera sensor" << std::endl;
+		//std::cout << "load the camera sensor" << std::endl;
 		// Get the parent sensor.
 		this->parentSensor =
 		boost::dynamic_pointer_cast<sensors::MultiCameraSensor>(_sensor);
@@ -77,7 +81,7 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 
 // Called by the world update start event
 void sdcCameraSensor::OnUpdate() {
-	std::cout << "onupdate camera sensor" << std::endl;
+	//std::cout << "onupdate camera sensor" << std::endl;
 	// Pull raw data from camera sensor object as an unsigned character array with 3 channels.
 	const unsigned char* img = this->parentSensor->GetImageData(0);
 	Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
@@ -240,7 +244,11 @@ void sdcCameraSensor::OnUpdate() {
 			line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 			// update the turn angle
 			double newAngle = getNewTurningAngle(createLine(vanishPoint.x, vanishPoint.y, midPoint.x, midPoint.y + offset[i]*row/15));
-			this->sensorData.UpdateSteeringMagnitude(newAngle);
+			this->sensorData->UpdateSteeringMagnitude(newAngle);
+            //this->sensorData.sensorId++;
+           // printf("sensorData steering mag: %f\n", this->sensorData.GetNewSteeringMagnitude());
+            //printf("GET mag sensorID: %i\n", this->sensorData.sensorId);
+           // printf("CamData newAngle : %f carId: %i\n", newAngle, cameraId);
 		}
 
 		line(imageROI, Point(leftLine[0], leftLine[1] + offset[i]*row/15), Point(leftLine[2], leftLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
@@ -275,7 +283,6 @@ void sdcCameraSensor::OnUpdate() {
 			// line(image, pt1, pt2, Scalar(0,0,255), 1);
 			++it;
 	}
-
 	// ATTN: need to have imageROI.rows in numerator because of trig. It isnt an oversight!
 	// Lines are drawn on the image, not the region of interest.
 
@@ -671,31 +678,31 @@ cv::Vec4i sdcCameraSensor::extendLine(cv::Vec4i line, cv::Vec4i topHorizontal, c
 */
  double sdcCameraSensor::getNewTurningAngle(cv::Vec4i midLine) {
 	 double result = 0;
-	 std::cout << "in newturningangle" << std::endl;
+	 //std::cout << "in newturningangle" << std::endl;
 	 if(midLine[1] - midLine[3] == 0) {
-		 std::cout << "Vertical line" << std::endl;
+		// std::cout << "Vertical line" << std::endl;
 		 result = 0;
 	 }else{
-		 std::cout << "In else" << std::endl;
+		// std::cout << "In else" << std::endl;
 
 		 double tempVal = (std::abs(midLine[0]-midLine[2]))/(std::abs(midLine[1] - midLine[3]));
 		 double atanTemp = atan(tempVal);
-		 std::cout << "arctan: " << std::endl;
-		 std::cout << atanTemp << std::endl;
-		 std::cout <<" tempval" << std::endl;
-		 std::cout << tempVal << std::endl;
+		// std::cout << "arctan: " << std::endl;
+		// std::cout << atanTemp << std::endl;
+		// std::cout <<" tempval" << std::endl;
+		 //std::cout << tempVal << std::endl;
 		 if(-1.57 > atanTemp || atanTemp > 1.57) {
-			 std::cout << "Bad range of angles" << std::endl;
+			// std::cout << "Bad range of angles" << std::endl;
 			 //math::Vector3 velocity = this->velocity;
 	     //return atan2(velocity.y, velocity.x);
 			 result = 0;
 		 }
 		 if(getSlope(midLine) < 0){
-			 std::cout << "Turn left!" << std::endl;
+			// std::cout << "Turn left!" << std::endl;
 			 result = -atanTemp;
 		 }else
 		 {
-			 std::cout << "Turn right!" << std::endl;
+			// std::cout << "Turn right!" << std::endl;
 			 result = atanTemp;
 		 }
 	 }
