@@ -53,7 +53,7 @@ sdcSensorData::sdcSensorData(int id) {
     this->stopSignInLeftCamera = false;
     this->stopSignInRightCamera = false;
     this->lanePosition = 0;
-    this->newSteerMagnitude = 10;
+    this->newSteerMagnitude = 0;
 
     // GPS variables
     this->gpsX = 0;
@@ -154,6 +154,7 @@ double sdcSensorData::GetNewSteeringMagnitude() {
     //printf("sensorData steering mag: %f\n", this->newSteerMagnitude);
     //printf("GET mag sensorID: %i\n", this->sensorId);
     return this->newSteerMagnitude;
+    //printf("newSteerMagnitude: %f\n", this->newSteerMagnitude);
 }
 
 /*

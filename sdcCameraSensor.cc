@@ -39,51 +39,73 @@ String cascade_file_path = "OpenCV/haarcascade_stop.xml";
 
 // some constants
 double MidPointHeight[5] = {0.5,2.0,4.5,8.0,12.5};
-
+int sdcCameraSensor::cameraCnt = 0;
 //FADBAD-wrapped forward differentiation for gradient calculations
 F<double> delG(const F<double>& x, const F<double>& y) {
 	F<double> dG = sqrt(pow(x,2)+pow(y,2));
 	return dG;
 }
 
+sdcCameraSensor::sdcCameraSensor(){
+    this->cameraCnt ++;
+    this->cameraId = this->cameraCnt;
+}
+
+void sdcCameraSensor::Init(){
+    this->cameraId = this->sensor->GetId();
+    //printf("this camerasId: %i \n", this->cameraId);
+    this->sensorData = manager::getSensorData(cameraId);
+}
 
 void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
-    this->cameraCnt++;
-    this->cameraId = this->cameraCnt;
-    this->sensorData = manager::getSensorData(cameraId);
+    
+    
     //printf("sdcCamera Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
    // printf("sdcCamera sensorId: %i\n",this->sensorData->sensorId);
     //sdcSensorData();
     //manager::getSensorData(1);
 		//std::cout << "load the camera sensor" << std::endl;
 		// Get the parent sensor.
-		this->parentSensor =
-		boost::dynamic_pointer_cast<sensors::MultiCameraSensor>(_sensor);
+    this->sensor = _sensor;
+    this->pose = this->sensor->Pose();
+    this->parentSensor = boost::dynamic_pointer_cast<sensors::MultiCameraSensor>(_sensor);
 
 		// Make sure the parent sensor is valid.
-		if (!this->parentSensor)
-		{
-				gzerr << "Couldn't find a camera\n";
-				return;
-		}
+    if (!this->parentSensor)
+    {
+        gzerr << "Couldn't find a camera\n";
+        return;
+    }
 
 		// Connect to the sensor update event.
-		this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcCameraSensor::OnUpdate, this));
+    this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcCameraSensor::OnUpdate, this));
 
 		// Make sure the parent sensor is active.
-		this->parentSensor->SetActive(true);
+    this->parentSensor->SetActive(true);
 		//std::cout << this->parentSensor->GetNoise() << std::endl;
-		if(!cpu_stop_sign.load(cascade_file_path)) {
+    if(!cpu_stop_sign.load(cascade_file_path)) {
 			std::cout << "Unable to load cascade classifier xml file!" << std::endl;
-		}
+    }
+   // this->link = this->parentSensor->GetLink(_sdf->Get<std::string>("link"));
+
+
+
+    
     
 }
 
 // Called by the world update start event
 void sdcCameraSensor::OnUpdate() {
+//    if(this->getSensor){
+//        
+//        this->getSensor = false;
+//    }
+
+   
 	//std::cout << "onupdate camera sensor" << std::endl;
 	// Pull raw data from camera sensor object as an unsigned character array with 3 channels.
 	const unsigned char* img = this->parentSensor->GetImageData(0);
+    
 	Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
 
 	//Select Region of Interest (ROI) for lane detection - currently this is the bottom half of the image.

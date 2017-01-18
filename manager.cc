@@ -13,6 +13,7 @@ std::vector<int> manager::carEastQueue = std::vector<int>();
 std::vector<int> manager::carSouthQueue = std::vector<int>();
 std::vector<int> manager::carWestQueue = std::vector<int>();
 std::vector<gazebo::sdcSensorData> manager::sensorDataList = std::vector<gazebo::sdcSensorData>();
+std::map<int, gazebo::sdcSensorData> manager::sensorManager = std::map<int, gazebo::sdcSensorData>();
 manager::manager(int id){
     printf("created manager");
     printf("%d", id);
@@ -238,13 +239,32 @@ void manager::stopSignCarLeft(int carId) {
     carAmt--;
 }
 
-gazebo::sdcSensorData *manager::getSensorData(int carId) {
+gazebo::sdcSensorData *manager::getSensorData(int cameraId) {
+    //HOW TO FIX: USE A MAP OF sdcSensorDatas WHERE THE KEY IS THE cameraId
+    // If its not in the map then make a new sensor data. Otherwise return it.
+    
+    if (sensorManager.count(cameraId) > 0){
+        return &sensorManager[cameraId];
+    }
+    else{
+        sensorManager.insert(std::pair<int, gazebo::sdcSensorData>(cameraId, gazebo::sdcSensorData(cameraId)));
+        printf("map count: %i\n",sensorManager.count(cameraId));
+        printf("cameraId in manager: %i\n\n",cameraId);
+        return &sensorManager[cameraId];
+    }
+    
+    
+    /*
+    
    // printf("in manager\n");
     //printf("car id: %i\n", carId);
     fflush(stdout);
-    if (sensorDataList.size() < carId) {
+    
+    //printf("sensorList size is: %lu while car id is: %d\n",sensorDataList.size(), carId);
+    if (sensorDataList.size() < cameraId) {
       //  printf("in manager and creating sensordata\n");
-        gazebo::sdcSensorData temp = gazebo::sdcSensorData(carId);
+        gazebo::sdcSensorData temp = gazebo::sdcSensorData(cameraId);
+        //temp.UpdateSteeringMagnitude(0);
         sensorDataList.push_back(temp);
         
     }
@@ -252,5 +272,6 @@ gazebo::sdcSensorData *manager::getSensorData(int carId) {
     //printf("sensorId is: %d\n",sensorDataList.at(carId-1)->sensorId);
  //   gazebo::sdcSensorData tempSensor = sensorDataList.at(carId-1);
 //    sensorDataList.at(carId-1).UpdateSteeringMagnitude(0.0);
-    return &sensorDataList.at(carId-1);
+    return &sensorDataList.at(cameraId-1);
+     */
 }

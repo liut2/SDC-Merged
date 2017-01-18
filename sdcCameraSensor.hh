@@ -19,7 +19,10 @@ namespace gazebo
 {
     class GAZEBO_VISIBLE sdcCameraSensor : public SensorPlugin
     {
+    public: sdcCameraSensor();
+    public: virtual void Init();
         public: virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
+    public: bool getSensor;
         public: void OnUpdate();
         public: double getSlope(cv::Vec4i l);
         public: cv::Point getIntersectionPoint(cv::Vec4i l1, cv::Vec4i l2);
@@ -29,10 +32,15 @@ namespace gazebo
         public: cv::Vec4i createLine(double x1, double y1, double x2, double y2);
         public: double getNewTurningAngle(cv::Vec4i midLine);
         private: sensors::MultiCameraSensorPtr parentSensor;
+    private: sensors::SensorPtr sensor;
         private: event::ConnectionPtr updateConnection;
         private: sdcSensorData *sensorData;
     private: int cameraId;
-    private: int cameraCnt;
+    public: static int cameraCnt;
+    private: physics::LinkPtr link;
+    private: double x;
+    private: double y;
+    private: math::Pose pose;
     };
 }
 

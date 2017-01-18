@@ -835,6 +835,7 @@
             <back_right>back_right_joint</back_right>
             <!-- This is the chassis -->
             <chassis>chassis</chassis>
+            <camera>camera::link</camera>
             <!-- Radius of the wheel (DO NOT CHANGE UNLESS YOU ALSO CHANGE THE ACTUAL PARAMETER ABOVE PLS) -->
             <wheel_radius>0.21</wheel_radius>
             <!-- Power is multiplied by "gas" to determine force applied to wheels -->

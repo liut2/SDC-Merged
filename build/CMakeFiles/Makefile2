@@ -63,10 +63,10 @@ CMAKE_BINARY_DIR = /Accounts/trank/Desktop/SDC-Merged/build
 # Target rules for target CMakeFiles/sdcCameraSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/request.dir/all
-CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/manager.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/instruction.dir/all
@@ -108,11 +108,11 @@ clean: CMakeFiles/sdcCameraSensor.dir/clean
 
 # All Build rule for target.
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcWaypoint.dir/all
+CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcIntersection.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/request.dir/all
-CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/manager.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcManager.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
@@ -191,9 +191,9 @@ clean: CMakeFiles/sdcWaypoint.dir/clean
 # Target rules for target CMakeFiles/sdcSideLidarSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
-CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
 	$(MAKE) -f CMakeFiles/sdcSideLidarSensor.dir/build.make CMakeFiles/sdcSideLidarSensor.dir/depend
@@ -232,9 +232,9 @@ clean: CMakeFiles/sdcSideLidarSensor.dir/clean
 # Target rules for target CMakeFiles/sdcFrontLidarSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
-CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
 	$(MAKE) -f CMakeFiles/sdcFrontLidarSensor.dir/build.make CMakeFiles/sdcFrontLidarSensor.dir/depend
@@ -273,8 +273,8 @@ clean: CMakeFiles/sdcFrontLidarSensor.dir/clean
 # Target rules for target CMakeFiles/sdcSensorData.dir
 
 # All Build rule for target.
-CMakeFiles/sdcSensorData.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/sdcSensorData.dir/all: CMakeFiles/sdcAngle.dir/all
+CMakeFiles/sdcSensorData.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/sdcSensorData.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcSensorData.dir/all: CMakeFiles/sdcLidarRay.dir/all
 	$(MAKE) -f CMakeFiles/sdcSensorData.dir/build.make CMakeFiles/sdcSensorData.dir/depend
@@ -313,9 +313,9 @@ clean: CMakeFiles/sdcSensorData.dir/clean
 # Target rules for target CMakeFiles/sdcGpsSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
-CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
 	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/depend
@@ -466,9 +466,9 @@ clean: CMakeFiles/sdcIntersection.dir/clean
 # Target rules for target CMakeFiles/sdcBackLidarSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
-CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
 	$(MAKE) -f CMakeFiles/sdcBackLidarSensor.dir/build.make CMakeFiles/sdcBackLidarSensor.dir/depend
@@ -507,9 +507,9 @@ clean: CMakeFiles/sdcBackLidarSensor.dir/clean
 # Target rules for target CMakeFiles/sdcTopLidarSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
-CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
 	$(MAKE) -f CMakeFiles/sdcTopLidarSensor.dir/build.make CMakeFiles/sdcTopLidarSensor.dir/depend
@@ -622,10 +622,10 @@ clean: CMakeFiles/sdcAngle.dir/clean
 # Target rules for target CMakeFiles/manager.dir
 
 # All Build rule for target.
+CMakeFiles/manager.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/manager.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/manager.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/manager.dir/all: CMakeFiles/request.dir/all
-CMakeFiles/manager.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/manager.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/manager.dir/all: CMakeFiles/instruction.dir/all
 CMakeFiles/manager.dir/all: CMakeFiles/sdcLidarRay.dir/all
@@ -702,10 +702,10 @@ clean: CMakeFiles/sdcBox.dir/clean
 # Target rules for target CMakeFiles/sdcManager.dir
 
 # All Build rule for target.
+CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/request.dir/all
-CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/manager.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/instruction.dir/all

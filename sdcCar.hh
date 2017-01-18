@@ -66,7 +66,8 @@ namespace gazebo {
         // A link to the chassis of the car, mainly used for access to physics variables
         // related to the car's state
         physics::LinkPtr chassis;
-
+        physics::LinkPtr camera;
+        int cameraId;
         // The velocity of the car
         math::Vector3 velocity;
 
@@ -164,7 +165,7 @@ namespace gazebo {
         bool turning;
         bool reversing;
         bool stopping;
-
+        bool getSensor;
         // Movement parameters
         sdcAngle targetDirection;
         double targetSteeringAmount;
