@@ -162,6 +162,12 @@ void sdcCameraSensor::OnUpdate() {
 	Vec4i previousRightLine = tempPreviousRightLine;
 
 
+	//Starting Hyperbolic LOBF
+	cv::vector<cv::Point> LeftPointList;
+	cv::vector<cv::Point> RightPointList;
+	cv::vector<cv::Point> LeftOutputPoints;
+	cv::vector<cv::Point> RightOutputPoints;
+
 	for(size_t i = 0; i < 5; i++) {
 		Rect section;
 		section = sections[i];
@@ -179,6 +185,8 @@ void sdcCameraSensor::OnUpdate() {
 		//determining the line we will use for the vanishing point
 		Point leftMidPoint = Point(0,MidPointHeight[i]*row/15);
 		Point rightMidPoint = Point(col,MidPointHeight[i]*row/15);
+
+
 
  		for( size_t j = 0; j < lines.size(); j++ )
  		{
@@ -231,8 +239,19 @@ void sdcCameraSensor::OnUpdate() {
 		// get the mid point on horizon
 		Point midPoint = Point((leftEnd.x + rightEnd.x)/2, leftEnd.y);
 		Point vanishPoint = getIntersectionPoint(leftLine, rightLine);
+
+		//LOBF
+		Point LPoint1 = cv::Point(leftLine[0], leftLine[1] + offset[i]*row/15);
+		Point LPoint2 = cv::Point(leftLine[2], leftLine[3] + offset[i]*row/15);
+		Point RPoint1 = cv::Point(rightLine[0], rightLine[1] + offset[i]*row/15);
+		Point RPoint2 = cv::Point(rightLine[2], rightLine[3] + offset[i]*row/15);
+		LeftPointList.push_back(LPoint1);
+		LeftPointList.push_back(LPoint2);
+		RightPointList.push_back(RPoint1);
+		RightPointList.push_back(RPoint2);
+
 		if (i == 4) {
-			line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+			//line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 			// update the turn angle
 			double newAngle = getNewTurningAngle(createLine(vanishPoint.x, vanishPoint.y, midPoint.x, midPoint.y + offset[i]*row/15));
             //this->sensorData.UpdateSteeringMagnitude(newAngle);
@@ -245,6 +264,56 @@ void sdcCameraSensor::OnUpdate() {
 		line(imageROI, Point(rightLine[0], rightLine[1] + offset[i]*row/15), Point(rightLine[2], rightLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 
 	}
+
+/*
+//LOBF
+int sidesLength = 2*row + 2*col;
+cv::vector<cv::Point> tempTestPList;
+//approxPolyDP(LeftPointList, LeftOutputPoints, sidesLength*.0001,false);
+//approxPolyDP(RightPointList, RightOutputPoints, sidesLength*.0001,false);
+
+int n = LeftPointList.size();
+double xvals[n];
+double yvals[n];
+double lny[n];
+for(int i=0; i<LeftPointList.size(); i++){
+	xvals[i] = LeftPointList[i].x;
+	yvals[i] = LeftPointList[i].y;
+	lny[i] = log(LeftPointList[i].y);
+}
+double xsum = 0;
+double ysum = 0;
+double xsqsum = 0;
+double xysum = 0;
+for(int g=0;g<LeftPointList.size(); g++){
+	xsum = xsum+xvals[g];
+	ysum = ysum+yvals[g];
+	xsqsum = xsqsum + pow(xvals[g],2.0);
+	xysum = xysum + xvals[g]*lny[g];
+}
+double slope = (n*xysum - xsum*ysum)/(n*xsqsum-xsum*xsum);
+double interceptval = (xsqsum*ysum-xsum*xysum)/(xsqsum*n-xsum*xsum);
+double adjustedinter = pow(2.71828, interceptval);
+double yvalarray[n];
+for(int q=0; q < n; q++){
+	yvalarray[q]=adjustedinter*pow(slope*xvals[q],2.71828);
+}
+
+for(int z=0; z<LeftPointList.size(); z++){
+	int newx = LeftPointList[z].x;
+	int newy = adjustedinter * pow(2.71828,(slope*newx));
+	Point tempPoint = cv::Point(newx, newy);
+	tempTestPList.push_back(tempPoint);
+}
+
+for (int j = 0; j < tempTestPList.size()-1; j++)
+{
+		printf("point data...     x:%d       y:%d \n", LeftPointList[j].x, LeftPointList[j].y);
+		//line(imageROI,LeftOutputPoints[j], LeftOutputPoints[j+1], Scalar(colors[1][0],colors[1][1],colors[1][2]), 3, CV_AA);
+		line(imageROI,tempTestPList[j], tempTestPList[j+1], Scalar(colors[2][0],colors[2][1],colors[2][2]), 3, CV_AA);
+}
+
+*/
 
 	// Display results to GUI
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
