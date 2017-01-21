@@ -1,0 +1,15 @@
+material newcurve
+{
+	receive_shadows off
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture curvetext33.png
+				scale 1 1
+			}
+		}
+	}
+}
