@@ -1,10 +1,10 @@
-file(REMOVE_RECURSE
+FILE(REMOVE_RECURSE
   "CMakeFiles/sdcVisibleObject.dir/sdcVisibleObject.cc.o"
   "libsdcVisibleObject.pdb"
-  "libsdcVisibleObject.dylib"
+  "libsdcVisibleObject.so"
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang CXX)
-  include(CMakeFiles/sdcVisibleObject.dir/cmake_clean_${lang}.cmake OPTIONAL)
-endforeach()
+FOREACH(lang CXX)
+  INCLUDE(CMakeFiles/sdcVisibleObject.dir/cmake_clean_${lang}.cmake OPTIONAL)
+ENDFOREACH(lang)

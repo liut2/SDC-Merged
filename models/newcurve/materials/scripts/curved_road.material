@@ -7,7 +7,7 @@ material curved_road
 		{
 			texture_unit
 			{
-				texture curvetext.png
+				texture road.png
 				scale 1 1
 			}
 		}

@@ -1,10 +1,10 @@
-file(REMOVE_RECURSE
+FILE(REMOVE_RECURSE
   "CMakeFiles/sdcIntersection.dir/sdcIntersection.cc.o"
   "libsdcIntersection.pdb"
-  "libsdcIntersection.dylib"
+  "libsdcIntersection.so"
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang CXX)
-  include(CMakeFiles/sdcIntersection.dir/cmake_clean_${lang}.cmake OPTIONAL)
-endforeach()
+FOREACH(lang CXX)
+  INCLUDE(CMakeFiles/sdcIntersection.dir/cmake_clean_${lang}.cmake OPTIONAL)
+ENDFOREACH(lang)

@@ -1,10 +1,10 @@
-file(REMOVE_RECURSE
+FILE(REMOVE_RECURSE
   "CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o"
   "libsdcCameraSensor.pdb"
-  "libsdcCameraSensor.dylib"
+  "libsdcCameraSensor.so"
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang CXX)
-  include(CMakeFiles/sdcCameraSensor.dir/cmake_clean_${lang}.cmake OPTIONAL)
-endforeach()
+FOREACH(lang CXX)
+  INCLUDE(CMakeFiles/sdcCameraSensor.dir/cmake_clean_${lang}.cmake OPTIONAL)
+ENDFOREACH(lang)

@@ -83,10 +83,10 @@
             </box>
           </geometry>
         <material>
-            <script>
-                <uri>models/comps_road/materials/scripts</uri>
-                <uri>models/comps_road/materials/textures</uri>
-                <name>comps_road</name>
+			<script>
+                <uri>models/newstraight/materials/scripts</uri>
+                <uri>models/newstraight/materials/textures</uri>
+                <name>newstraight</name>
             </script>
         </material>
       </visual>
@@ -113,9 +113,9 @@
           </geometry>
         <material>
             <script>
-                <uri>models/comps_road/materials/scripts</uri>
-                <uri>models/comps_road/materials/textures</uri>
-                <name>comps_road</name>
+                <uri>models/newstraight/materials/scripts</uri>
+                <uri>models/newstraight/materials/textures</uri>
+                <name>newstraight</name>
             </script>
         </material>
       </visual>

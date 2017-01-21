@@ -1,10 +1,10 @@
-file(REMOVE_RECURSE
+FILE(REMOVE_RECURSE
   "CMakeFiles/instruction.dir/instruction.cc.o"
   "libinstruction.pdb"
-  "libinstruction.dylib"
+  "libinstruction.so"
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang CXX)
-  include(CMakeFiles/instruction.dir/cmake_clean_${lang}.cmake OPTIONAL)
-endforeach()
+FOREACH(lang CXX)
+  INCLUDE(CMakeFiles/instruction.dir/cmake_clean_${lang}.cmake OPTIONAL)
+ENDFOREACH(lang)

@@ -20,13 +20,11 @@
           </mesh>
         </geometry>
         <material>
-          <script>
-            <uri>models/newcurve/materials/scripts</uri>
-            <uri>models/newcurve/materials/textures</uri>
-            <name>newcurve</name>
-          </script>
-
-
+            <script>
+                <uri>models/newcurve/materials/scripts</uri>
+                <uri>models/newcurve/materials/textures</uri>
+                <name>newcurve</name>
+            </script>
         </material>
       </visual>
     </link>

@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcIntersection.cc
+/home/sovereign/Desktop/mergeSDC/SDC-Merged/sdcIntersection.cc
 sdcIntersection.hh
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcIntersection.hh
+/home/sovereign/Desktop/mergeSDC/SDC-Merged/sdcIntersection.hh
 
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcIntersection.hh
+/home/sovereign/Desktop/mergeSDC/SDC-Merged/sdcIntersection.hh
 vector
 -
 iostream
@@ -18,9 +18,9 @@ iostream
 limits
 -
 sdcWaypoint.hh
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcWaypoint.hh
+/home/sovereign/Desktop/mergeSDC/SDC-Merged/sdcWaypoint.hh
 
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcWaypoint.hh
+/home/sovereign/Desktop/mergeSDC/SDC-Merged/sdcWaypoint.hh
 iostream
 -
 vector

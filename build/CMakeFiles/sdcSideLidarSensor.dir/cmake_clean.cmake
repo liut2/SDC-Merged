@@ -1,10 +1,10 @@
-file(REMOVE_RECURSE
+FILE(REMOVE_RECURSE
   "CMakeFiles/sdcSideLidarSensor.dir/sdcSideLidarSensor.cc.o"
   "libsdcSideLidarSensor.pdb"
-  "libsdcSideLidarSensor.dylib"
+  "libsdcSideLidarSensor.so"
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang CXX)
-  include(CMakeFiles/sdcSideLidarSensor.dir/cmake_clean_${lang}.cmake OPTIONAL)
-endforeach()
+FOREACH(lang CXX)
+  INCLUDE(CMakeFiles/sdcSideLidarSensor.dir/cmake_clean_${lang}.cmake OPTIONAL)
+ENDFOREACH(lang)

@@ -1,31 +1,28 @@
 # The set of languages for which implicit dependencies are needed:
-set(CMAKE_DEPENDS_LANGUAGES
+SET(CMAKE_DEPENDS_LANGUAGES
   "CXX"
   )
 # The set of files for implicit dependencies of each language:
-set(CMAKE_DEPENDS_CHECK_CXX
-  "/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/request.cc" "/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/build/CMakeFiles/request.dir/request.cc.o"
+SET(CMAKE_DEPENDS_CHECK_CXX
+  "/home/sovereign/Desktop/mergeSDC/SDC-Merged/request.cc" "/home/sovereign/Desktop/mergeSDC/SDC-Merged/build/CMakeFiles/request.dir/request.cc.o"
   )
-set(CMAKE_CXX_COMPILER_ID "Clang")
-
-# The include file search paths:
-set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/usr/local/Cellar/gazebo6/6.6.0/include"
-  "/usr/local/Cellar/gazebo6/6.6.0/include/gazebo-6.6"
-  "/usr/local/include"
-  "/usr/local/Cellar/sdformat3/3.7.0/include/sdformat-3.7"
-  "/usr/local/Cellar/ignition-math2/2.5.0/include/ignition/math2"
-  "/usr/local/Cellar/ogre/1.7.4/include/OGRE"
-  "/usr/local/Cellar/ogre/1.7.4/include"
-  "/usr/local/Cellar/ogre/1.7.4/include/OGRE/Terrain"
-  "/usr/local/Cellar/ogre/1.7.4/include/OGRE/Paging"
-  "../FADBAD++"
-  "/usr/local/include/opencv"
-  )
+SET(CMAKE_CXX_COMPILER_ID "GNU")
 
 # Targets to which this target links.
-set(CMAKE_TARGET_LINKED_INFO_FILES
+SET(CMAKE_TARGET_LINKED_INFO_FILES
   )
 
-# Fortran module output directory.
-set(CMAKE_Fortran_TARGET_MODULE_DIR "")
+# The include file search paths:
+SET(CMAKE_C_TARGET_INCLUDE_PATH
+  "/usr/include/gazebo-7"
+  "/usr/include/sdformat-4.1"
+  "/usr/include/ignition/math2"
+  "/usr/include/OGRE"
+  "/usr/include/OGRE/Terrain"
+  "/usr/include/OGRE/Paging"
+  "../FADBAD++"
+  "/usr/include/opencv"
+  )
+SET(CMAKE_CXX_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})
+SET(CMAKE_Fortran_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})
+SET(CMAKE_ASM_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})

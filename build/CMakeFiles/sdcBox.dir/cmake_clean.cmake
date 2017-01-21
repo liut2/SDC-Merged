@@ -1,10 +1,10 @@
-file(REMOVE_RECURSE
+FILE(REMOVE_RECURSE
   "CMakeFiles/sdcBox.dir/sdcBox.cpp.o"
   "libsdcBox.pdb"
-  "libsdcBox.dylib"
+  "libsdcBox.so"
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang CXX)
-  include(CMakeFiles/sdcBox.dir/cmake_clean_${lang}.cmake OPTIONAL)
-endforeach()
+FOREACH(lang CXX)
+  INCLUDE(CMakeFiles/sdcBox.dir/cmake_clean_${lang}.cmake OPTIONAL)
+ENDFOREACH(lang)
