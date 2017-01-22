@@ -139,7 +139,7 @@ void sdcCar::Drive()
         //  this->Stop();
            // printf("inWaypoint\n");
             this->WaypointDriving(WAYPOINT_VEC);
-            
+
         break;
 
         // At a stop sign, performing a turn
@@ -189,7 +189,7 @@ void sdcCar::MatchTargetDirection(){
         if (!directionAngleChange.WithinMargin(DIRECTION_MARGIN_OF_ERROR)) {
             // The steering amount scales based on how far we have to turn, with upper and lower limits
             double proposedSteeringAmount = fmax(fmin(-this->turningLimit*tan(directionAngleChange.angle/-2), this->turningLimit), -this->turningLimit);
-            
+
             // When reversing, steering directions are inverted
             if(!this->reversing){
                 this->SetTargetSteeringAmount(proposedSteeringAmount);
@@ -197,7 +197,7 @@ void sdcCar::MatchTargetDirection(){
                 this->SetTargetSteeringAmount(-proposedSteeringAmount);
             }
         }
-        
+
         // Check if the car needs to steer, and apply a small turn in the corresponding direction
         if (!(std::abs(this->targetSteeringAmount - this->steeringAmount) < STEERING_MARGIN_OF_ERROR)) {
             if (this->steeringAmount < this->targetSteeringAmount) {
@@ -211,8 +211,8 @@ void sdcCar::MatchTargetDirection(){
         this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
         //printf("sensorData id in car: %i\n", sensorData->sensorId);
     }
-   
-    
+
+
 
 }
 
@@ -399,7 +399,7 @@ void sdcCar::GridTurning(int turn){
     float destX = WAYPOINT_VEC[progress].pos.first;
     float destY = WAYPOINT_VEC[progress].pos.second;
     float distance = std::abs(destX - this->x) + std::abs(destY - this->y);
-    
+
     if(turn == 3){
         this->waypointProgress++;
 
@@ -410,7 +410,7 @@ void sdcCar::GridTurning(int turn){
 
     //turn == 0 means go straight
     else if (turn == 0){
-       
+
 
         if(distance < 5){
             this->waypointProgress = 1;
@@ -454,7 +454,7 @@ void sdcCar::GridTurning(int turn){
             if(!WAYPOINT_VEC[progress].hasReservation){
                 this->Stop();
             }
-            
+
 
             //car sends reservation request when velocity is below threshold
             //sdcManager sends back response and car sets hasReservation to true
@@ -930,7 +930,7 @@ bool sdcCar::IsObjectTooFurious(sdcVisibleObject obj){
  * Default rate: 1.0
  */
 void sdcCar::Accelerate(double amt, double rate){
-    
+
     this->SetTargetSpeed(this->GetSpeed() + amt);
     //printf("targetSpeed: %f\n",this->targetSpeed);
     this->SetAccelRate(rate);
@@ -1039,16 +1039,16 @@ void sdcCar::OnUpdate()
     //    }
     //this->sensorData = sdcManager::getSensorData(carId);
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 2; //in merged world use 0
+    int crudeSwitch = 1; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
-    
+
     if (crudeSwitch == 0) {
         if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
             //printf("starting at %f,%f \n", this->x, this->y);
             this->currentState = waypoint;
         }else{
-            
+
             this->currentState = laneDriving;
         }
     } else if (crudeSwitch == 1){
@@ -1060,7 +1060,7 @@ void sdcCar::OnUpdate()
     } else if (crudeSwitch == 2) {
         //printf("Crude switch == 2 : for intersection worlds");
     }
-    
+
     //    if(this->stopping){
     //        printf("stopping\n");
     //        printf("%f",this->velocity.y);
@@ -1070,7 +1070,7 @@ void sdcCar::OnUpdate()
     //    }
     //
     //     Get the current velocity of the car
-    
+
     ///For stop sign algorithm queue to correctly stop
 //    if(this->currentState!=laneDriving){
 //        if(sdcManager::shouldStop(carId, fromDir)){
@@ -1087,8 +1087,8 @@ void sdcCar::OnUpdate()
 //            }
 //        }
 //    }
-    
-    
+
+
     if(this->inIntersection){
         //if outside intersection
         //printf("direction: %i\n", this->destDirection);
@@ -1137,7 +1137,7 @@ void sdcCar::OnUpdate()
     //printf("x, y is : %f %f \n", this->x, this->y);
     // Get the cars current rotation
     // this->yaw = sdcSensorData::GetYaw();
-    
+
     // Check if the front lidars have been updated, and if they have update
     // the car's list
     // printf("\nin onupdate\n");
@@ -1150,7 +1150,7 @@ void sdcCar::OnUpdate()
     //        this->frontLidarLastUpdate = this->sensorData->GetLidarLastUpdate(FRONT);
     //    }
     //  printf("\nafter lidar\n");
-    
+
     // Call our Drive function, which is the brain for the car
     //printf("going to drive\n");
     ///std::cout << "on update the car model" << std::endl;
@@ -1164,7 +1164,7 @@ void sdcCar::OnUpdate()
      // Get the cars current rotation
      this->yaw = sdcSensorData::GetYaw();
      */
-    
+
     // Call our Drive function, which is the brain for the car
     if(this->carId == 1){
         this->Drive();
@@ -1172,71 +1172,71 @@ void sdcCar::OnUpdate()
     else{
         this->Stop();
     }
-    
+
     //printf("after drive\n");
-    
+
     ////////////////////////////
     // GAZEBO PHYSICS METHODS //
     ////////////////////////////
-    
+
     // Compute the angle of the front wheels.
     double wheelAngle = this->steeringAmount / this->steeringRatio;
-    
+
     // Compute the rotational velocity of the wheels
     double jointVel = (this->gas-this->brake * this->maxSpeed) / this->wheelRadius;
-    
+
     // Set velocity and max force for each wheel
     this->joints[0]->SetVelocityLimit(1, -jointVel);
     this->joints[0]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->frontPower);
-    
+
     this->joints[1]->SetVelocityLimit(1, -jointVel);
     this->joints[1]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->frontPower);
-    
+
     this->joints[2]->SetVelocityLimit(1, -jointVel);
     this->joints[2]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->rearPower);
-    
+
     this->joints[3]->SetVelocityLimit(1, -jointVel);
     this->joints[3]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->rearPower);
-    
+
     // Set the front-left wheel angle
     this->joints[0]->SetLowStop(0, wheelAngle);
     this->joints[0]->SetHighStop(0, wheelAngle);
     this->joints[0]->SetLowStop(0, wheelAngle);
     this->joints[0]->SetHighStop(0, wheelAngle);
-    
+
     // Set the front-right wheel angle
     this->joints[1]->SetHighStop(0, wheelAngle);
     this->joints[1]->SetLowStop(0, wheelAngle);
     this->joints[1]->SetHighStop(0, wheelAngle);
     this->joints[1]->SetLowStop(0, wheelAngle);
-    
+
     //  aerodynamics
     this->chassis->AddForce(math::Vector3(0, 0, this->aeroLoad * this->velocity.GetSquaredLength()));
-    
+
     // Sway bars
     math::Vector3 bodyPoint;
     math::Vector3 hingePoint;
     math::Vector3 axis;
-    
+
     // Physics calculations
     for (int ix = 0; ix < 4; ++ix)
     {
         hingePoint = this->joints[ix]->GetAnchor(0);
         bodyPoint = this->joints[ix]->GetAnchor(1);
-        
+
         axis = this->joints[ix]->GetGlobalAxis(0).Round();
         double displacement = (bodyPoint - hingePoint).Dot(axis);
-        
+
         float amt = displacement * this->swayForce;
         if (displacement > 0)
         {
             if (amt > 15)
                 amt = 15;
-            
+
             math::Pose p = this->joints[ix]->GetChild()->GetWorldPose();
             this->joints[ix]->GetChild()->AddForce(axis * -amt);
             this->chassis->AddForceAtWorldPosition(axis * amt, p.pos);
-            
+
             p = this->joints[ix^1]->GetChild()->GetWorldPose();
             this->joints[ix^1]->GetChild()->AddForce(axis * amt);
             this->chassis->AddForceAtWorldPosition(axis * -amt, p.pos);
@@ -1330,7 +1330,7 @@ sdcCar::sdcCar(){
     this->carId = this->carIdCount;
     this->inIntersection = false;
     this->destDirection = -1;
-    
+
     //printf("sdcCar Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
     //printf("sdcCar sensorId: %i\n",this->sensorData->sensorId);
     //this->frontSensor = sdcFrontLidarSensor();

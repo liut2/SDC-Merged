@@ -23,7 +23,7 @@ using namespace gazebo;
  * Initializes the lidar in the given position to store its minimum angle, as well as the resolution
  */
 sdcSensorData::sdcSensorData() {
-    
+
 }
 sdcSensorData::sdcSensorData(int id) {
     this->sensorId = id;
@@ -81,7 +81,7 @@ void sdcSensorData::InitLidar(LidarPos lidar, double minAngle, double angleResol
  */
 void sdcSensorData::UpdateLidar(LidarPos lidar, std::vector<double>* newRays){
     lidarInfoMap[lidar].lastUpdate = (lidarInfoMap[lidar].lastUpdate + 1) % 100000000;
-    printf("created new lidar rays\n");
+    //printf("created new lidar rays\n");
     switch (lidar) {
         case FRONT:
 

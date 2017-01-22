@@ -1,0 +1,15 @@
+material newstraight
+{
+	receive_shadows off
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture straighttext.png
+				scale 1 1
+			}
+		}
+	}
+}

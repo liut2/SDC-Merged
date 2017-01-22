@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<sdf version="1.0">
+  <model name="curved_road">
+    <static>true</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>models/newcurve/curve8k.dae</uri>
+             <scale>1 1 .0001</scale>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <mesh>
+            <uri>models/newcurve/curve8k.dae</uri>
+            <scale>1 1 .0001</scale>
+          </mesh>
+        </geometry>
+        <material>
+            <script>
+                <uri>models/newcurve/materials/scripts</uri>
+                <uri>models/newcurve/materials/textures</uri>
+                <name>newcurve</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

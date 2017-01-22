@@ -19,11 +19,15 @@
 
 
     <include>
+      <uri>/models/newcurve</uri>
+      <pose>91.25 -2.5 -0.05 0 0 -1.575</pose>
+    </include>
+
+    <include>
         <uri>/models/sdcCar</uri>
         <!-- <pose>-10 2 0 0 0 0</pose> -->
         <!-- The format for pose is: xpos (move car forwards/backwards), ypos (car shifts side to side), zpos (height of the car), roll(rotated onto side), pitch (how much like a ramp it looks), yaw(turned left (+), right(-)) -->
-        <pose> 3 2 0 0 0 .15 </pose>
-        
+        <pose> 0 1 0 0 0 0.15 </pose>
     </include>
 
 
@@ -61,13 +65,13 @@
     </model>
 
     <model name='road_2_0_1'>
-      <pose>50 1 0.05 0 0 0</pose>
+      <pose>25 1.02 -0.05 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision">
           <geometry>
             <box>
-              <size>100 5 .05</size>
+              <size>75 6.54 .0001</size>
             </box>
           </geometry>
         </collision>
@@ -75,14 +79,14 @@
           <cast_shadows>false</cast_shadows>
           <geometry>
             <box>
-              <size>100 5 .05</size>
+              <size>75 6.54 .0001</size>
             </box>
           </geometry>
         <material>
-            <script>
-                <uri>models/comps_road/materials/scripts</uri>
-                <uri>models/comps_road/materials/textures</uri>
-                <name>comps_road</name>
+			<script>
+                <uri>models/newstraight/materials/scripts</uri>
+                <uri>models/newstraight/materials/textures</uri>
+                <name>newstraight</name>
             </script>
         </material>
       </visual>
@@ -90,14 +94,13 @@
     </model>
 
     <model name='road_2_0_2'>
-      <!--<pose>148 -6 0.05 0 0 3</pose>-->
-      <pose>147 -11.25 0.05 0 0 -.25</pose>
+      <pose>139.5 -47.4 -0.05 0 0 -.78</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision">
           <geometry>
             <box>
-              <size>100 5 .05</size>
+              <size>75 6.54 .0001</size>
             </box>
           </geometry>
         </collision>
@@ -105,14 +108,14 @@
           <cast_shadows>false</cast_shadows>
           <geometry>
             <box>
-              <size>100 5 .05</size>
+              <size>75 6.54 .0001</size>
             </box>
           </geometry>
         <material>
             <script>
-                <uri>models/comps_road/materials/scripts</uri>
-                <uri>models/comps_road/materials/textures</uri>
-                <name>comps_road</name>
+                <uri>models/newstraight/materials/scripts</uri>
+                <uri>models/newstraight/materials/textures</uri>
+                <name>newstraight</name>
             </script>
         </material>
       </visual>
