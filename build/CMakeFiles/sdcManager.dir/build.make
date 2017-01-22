@@ -90,7 +90,9 @@ sdcManager_EXTERNAL_OBJECTS =
 
 libsdcManager.dylib: CMakeFiles/sdcManager.dir/sdcManager.cc.o
 libsdcManager.dylib: CMakeFiles/sdcManager.dir/build.make
-libsdcManager.dylib: libmanager.dylib
+libsdcManager.dylib: libinstruction.dylib
+libsdcManager.dylib: librequest.dylib
+libsdcManager.dylib: libsdcSensorData.dylib
 libsdcManager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
 libsdcManager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_client.dylib
 libsdcManager.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_building.dylib
@@ -132,9 +134,6 @@ libsdcManager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreMain.dylib
 libsdcManager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreTerrain.dylib
 libsdcManager.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgrePaging.dylib
 libsdcManager.dylib: /usr/local/Cellar/ignition-math2/2.5.0/lib/libignition-math2.dylib
-libsdcManager.dylib: libinstruction.dylib
-libsdcManager.dylib: librequest.dylib
-libsdcManager.dylib: libsdcSensorData.dylib
 libsdcManager.dylib: libsdcVisibleObject.dylib
 libsdcManager.dylib: libsdcLidarRay.dylib
 libsdcManager.dylib: libsdcLidarSensorInfo.dylib

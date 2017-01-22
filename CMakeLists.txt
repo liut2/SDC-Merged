@@ -23,7 +23,7 @@ add_library(manager SHARED manager.cc)
 target_link_libraries(manager instruction request sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcManager SHARED sdcManager.cc)
-target_link_libraries(sdcManager manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcManager instruction request sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcBox SHARED sdcBox.cpp)
 target_link_libraries(sdcBox ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
@@ -35,7 +35,7 @@ add_library(sdcAngle SHARED sdcAngle.cc)
 target_link_libraries(sdcAngle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcIntersection SHARED sdcIntersection.cc)
-target_link_libraries(sdcIntersection ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcIntersection sdcManager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcLidarSensorInfo SHARED sdcLidarSensorInfo.cc)
 target_link_libraries(sdcLidarSensorInfo sdcAngle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

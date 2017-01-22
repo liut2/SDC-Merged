@@ -429,7 +429,14 @@ clean: CMakeFiles/sdcFlyingBox.dir/clean
 # Target rules for target CMakeFiles/sdcIntersection.dir
 
 # All Build rule for target.
-CMakeFiles/sdcIntersection.dir/all:
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcSensorData.dir/all
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcVisibleObject.dir/all
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/request.dir/all
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcAngle.dir/all
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcManager.dir/all
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/instruction.dir/all
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcLidarRay.dir/all
 	$(MAKE) -f CMakeFiles/sdcIntersection.dir/build.make CMakeFiles/sdcIntersection.dir/depend
 	$(MAKE) -f CMakeFiles/sdcIntersection.dir/build.make CMakeFiles/sdcIntersection.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles --progress-num=23,24 "Built target sdcIntersection"
@@ -442,7 +449,7 @@ all: CMakeFiles/sdcIntersection.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/sdcIntersection.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles 18
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcIntersection.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles 0
 .PHONY : CMakeFiles/sdcIntersection.dir/rule
@@ -706,7 +713,6 @@ CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/request.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcAngle.dir/all
-CMakeFiles/sdcManager.dir/all: CMakeFiles/manager.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/instruction.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcLidarRay.dir/all
@@ -722,7 +728,7 @@ all: CMakeFiles/sdcManager.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/sdcManager.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles 18
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles 16
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcManager.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles 0
 .PHONY : CMakeFiles/sdcManager.dir/rule

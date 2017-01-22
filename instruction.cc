@@ -8,15 +8,15 @@ instruction::instruction(int id, int inputSpeed, bool inputHasReservation){
     
 }
 
-void instruction:: printid(){
+void instruction::printid(){
     printf("id is: ");
     printf("%d", id);
 }
 
-float getSpeed() {
+float instruction::getSpeed() {
     return this->speed;
 }
 
-bool getHasReservation() {
+bool instruction::getHasReservation() {
     return this->hasReservation;
 }

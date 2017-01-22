@@ -396,6 +396,10 @@ void sdcCar::GridTurning(int turn){
     int progress = this->waypointProgress;
    // printf("turn: %i\n", turn);
     //turn == 3 means stop
+    float destX = WAYPOINT_VEC[progress].pos.first;
+    float destY = WAYPOINT_VEC[progress].pos.second;
+    float distance = std::abs(destX - this->x) + std::abs(destY - this->y);
+    
     if(turn == 3){
         this->waypointProgress++;
 
@@ -406,20 +410,25 @@ void sdcCar::GridTurning(int turn){
 
     //turn == 0 means go straight
     else if (turn == 0){
-        if(WAYPOINT_VEC[progress].hasReservation){
-            this->waypointProgress++;
+       
+
+        if(distance < 5){
+            this->waypointProgress = 1;
             this->turning = false;
-            //printf("turn == 0\n");
+            printf("turn == 0\n");
             return;
 
         }
         else{
-            float destX = WAYPOINT_VEC[progress].pos.first;
-            float destY = WAYPOINT_VEC[progress].pos.second;
-            float distance = abs(destX - this->x) + abs(destY - this->y);
             if (distance < 15){
-                auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir));
-                this->targetSpeed = instruction.getSpeed();
+                if(!WAYPOINT_VEC[progress].hasReservation){
+                    auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
+                    this->targetSpeed = instruction.getSpeed();
+                    if (instruction.getHasReservation() == 1){
+                        WAYPOINT_VEC[progress].hasReservation = true;
+                        //printf("straight got reservation\n");
+                    }
+                }
             }
            /* if(GetSpeed() < .1){
                 //printf("waypointType: %i\n", WAYPOINT_VEC[progress].waypointType);
@@ -436,14 +445,16 @@ void sdcCar::GridTurning(int turn){
                     fflush(stdout);
                 }
             }*/
-            if(!laneStopped){
-                printf("lanestop request\n\n\n");
-                printf("fromDir: %i\n\n", this->fromDir);
-                sdcManager::laneStopRequest(this->fromDir);
-                laneStopped = true;
+//            if(!laneStopped){
+//                printf("lanestop request\n\n\n");
+//                printf("fromDir: %i\n\n", this->fromDir);
+//                sdcManager::laneStopRequest(this->fromDir);
+//                laneStopped = true;
+//            }
+            if(!WAYPOINT_VEC[progress].hasReservation){
+                this->Stop();
             }
-
-            this->Stop();
+            
 
             //car sends reservation request when velocity is below threshold
             //sdcManager sends back response and car sets hasReservation to true
@@ -453,7 +464,7 @@ void sdcCar::GridTurning(int turn){
     }
     //turn == 1 or 2 means turn
     else {
-        if(WAYPOINT_VEC[progress].hasReservation){
+        if(distance < 3 && WAYPOINT_VEC[progress].hasReservation){
             math::Vector2d nextTarget = {WAYPOINT_VEC[progress+1].pos.first,WAYPOINT_VEC[progress+1].pos.second};
 //            printf("next target pos.first: %f\n",WAYPOINT_VEC[progress+1].pos.first);
 //            printf("next target pos.second: %f\n",WAYPOINT_VEC[progress+1].pos.second);
@@ -466,24 +477,39 @@ void sdcCar::GridTurning(int turn){
                 this->waypointProgress++;
             }
         }
-        else{
-            if(GetSpeed() < .1){
-                if(sdcManager::stopSignHandleRequest(carId, WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir)){
+        if (distance < 15){
+            if(!WAYPOINT_VEC[progress].hasReservation){
+                auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
+                this->targetSpeed = instruction.getSpeed();
+                if (instruction.getHasReservation() == 1){
                     WAYPOINT_VEC[progress].hasReservation = true;
-                    inIntersection = true;
-                    printf("got reservation\n");
-                    printf("destDirection: %i\n", this->destDirection);
-                    fflush(stdout);
-                }
+                    printf("turning got reservation");
             }
-            if(!laneStopped){
-                printf("lanestop request\n\n\n");
-                sdcManager::laneStopRequest(this->fromDir);
-                laneStopped = true;
             }
-            this->Stop();
-            return;
         }
+        if(!WAYPOINT_VEC[progress].hasReservation){
+            this->Stop();
+        }
+
+
+//        else{
+//            if(GetSpeed() < .1){
+//                if(sdcManager::stopSignHandleRequest(carId, WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir)){
+//                    WAYPOINT_VEC[progress].hasReservation = true;
+//                    inIntersection = true;
+//                    printf("got reservation\n");
+//                    printf("destDirection: %i\n", this->destDirection);
+//                    fflush(stdout);
+//                }
+//            }
+//            if(!laneStopped){
+//                printf("lanestop request\n\n\n");
+//                sdcManager::laneStopRequest(this->fromDir);
+//                laneStopped = true;
+//            }
+//            this->Stop();
+//            return;
+//        }
     }
 
 }
@@ -1013,7 +1039,7 @@ void sdcCar::OnUpdate()
     //    }
     //this->sensorData = sdcManager::getSensorData(carId);
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 1; //in merged world use 0
+    int crudeSwitch = 2; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
     
@@ -1044,21 +1070,23 @@ void sdcCar::OnUpdate()
     //    }
     //
     //     Get the current velocity of the car
-    if(this->currentState!=laneDriving){
-        if(sdcManager::shouldStop(carId, fromDir)){
-            if(!laneStopped){
-                //printf("told to stop\n");
-                this->currentState = stop;
-                this->toldToStop = true;
-            }
-        }
-        else{
-            if(this->toldToStop){
-                this->currentState = waypoint;
-                this->toldToStop = false;
-            }
-        }
-    }
+    
+    ///For stop sign algorithm queue to correctly stop
+//    if(this->currentState!=laneDriving){
+//        if(sdcManager::shouldStop(carId, fromDir)){
+//            if(!laneStopped){
+//                //printf("told to stop\n");
+//                this->currentState = stop;
+//                this->toldToStop = true;
+//            }
+//        }
+//        else{
+//            if(this->toldToStop){
+//                this->currentState = waypoint;
+//                this->toldToStop = false;
+//            }
+//        }
+//    }
     
     
     if(this->inIntersection){
@@ -1069,7 +1097,7 @@ void sdcCar::OnUpdate()
                 //0 = north, 1 = east, 2 = south, 3 = west
             case 0:
                 if(this->y > 55){
-                    sdcsdcManager::stopSignCarLeft(this->carId);
+                    sdcManager::stopSignCarLeft(this->carId);
                     this->inIntersection = false;
                     // this->currentState == waypoint;
                     printf("exited north\n");
@@ -1138,7 +1166,13 @@ void sdcCar::OnUpdate()
      */
     
     // Call our Drive function, which is the brain for the car
-    this->Drive();
+    if(this->carId == 1){
+        this->Drive();
+    }
+    else{
+        this->Stop();
+    }
+    
     //printf("after drive\n");
     
     ////////////////////////////

@@ -90,13 +90,9 @@ sdcCar_EXTERNAL_OBJECTS =
 
 libsdcCar.dylib: CMakeFiles/sdcCar.dir/sdcCar.cc.o
 libsdcCar.dylib: CMakeFiles/sdcCar.dir/build.make
-libsdcCar.dylib: libsdcManager.dylib
 libsdcCar.dylib: libmanager.dylib
 libsdcCar.dylib: libsdcWaypoint.dylib
-libsdcCar.dylib: libsdcSensorData.dylib
 libsdcCar.dylib: libsdcIntersection.dylib
-libsdcCar.dylib: librequest.dylib
-libsdcCar.dylib: libinstruction.dylib
 libsdcCar.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
 libsdcCar.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_client.dylib
 libsdcCar.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_building.dylib
@@ -138,10 +134,14 @@ libsdcCar.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreMain.dylib
 libsdcCar.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreTerrain.dylib
 libsdcCar.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgrePaging.dylib
 libsdcCar.dylib: /usr/local/Cellar/ignition-math2/2.5.0/lib/libignition-math2.dylib
+libsdcCar.dylib: libsdcManager.dylib
+libsdcCar.dylib: libsdcSensorData.dylib
 libsdcCar.dylib: libsdcVisibleObject.dylib
 libsdcCar.dylib: libsdcLidarRay.dylib
 libsdcCar.dylib: libsdcLidarSensorInfo.dylib
 libsdcCar.dylib: libsdcAngle.dylib
+libsdcCar.dylib: librequest.dylib
+libsdcCar.dylib: libinstruction.dylib
 libsdcCar.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
 libsdcCar.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_client.dylib
 libsdcCar.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_building.dylib

@@ -37,6 +37,7 @@
 
 #include "sdcFrontLidarSensor.hh"
 #include "manager.hh"
+#include "sdcManager.hh"
 #include "request.hh"
 #include "instruction.hh"
 
