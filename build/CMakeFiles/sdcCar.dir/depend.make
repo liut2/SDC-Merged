@@ -11,6 +11,7 @@ CMakeFiles/sdcCar.dir/sdcCar.cc.o: ../sdcFrontLidarSensor.hh
 CMakeFiles/sdcCar.dir/sdcCar.cc.o: ../sdcIntersection.hh
 CMakeFiles/sdcCar.dir/sdcCar.cc.o: ../sdcLidarRay.hh
 CMakeFiles/sdcCar.dir/sdcCar.cc.o: ../sdcLidarSensorInfo.hh
+CMakeFiles/sdcCar.dir/sdcCar.cc.o: ../sdcManager.hh
 CMakeFiles/sdcCar.dir/sdcCar.cc.o: ../sdcSensorData.hh
 CMakeFiles/sdcCar.dir/sdcCar.cc.o: ../sdcVisibleObject.hh
 CMakeFiles/sdcCar.dir/sdcCar.cc.o: ../sdcWaypoint.hh

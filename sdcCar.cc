@@ -1006,7 +1006,7 @@ void sdcCar::OnUpdate()
     //    }
     //this->sensorData = manager::getSensorData(carId);
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 1; //in merged world use 0
+    int crudeSwitch = 2; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
     
@@ -1253,6 +1253,7 @@ void sdcCar::Init()
     this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
     this->laneStopped = false;
     this->sensorData = manager::getSensorData(cameraId);
+
     // During init, sensors aren't available so pull position and rotation information
     // straight from the car
     math::Pose pose = this->chassis->GetWorldPose();
@@ -1285,7 +1286,10 @@ sdcCar::sdcCar(){
     this->carId = this->carIdCount;
     this->inIntersection = false;
     this->destDirection = -1;
-    
+    if (this->carId == 1){
+        printf("creating sdcManager\n");
+        sdcManager::sdcManager(0);
+    }
     //printf("sdcCar Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
     //printf("sdcCar sensorId: %i\n",this->sensorData->sensorId);
     //this->frontSensor = sdcFrontLidarSensor();

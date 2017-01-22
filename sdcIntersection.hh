@@ -5,6 +5,7 @@
 #include <iostream>
 #include <limits>
 #include "sdcWaypoint.hh"
+#include "sdcManager.hh"
 
 enum Direction {
   north,
