@@ -90,7 +90,7 @@ sdcFrontLidarSensor_EXTERNAL_OBJECTS =
 
 libsdcFrontLidarSensor.dylib: CMakeFiles/sdcFrontLidarSensor.dir/sdcFrontLidarSensor.cc.o
 libsdcFrontLidarSensor.dylib: CMakeFiles/sdcFrontLidarSensor.dir/build.make
-libsdcFrontLidarSensor.dylib: libsdcSensorData.dylib
+libsdcFrontLidarSensor.dylib: libmanager.dylib
 libsdcFrontLidarSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
 libsdcFrontLidarSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_client.dylib
 libsdcFrontLidarSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_building.dylib
@@ -132,10 +132,13 @@ libsdcFrontLidarSensor.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreMain.dylib
 libsdcFrontLidarSensor.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgreTerrain.dylib
 libsdcFrontLidarSensor.dylib: /usr/local/Cellar/ogre/1.7.4/lib/libOgrePaging.dylib
 libsdcFrontLidarSensor.dylib: /usr/local/Cellar/ignition-math2/2.5.0/lib/libignition-math2.dylib
+libsdcFrontLidarSensor.dylib: libsdcSensorData.dylib
 libsdcFrontLidarSensor.dylib: libsdcVisibleObject.dylib
 libsdcFrontLidarSensor.dylib: libsdcLidarRay.dylib
 libsdcFrontLidarSensor.dylib: libsdcLidarSensorInfo.dylib
 libsdcFrontLidarSensor.dylib: libsdcAngle.dylib
+libsdcFrontLidarSensor.dylib: libinstruction.dylib
+libsdcFrontLidarSensor.dylib: librequest.dylib
 libsdcFrontLidarSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo.dylib
 libsdcFrontLidarSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_client.dylib
 libsdcFrontLidarSensor.dylib: /usr/local/Cellar/gazebo6/6.6.0/lib/libgazebo_gui_building.dylib

@@ -34,7 +34,7 @@ namespace gazebo
         private: sensors::MultiCameraSensorPtr parentSensor;
     private: sensors::SensorPtr sensor;
         private: event::ConnectionPtr updateConnection;
-        private: sdcSensorData *sensorData;
+    private: sdcSensorData *sensorData;
     private: int cameraId;
     public: static int cameraCnt;
     private: physics::LinkPtr link;

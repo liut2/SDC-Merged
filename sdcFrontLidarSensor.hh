@@ -8,7 +8,7 @@
 #include <gazebo/common/common.hh>
 #include <stdio.h>
 #include <vector>
-
+#include "manager.hh"
 #include "sdcSensorData.hh"
 
 namespace gazebo
@@ -22,6 +22,9 @@ namespace gazebo
         private:
             sensors::RaySensorPtr parentSensor;
             event::ConnectionPtr updateConnection;
+            sensors::SensorPtr sensor;
+            sdcSensorData *sensorData;
+            int sensorId;
     };
 }
 

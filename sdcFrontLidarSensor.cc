@@ -8,7 +8,6 @@
 #include <gazebo/common/common.hh>
 #include <stdio.h>
 #include <vector>
-
 #include "sdcFrontLidarSensor.hh"
 
 using namespace gazebo;
@@ -21,9 +20,15 @@ sensors::RaySensorPtr parentSensor;
 
 ////// LIDAR ON FRONT OF CAR
 void sdcFrontLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
+    //this->lidarId = this->sensor->GetId();
+    this->sensor = _sensor;
+    printf("lidar sensor id: %i\n",this->sensor->GetId());
+    int sensorId = this->sensor->GetId();
+    
+    //printf("this camerasId: %i \n", this->cameraId);
+    this->sensorData = manager::getSensorData(sensorId);
     // Get the parent sensor.
-    this->parentSensor =
-    boost::dynamic_pointer_cast<sensors::RaySensor>(_sensor);
+    this->parentSensor = boost::dynamic_pointer_cast<sensors::RaySensor>(_sensor);
 
     // Make sure the parent sensor is valid.
     if (!this->parentSensor)
@@ -38,7 +43,7 @@ void sdcFrontLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sd
     // Make sure the parent sensor is active.
     this->parentSensor->SetActive(true);
 
-    //this->sdcSensorData.InitLidar(FRONT, this->parentSensor->AngleMin().Radian(), this->parentSensor->GetAngleResolution(), this->parentSensor->GetRangeMax(), this->parentSensor->GetRayCount());
+    this->sensorData->InitLidar(FRONT, this->parentSensor->AngleMin().Radian(), this->parentSensor->GetAngleResolution(), this->parentSensor->GetRangeMax(), this->parentSensor->GetRayCount());
 }
 
 // Called by the world update start event
@@ -47,5 +52,5 @@ void sdcFrontLidarSensor::OnUpdate(){
     for (unsigned int i = 0; i < this->parentSensor->GetRayCount(); ++i){
         rays->push_back(this->parentSensor->GetRange(i));
     }
-    //this->sdcSensorData.UpdateLidar(FRONT, rays);
+    this->sensorData->UpdateLidar(FRONT, rays);
 }

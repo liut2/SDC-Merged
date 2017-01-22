@@ -105,6 +105,8 @@ stdio.h
 -
 vector
 -
+manager.hh
+/Accounts/mawbye/Desktop/SDC-Merged/manager.hh
 sdcSensorData.hh
 /Accounts/mawbye/Desktop/SDC-Merged/sdcSensorData.hh
 

@@ -208,7 +208,7 @@ void sdcCar::MatchTargetDirection(){
         }
     }
     else if(this->currentState == laneDriving){
-        this->steeringAmount = this->sensorData->GetNewSteeringMagnitude();
+        this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
         //printf("sensorData id in car: %i\n", sensorData->sensorId);
     }
    
@@ -375,8 +375,8 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
  * as possible to the midpoint.
  */
 void sdcCar::LanedDriving() {
-    int lanePos = this->sensorData->LanePosition();
-    this->SetTurningLimit(this->sensorData->GetNewSteeringMagnitude());
+    int lanePos = this->cameraSensorData->LanePosition();
+    this->SetTurningLimit(this->cameraSensorData->GetNewSteeringMagnitude());
 
     if (!(lanePos > 320 || lanePos < -320)) {
         // It's beautiful don't question it
@@ -1258,6 +1258,9 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     this->model = _model;
     this->chassis = this->model->GetLink(_sdf->Get<std::string>("chassis"));
     this->camera = this->model->GetLink(_sdf->Get<std::string>("camera"));
+    this->frontLidar = this->model->GetLink(_sdf->Get<std::string>("frontLidar"));
+    this->frontLidarId = this->frontLidar->GetId() + 8;
+    printf("lidar Id: %i\n", this->frontLidarId);
     this->cameraId = this->camera->GetId() + 2;
     //printf("camera ID: %i\n",this->cameraId);
 
@@ -1293,7 +1296,8 @@ void sdcCar::Init()
     // Compute the angle ratio between the steering wheel and the tires
     this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
     this->laneStopped = false;
-    this->sensorData = manager::getSensorData(cameraId);
+    this->cameraSensorData = manager::getSensorData(cameraId);
+    this->lidarSensorData = manager::getSensorData(frontLidarId);
     // During init, sensors aren't available so pull position and rotation information
     // straight from the car
     math::Pose pose = this->chassis->GetWorldPose();
@@ -1338,6 +1342,8 @@ sdcCar::sdcCar(){
     this->swayForce = 10;
 
     this->maxSpeed = 10;
+    this->maxTurnLeft = 5;
+    this->maxTurnRight = 5;
     this->frontPower = 50;
     this->rearPower = 50;
     this->wheelRadius = 0.3;

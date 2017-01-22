@@ -68,7 +68,9 @@ namespace gazebo {
         // related to the car's state
         physics::LinkPtr chassis;
         physics::LinkPtr camera;
+        physics::LinkPtr frontLidar;
         int cameraId;
+        int frontLidarId;
         // The velocity of the car
         math::Vector3 velocity;
 
@@ -77,7 +79,8 @@ namespace gazebo {
         std::vector<sdcWaypoint> WAYPOINT_VEC;
         std::vector<sdcIntersection> intersections;
         //sensorData object
-        sdcSensorData *sensorData;
+        sdcSensorData *cameraSensorData;
+        sdcSensorData *lidarSensorData;
 
         //sdcFrontLidarSensor frontSensor;
 
@@ -89,6 +92,8 @@ namespace gazebo {
         // physical parameters of the vehicle
         double frontPower, rearPower;
         double maxSpeed;
+        double maxTurnLeft;
+        double maxTurnRight;
         double wheelRadius;
 
         double steeringRatio;

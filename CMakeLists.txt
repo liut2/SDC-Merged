@@ -60,7 +60,7 @@ target_link_libraries(sdcCar sdcManager manager sdcWaypoint sdcAngle  sdcSensorD
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 add_library(sdcFrontLidarSensor SHARED sdcFrontLidarSensor.cc)
-target_link_libraries(sdcFrontLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcFrontLidarSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcTopLidarSensor SHARED sdcTopLidarSensor.cc)
 target_link_libraries(sdcTopLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
