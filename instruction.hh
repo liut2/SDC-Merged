@@ -5,9 +5,14 @@
 
 class instruction{
     public: 
-        instruction(int id);
+        instruction(int id, int inputSpeed, bool inputHasReservation);
+        float getSpeed();
+    bool getHasReservation();
         int id = 0;
         void printid();
+        float speed = 0;
+        bool hasReservation = 0;
+    
     
 };
 //extern manager manager;

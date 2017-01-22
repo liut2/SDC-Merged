@@ -1,12 +1,22 @@
 #include "instruction.hh"
 
 
-instruction::instruction(int id){
-    printf("created instruction");
-    printf("%d", id);
+instruction::instruction(int id, int inputSpeed, bool inputHasReservation){
+    this->id = id;
+    this->speed = inputSpeed;
+    this->hasReservation = inputHasReservation;
+    
 }
 
 void instruction:: printid(){
     printf("id is: ");
     printf("%d", id);
+}
+
+float getSpeed() {
+    return this->speed;
+}
+
+bool getHasReservation() {
+    return this->hasReservation;
 }
