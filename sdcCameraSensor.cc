@@ -58,8 +58,8 @@ void sdcCameraSensor::Init(){
 }
 
 void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
-    
-    
+
+
     //printf("sdcCamera Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
    // printf("sdcCamera sensorId: %i\n",this->sensorData->sensorId);
     //sdcSensorData();
@@ -90,22 +90,22 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 
 
 
-    
-    
+
+
 }
 
 // Called by the world update start event
 void sdcCameraSensor::OnUpdate() {
 //    if(this->getSensor){
-//        
+//
 //        this->getSensor = false;
 //    }
 
-   
+
 	//std::cout << "onupdate camera sensor" << std::endl;
 	// Pull raw data from camera sensor object as an unsigned character array with 3 channels.
 	const unsigned char* img = this->parentSensor->GetImageData(0);
-    
+
 	Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
 
 	//Select Region of Interest (ROI) for lane detection - currently this is the bottom half of the image.
@@ -233,7 +233,7 @@ void sdcCameraSensor::OnUpdate() {
 					rightLine = l;
 				}
 			}
-	 		//line(imageROI, Point(l[0], l[1] + offset[i]*row/15), Point(l[2], l[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+	 		line(imageROI, Point(l[0], l[1] + offset[i]*row/15), Point(l[2], l[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
  		}
 
 		// edge case checking: case1: 0 or 1 line detected; case2: two lines exsist on the same side
@@ -263,7 +263,7 @@ void sdcCameraSensor::OnUpdate() {
 		Point midPoint = Point((leftEnd.x + rightEnd.x)/2, leftEnd.y);
 		Point vanishPoint = getIntersectionPoint(leftLine, rightLine);
 		if (i == 4) {
-			line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+			//line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 			// update the turn angle
 			double newAngle = getNewTurningAngle(createLine(vanishPoint.x, vanishPoint.y, midPoint.x, midPoint.y + offset[i]*row/15));
 			this->sensorData->UpdateSteeringMagnitude(newAngle);
@@ -273,8 +273,8 @@ void sdcCameraSensor::OnUpdate() {
            // printf("CamData newAngle : %f carId: %i\n", newAngle, cameraId);
 		}
 
-		line(imageROI, Point(leftLine[0], leftLine[1] + offset[i]*row/15), Point(leftLine[2], leftLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
-		line(imageROI, Point(rightLine[0], rightLine[1] + offset[i]*row/15), Point(rightLine[2], rightLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+		//line(imageROI, Point(leftLine[0], leftLine[1] + offset[i]*row/15), Point(leftLine[2], leftLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+		//line(imageROI, Point(rightLine[0], rightLine[1] + offset[i]*row/15), Point(rightLine[2], rightLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 
 	}
 
