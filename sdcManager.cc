@@ -8,8 +8,10 @@ bool sdcManager::eStop = 0;
 bool sdcManager::sStop = 0;
 bool sdcManager::wStop = 0;
 int sdcManager::gridSize = 10;
+float sdcManager::maxTurnLeft = 6;
+float sdcManager::maxTurnRight = 4;
 std::vector<int> sdcManager::carList = std::vector<int>();
-std::vector<std::vector<int>> sdcManager::grid = std::vector<std::vector<int>>();
+std::vector<std::vector<float>> sdcManager::grid = std::vector<std::vector<float>>();
 std::vector<int> sdcManager::carNorthQueue = std::vector<int>();
 std::vector<int> sdcManager::carEastQueue = std::vector<int>();
 std::vector<int> sdcManager::carSouthQueue = std::vector<int>();
@@ -21,9 +23,9 @@ sdcManager::sdcManager(int id){
     printf("created manager\n");
     printf("%d\n", id);
     sdcManager::makeGrid();
-    sdcManager::setGrid(1, 2, 3);
-    printf("Spot 2,3: %i\n", sdcManager::getGrid(2,3));
-    printf("Spot 3,3: %i\n", sdcManager::getGrid(3,3));
+    //sdcManager::setGrid(1, 2, 3);
+    //printf("Spot 2,3: %i\n", sdcManager::getGrid(2,3));
+    //printf("Spot 3,3: %i\n", sdcManager::getGrid(3,3));
 }
 
 void sdcManager:: printid(){
@@ -32,8 +34,8 @@ void sdcManager:: printid(){
 }
 
 void sdcManager::makeGrid(){
-    std::vector<int> columns = std::vector<int>(gridSize, 0);
-    grid = std::vector<std::vector<int>> (gridSize, columns);
+    std::vector<float> columns = std::vector<float>(gridSize, 0);
+    grid = std::vector<std::vector<float>> (gridSize, columns);
     //    for(int x = 0; x < gridSize; x++) {
     //        for (int y = 0; y < gridSize; y++) {
     //            setGrid(0, x, y);
@@ -41,7 +43,7 @@ void sdcManager::makeGrid(){
     //    }
 }
 
-void sdcManager::setGrid(int filled, int x, int y){
+void sdcManager::setGrid(float filled, int x, int y){
     //std::vector<std::vector<int>> grid (
     //std::vector<int> temp = std::vector<int>();
     //temp.at(x) = filled;
@@ -49,8 +51,8 @@ void sdcManager::setGrid(int filled, int x, int y){
     grid[x][y] = filled;
 }
 
-bool sdcManager::getGrid(int x, int y){
-    printf("in get grid\n");
+float sdcManager::getGrid(int x, int y){
+    //printf("in get grid\n");
     return grid[x][y];
 }
 
@@ -63,7 +65,7 @@ void sdcManager::registerCar(int carId, int turning, int direction) {
     carList.push_back(carId);
     printf("registered car Id is: %i\n", carId);
     fflush(stdout);
-    
+
 }
 void sdcManager::laneStopRequest(int fromDir){
     switch (fromDir) {
@@ -88,15 +90,93 @@ void sdcManager::laneStopRequest(int fromDir){
 
 instruction sdcManager::reservationRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir){
     //10 is the normal car max speed
-    return instruction::instruction(carId, 10, 1);
-    
+    printf("start of request carId: %d\n", fromDir);
+    clock_t tm = clock();
+    bool reserved = true;
+    if(turning == 0){
+      float timeWillTake = 0;
+      float timeWillLeave = 0;
+      float distance = 0;
+      if (fromDir == 0 || fromDir == 2) { //travelling y bound
+        int xIndex = static_cast<int>(x-46);
+        printf("carId is y bound: %d\n", carId);
+        for (int yIndex = 0; yIndex < gridSize; yIndex++) {
+          distance = std::abs(yIndex + 45 - x);
+          timeWillTake = tm + ((float)distance - 20.0) / speed;
+          timeWillLeave = tm + ((float)distance + 20.0) / speed;
+          printf("car old and reach diff: %f, %f\n", sdcManager::getGrid(xIndex, yIndex), timeWillTake);
+          for (int xWidth = 0; xWidth < 3; xWidth ++) { //xWidth is width buffer
+            if (timeWillTake < sdcManager::getGrid(xIndex + xWidth, yIndex) || !reserved) {
+              reserved = false;
+              printf("car rrejected: %d\n", carId);
+              return instruction::instruction(carId, .2*speed, 0);
+            }
+          }
+        }
+        if (reserved) {
+          for (int yIndex = 0; yIndex < gridSize; yIndex++) {
+            distance = std::abs(yIndex + 45 - x);
+            timeWillTake = tm + (distance - 2) / speed;
+            timeWillLeave = tm + (distance + 2) / speed;
+            for (int xWidth = 0; xWidth < 3; xWidth ++) { //xWidth is width buffer
+                sdcManager::setGrid(timeWillLeave, xIndex + xWidth, yIndex);
+            }
+          }
+          printf("carId got reserved: %d\n", carId);
+          return instruction::instruction(carId, speed, 1);
+        }
+      }
+      else if (fromDir == 1 || fromDir == 3) { //travelling x bound
+        printf("carId is x bound: %d\n", carId);
+        int yIndex = static_cast<int>(y-46);
+        for (int xIndex = 0; xIndex < gridSize; xIndex++) {
+          distance = std::abs(xIndex + 45 - x);
+          timeWillTake = 10*tm + ((float)distance - 20.0) / speed;
+          timeWillLeave = 10*tm + ((float)distance + 20.0) / speed;
+          printf("car old leave diff: %f, %f\n", sdcManager::getGrid(xIndex, yIndex), timeWillTake);
+          for (int yWidth = 0; yWidth < 3; yWidth ++) { //xWidth is width buffer
+            if (timeWillTake < sdcManager::getGrid(xIndex, yIndex + yWidth) || !reserved) {
+              reserved = false;
+              printf("car rrejected: %d\n", carId);
+              return instruction::instruction(carId, 0, 0);
+            }
+          }
+        }
+        if (reserved) {
+          for (int xIndex = 0; xIndex < gridSize; xIndex++) {
+            distance = std::abs(xIndex + 45 - x);
+            timeWillTake = tm + (distance - 2) / speed;
+            timeWillLeave = tm + (distance + 2) / speed;
+            for (int yWidth = 0; yWidth < 3; yWidth ++) {
+                sdcManager::setGrid(timeWillLeave, xIndex, yIndex + yWidth);
+            }
+          }
+          printf("carId got reserved: %d\n", carId);
+          return instruction::instruction(carId, speed, 1);
+        }
+      }
+      return instruction::instruction(carId, 0, 0);
+    }
+    //left?
+    else if (turning == 1){
+      printf("maxTurnLeft: %f\n", sdcManager::maxTurnLeft);
+        return instruction::instruction(carId, sdcManager::maxTurnLeft, 1);
+    }
+    else if (turning == 2){
+        return instruction::instruction(carId, sdcManager::maxTurnRight, 1);
+    }
+    else{
+      return instruction::instruction(carId, speed*.9, 0);
+    }
+
+
 }
 
 bool sdcManager::stopSignHandleRequest(int carId, int turning, int direction, int fromDir) {
     //    printf("carAmt: %i\n", carAmt);
     //    printf("turning: %i\n", turning);
     fflush(stdout);
-    
+
     if (carAmt == 0) { //no car at intersection
         registerCar(carId, turning, direction);
         carNorthQueue.erase(std::remove(carNorthQueue.begin(), carNorthQueue.end(), carId), carNorthQueue.end());
@@ -110,7 +190,7 @@ bool sdcManager::stopSignHandleRequest(int carId, int turning, int direction, in
             case 0 :
                 if (turning == 0 && (direction + 2)%4 == currentDir) {
                     registerCar(carId, turning, direction);
-                    
+
                     //removing from all queues even though it will only happen in 1 for shorter code
                     carNorthQueue.erase(std::remove(carNorthQueue.begin(), carNorthQueue.end(), carId), carNorthQueue.end());
                     carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
@@ -130,8 +210,8 @@ bool sdcManager::stopSignHandleRequest(int carId, int turning, int direction, in
                 else{
                     return false;
                 }
-                
-                
+
+
                 //car in intersection is going left
             case 1:
                 return false;
@@ -160,10 +240,10 @@ bool sdcManager::stopSignHandleRequest(int carId, int turning, int direction, in
                 }
             case 3:
                 return false;
-                
+
         }
     }
-    
+
     else { //more than 1 car
         return false;
     }
@@ -174,7 +254,7 @@ bool sdcManager::stopSignHandleRequest(int carId, int turning, int direction, in
  destdirection = 0
  if(!nextcar turn left && ! nextcar straight north):
  give reservation
- 
+
  straight case:
  destdirection = 0
  if(nextcar straight 2 || nextcar right east || nextcar right south
@@ -200,7 +280,7 @@ bool sdcManager::stopSignQueue(int carId, int fromDir) {
             break;
     }
     return false;
-    
+
 }
 bool sdcManager::shouldStop(int carId, int fromDir) {
     switch (fromDir) {
@@ -217,7 +297,7 @@ bool sdcManager::shouldStop(int carId, int fromDir) {
             else{
                 return false;
             }
-            
+
             break;
         case 1:
             if(carEastQueue.size() > 1){
@@ -233,7 +313,7 @@ bool sdcManager::shouldStop(int carId, int fromDir) {
             else{
                 return false;
             }
-            
+
             break;
         case 2:
             if(carSouthQueue.size() > 1){
@@ -248,7 +328,7 @@ bool sdcManager::shouldStop(int carId, int fromDir) {
             else{
                 return false;
             }
-            
+
             break;
         case 3:
             if(carWestQueue.size() > 1){
@@ -263,12 +343,12 @@ bool sdcManager::shouldStop(int carId, int fromDir) {
             else{
                 return false;
             }
-            
+
             break;
-            
+
     }
     return false;
-    
+
 }
 void sdcManager::stopSignCarLeft(int carId) {
     carList.erase(std::remove(carList.begin(), carList.end(), carId), carList.end());
@@ -278,7 +358,7 @@ void sdcManager::stopSignCarLeft(int carId) {
 gazebo::sdcSensorData *sdcManager::getSensorData(int cameraId) {
     //HOW TO FIX: USE A MAP OF sdcSensorDatas WHERE THE KEY IS THE cameraId
     // If its not in the map then make a new sensor data. Otherwise return it.
-    
+
     if (sensorManager.count(cameraId) > 0){
         return &sensorManager[cameraId];
     }
@@ -288,21 +368,21 @@ gazebo::sdcSensorData *sdcManager::getSensorData(int cameraId) {
         printf("cameraId in manager: %i\n\n",cameraId);
         return &sensorManager[cameraId];
     }
-    
-    
+
+
     /*
-     
+
      // printf("in manager\n");
      //printf("car id: %i\n", carId);
      fflush(stdout);
-     
+
      //printf("sensorList size is: %lu while car id is: %d\n",sensorDataList.size(), carId);
      if (sensorDataList.size() < cameraId) {
      //  printf("in manager and creating sensordata\n");
      gazebo::sdcSensorData temp = gazebo::sdcSensorData(cameraId);
      //temp.UpdateSteeringMagnitude(0);
      sensorDataList.push_back(temp);
-     
+
      }
      //printf("car Id: %i", carId);
      //printf("sensorId is: %d\n",sensorDataList.at(carId-1)->sensorId);

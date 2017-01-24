@@ -330,7 +330,7 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
     if(progress < WAYPOINT_VEC.size()){
         // Pull the next waypoint and set the car to drive towards it
         //printf("waypointvec.size: %i", WAYPOINT_VEC.size());
-        this->Accelerate();
+        //this->Accelerate();
 
         // Check if the car is close enough to the target to move on
         double distance = sqrt(pow(WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(WAYPOINT_VEC[progress].pos.second - this->y,2));
@@ -420,10 +420,14 @@ void sdcCar::GridTurning(int turn){
 
         }
         else{
-            if (distance < 15){
+            if (distance < 25){
                 if(!WAYPOINT_VEC[progress].hasReservation){
                     auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-                    this->targetSpeed = instruction.getSpeed();
+                    this->SetTargetSpeed(instruction.getSpeed());
+                    printf("reservation target speed: %f\n", this->targetSpeed);
+                    while(!instruction.getHasReservation()) {
+                      instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
+                    }
                     if (instruction.getHasReservation() == 1){
                         WAYPOINT_VEC[progress].hasReservation = true;
                         //printf("straight got reservation\n");
@@ -475,12 +479,18 @@ void sdcCar::GridTurning(int turn){
             if(margin < .1 && margin > -.1){
                 this->turning = false;
                 this->waypointProgress++;
+                this->targetSpeed = this->maxCarSpeed;
             }
         }
-        if (distance < 15){
+        if (distance < 25){
             if(!WAYPOINT_VEC[progress].hasReservation){
                 auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-                this->targetSpeed = instruction.getSpeed();
+                this->SetTargetSpeed(instruction.getSpeed());
+                printf("current speed: %f\n", this->GetSpeed());
+                printf("reservation target speed: %f\n", this->targetSpeed);
+                while(!instruction.getHasReservation()) {
+                  instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
+                }
                 if (instruction.getHasReservation() == 1){
                     WAYPOINT_VEC[progress].hasReservation = true;
                     printf("turning got reservation");
@@ -541,7 +551,7 @@ void sdcCar::initializeGraph() {
     destIntersection.place = 0;
     sdcIntersection centerIntersection;
     centerIntersection.place = 1;
-    int turnType = genRand(2); //returns if the car goes straight (0) left (1) or right (2)
+    int turnType = 0;//genRand(2); //returns if the car goes straight (0) left (1) or right (2)
     printf("turnType: %i carId: %i\n", turnType, this->carId);
     fflush(stdout);
 
@@ -637,7 +647,7 @@ void sdcCar::initializeGraph() {
 void sdcCar::insertWaypointTypes(Direction startDir) {
     Direction curDir = startDir;
     int nextDir = intersections[1].waypoint.waypointType;
-    printf("nextDir: %i", nextDir);
+    printf("nextDir: %i\n", nextDir);
     int current = 1;
     int next = 0;
   // get the direction the car heads in from the current intersection to
@@ -1038,8 +1048,13 @@ void sdcCar::OnUpdate()
     //        this->getSensor = false;
     //    }
     //this->sensorData = sdcManager::getSensorData(carId);
+    // if(this->carId == 1){
+    //     printf("current target speed: %f\n", this->targetSpeed);
+    // }
+
+
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 1; //in merged world use 0
+    int crudeSwitch = 2; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
 
@@ -1166,11 +1181,11 @@ void sdcCar::OnUpdate()
      */
 
     // Call our Drive function, which is the brain for the car
-    if(this->carId == 1){
-        this->Drive();
+    if(1){
+       this->Drive();
     }
     else{
-        this->Stop();
+      this->Stop();
     }
 
     //printf("after drive\n");
@@ -1324,13 +1339,14 @@ void sdcCar::Init()
  * when the car is updating
  */
 sdcCar::sdcCar(){
-
+    if (this->carIdCount == 0) {
+      sdcManager::sdcManager(0);
+    }
     //sdcManager::registerCar(carId++);
     this->carIdCount ++;
     this->carId = this->carIdCount;
     this->inIntersection = false;
     this->destDirection = -1;
-
     //printf("sdcCar Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
     //printf("sdcCar sensorId: %i\n",this->sensorData->sensorId);
     //this->frontSensor = sdcFrontLidarSensor();
@@ -1369,7 +1385,7 @@ sdcCar::sdcCar(){
     this->currentAvoidanceState = notAvoiding;
 
     // Set starting speed parameters
-    this->targetSpeed = 6;
+    this->targetSpeed = this->maxCarSpeed;
 
     // Set starting turning parameters
     this->steeringAmount = 0.0;

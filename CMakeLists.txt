@@ -7,8 +7,8 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 
 include_directories(FADBAD++)
 
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
+#find_package(OpenCV REQUIRED)
+#include_directories(${OpenCV_INCLUDE_DIRS})
 # link_directories(${OpenCV_LIBS}) Spits out error messages, and also doesn't seem necessary to work
 
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
@@ -74,5 +74,5 @@ target_link_libraries(sdcBackLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boo
 add_library(sdcGpsSensor SHARED sdcGpsSensor.cc)
 target_link_libraries(sdcGpsSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
-add_library(sdcCameraSensor SHARED sdcCameraSensor.cc)
-target_link_libraries(sdcCameraSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+#add_library(sdcCameraSensor SHARED sdcCameraSensor.cc)
+#target_link_libraries(sdcCameraSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})

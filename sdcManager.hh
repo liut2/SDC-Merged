@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <vector>
+#include <time.h>
 #include "request.hh"
 #include "instruction.hh"
 #include "sdcSensorData.hh"
@@ -20,12 +21,12 @@ public:
     void printid();
     static void registerCar(int carId, int turning, int direction);
     static void laneStopRequest(int fromDir);
-    
+
     //reservation
     void makeGrid();
-    void setGrid(int filled, int x, int y);
-    bool getGrid(int x, int y);
-    
+    static void setGrid(float filled, int x, int y);
+    static float getGrid(int x, int y);
+
     static instruction reservationRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
     static bool stopSignHandleRequest(int carId, int turning, int direction, int fromDir);
     static void stopSignCarLeft(int carId);
@@ -35,11 +36,15 @@ public:
 private:
     static int carAmt;
     static std::vector<int> carList;
-    static std::vector<std::vector<int>> grid;
-    
-    
-    
-    
+    static std::vector<std::vector<float>> grid;
+    static float maxTurnLeft;
+    static float maxTurnRight;
+
+
+
+
+
+
     static std::vector<int> carNorthQueue;
     static std::vector<int> carEastQueue;
     static std::vector<int> carSouthQueue;
@@ -53,7 +58,7 @@ private:
     static bool sStop;
     static bool wStop;
     static int gridSize;
-    
-    
+
+
 };
 #endif
