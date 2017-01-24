@@ -6,19 +6,19 @@
 
 #IncludeRegexTransform: 
 
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcAngle.hh
+/Accounts/liut2/Desktop/SDC-Merged/sdcAngle.hh
 math.h
 -
 iostream
 -
 
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcLidarSensorInfo.cc
+/Accounts/liut2/Desktop/SDC-Merged/sdcLidarSensorInfo.cc
 stdio.h
 -
 sdcLidarSensorInfo.hh
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcLidarSensorInfo.hh
+/Accounts/liut2/Desktop/SDC-Merged/sdcLidarSensorInfo.hh
 
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcLidarSensorInfo.hh
+/Accounts/liut2/Desktop/SDC-Merged/sdcLidarSensorInfo.hh
 sdcAngle.hh
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcAngle.hh
+/Accounts/liut2/Desktop/SDC-Merged/sdcAngle.hh
 
