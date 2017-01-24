@@ -22,9 +22,15 @@
 #include "fadiff.h"
 #include <math.h>
 
+//HyperLOBF
+//#include "alglib/src/interpolation.cpp"
+#include "alglib/src/interpolation.h"
+#include "alglib/src/stdafx.h"
+
 using namespace fadbad;
 using namespace gazebo;
 using namespace cv;
+using namespace alglib;
 
 // Register this plugin with the simulator
 GZ_REGISTER_SENSOR_PLUGIN(sdcCameraSensor)
@@ -58,8 +64,8 @@ void sdcCameraSensor::Init(){
 }
 
 void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
-    
-    
+
+
     //printf("sdcCamera Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
    // printf("sdcCamera sensorId: %i\n",this->sensorData->sensorId);
     //sdcSensorData();
@@ -90,22 +96,22 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 
 
 
-    
-    
+
+
 }
 
 // Called by the world update start event
 void sdcCameraSensor::OnUpdate() {
 //    if(this->getSensor){
-//        
+//
 //        this->getSensor = false;
 //    }
 
-   
+
 	//std::cout << "onupdate camera sensor" << std::endl;
 	// Pull raw data from camera sensor object as an unsigned character array with 3 channels.
 	const unsigned char* img = this->parentSensor->GetImageData(0);
-    
+
 	Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
 
 	//Select Region of Interest (ROI) for lane detection - currently this is the bottom half of the image.
@@ -193,6 +199,11 @@ void sdcCameraSensor::OnUpdate() {
 	Vec4i previousRightLine = tempPreviousRightLine;
 
 
+	//HyperLOBF Stuff
+	cv::vector<cv::Point> leftPointList;
+	cv::vector<cv::Point> rightPointList;
+
+
 	for(size_t i = 0; i < 5; i++) {
 		Rect section;
 		section = sections[i];
@@ -273,10 +284,73 @@ void sdcCameraSensor::OnUpdate() {
            // printf("CamData newAngle : %f carId: %i\n", newAngle, cameraId);
 		}
 
+
+		//HyperLOBF Stuff (alglib)
+		leftPointList.push_back(leftEnd);
+		rightPointList.push_back(rightEnd);
+
+
+
+
 		line(imageROI, Point(leftLine[0], leftLine[1] + offset[i]*row/15), Point(leftLine[2], leftLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 		line(imageROI, Point(rightLine[0], rightLine[1] + offset[i]*row/15), Point(rightLine[2], rightLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 
 	}
+
+
+	//HyperLOBF Stuff (alglib)
+	int leftXPointArray[5];
+	int leftYPointArray[5];
+  int rightXPointArray[5];
+	int rightYPointArray[5];
+	char* lx;
+	char* ly;
+	char* rx;
+	char* ry;
+
+	int InfoVar;
+	//alglib_impl::_barycentricinterpolant_init p;
+	//alglib_impl::_polynomialfitreport_init rep;
+	//polynomialfitreport& rep;
+	barycentricinterpolant p;
+	polynomialfitreport rep;
+
+	for(int z=0; z<5; z++){
+
+		const char* lxx = std::to_string(leftPointList[z].x).c_str();
+		char* lxxx;
+		strcpy(lxxx, lxx);
+		lx = strcat(lx,lxxx);
+		lx = strcat(lx," ");
+
+		const char* lyy = std::to_string(leftPointList[z].y).c_str();
+		char* lyyy;
+		strcpy(lyyy, lyy);
+		ly = strcat(ly,lyyy);
+		ly = strcat(ly," ");
+
+		const char* rxx = std::to_string(rightPointList[z].x).c_str();
+		char* rxxx;
+		strcpy(rxxx, rxx);
+		rx = strcat(rx,rxxx);
+		rx = strcat(rx," ");
+
+		const char* ryy = std::to_string(rightPointList[z].y).c_str();
+		char* ryyy;
+		strcpy(ryyy, ryy);
+		ry = strcat(ry,ryyy);
+		ry = strcat(ry," ");
+
+	}
+
+	real_1d_array leftX = lx;
+	real_1d_array leftY = ly;
+	real_1d_array rightX = rx;
+	real_1d_array rightY = ry;
+
+	alglib::polynomialfit(leftXPointArray, leftYPointArray, 5, 3, InfoVar, p, rep);
+
+
 
 	// Display results to GUI
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
