@@ -58,7 +58,7 @@ bool isEqual(const cv::Vec4i& _l1, const cv::Vec4i& _l2) {
 	 float product = (l1[2] - l1[0])*(l2[2] - l2[0]) + (l1[3] - l1[1])*(l2[3] - l2[1]);
 
 	 // test if the slope differs too much
-	 /*
+
 	 if (fabs(product / (length1 * length2)) < cos(CV_PI / 30))
 			 return false;
 
@@ -72,8 +72,8 @@ bool isEqual(const cv::Vec4i& _l1, const cv::Vec4i& _l2) {
 	 // test if two lines are too far away from each other
 	 if (dist > std::max(length1, length2) * 0.5f)
 			 return false;
-	*/
-	 return false;
+
+	 return true;
 }
 
 sdcCameraSensor::sdcCameraSensor(){
@@ -286,6 +286,7 @@ void sdcCameraSensor::OnUpdate() {
 		Point midPoint = Point((leftEnd.x + rightEnd.x)/2, leftEnd.y);
 		Point vanishPoint = getIntersectionPoint(leftLine, rightLine);
 		*/
+		// we should use section 2,3,4, which are indexed at 1,2,3
 		if (i == 1) {
 			//line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 			// update the turn angle
