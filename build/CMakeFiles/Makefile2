@@ -63,14 +63,14 @@ CMAKE_BINARY_DIR = /Accounts/liut2/Desktop/SDC-Merged/build
 # Target rules for target CMakeFiles/sdcCameraSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
+CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/request.dir/all
+CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/manager.dir/all
-CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/request.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/instruction.dir/all
 CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
-CMakeFiles/sdcCameraSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 	$(MAKE) -f CMakeFiles/sdcCameraSensor.dir/build.make CMakeFiles/sdcCameraSensor.dir/depend
 	$(MAKE) -f CMakeFiles/sdcCameraSensor.dir/build.make CMakeFiles/sdcCameraSensor.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=13,14 "Built target sdcCameraSensor"
@@ -107,17 +107,17 @@ clean: CMakeFiles/sdcCameraSensor.dir/clean
 # Target rules for target CMakeFiles/sdcCar.dir
 
 # All Build rule for target.
+CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcIntersection.dir/all
+CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcWaypoint.dir/all
+CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcVisibleObject.dir/all
+CMakeFiles/sdcCar.dir/all: CMakeFiles/request.dir/all
+CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/manager.dir/all
-CMakeFiles/sdcCar.dir/all: CMakeFiles/request.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcManager.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/instruction.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcWaypoint.dir/all
-CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcSensorData.dir/all
-CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcVisibleObject.dir/all
-CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcIntersection.dir/all
 	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/depend
 	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=15,16 "Built target sdcCar"
@@ -191,11 +191,11 @@ clean: CMakeFiles/sdcWaypoint.dir/clean
 # Target rules for target CMakeFiles/sdcSideLidarSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
+CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
-CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 	$(MAKE) -f CMakeFiles/sdcSideLidarSensor.dir/build.make CMakeFiles/sdcSideLidarSensor.dir/depend
 	$(MAKE) -f CMakeFiles/sdcSideLidarSensor.dir/build.make CMakeFiles/sdcSideLidarSensor.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=33,34 "Built target sdcSideLidarSensor"
@@ -232,14 +232,14 @@ clean: CMakeFiles/sdcSideLidarSensor.dir/clean
 # Target rules for target CMakeFiles/sdcFrontLidarSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
+CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/request.dir/all
+CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/manager.dir/all
-CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/request.dir/all
 CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/instruction.dir/all
 CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
-CMakeFiles/sdcFrontLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 	$(MAKE) -f CMakeFiles/sdcFrontLidarSensor.dir/build.make CMakeFiles/sdcFrontLidarSensor.dir/depend
 	$(MAKE) -f CMakeFiles/sdcFrontLidarSensor.dir/build.make CMakeFiles/sdcFrontLidarSensor.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=19,20 "Built target sdcFrontLidarSensor"
@@ -276,10 +276,10 @@ clean: CMakeFiles/sdcFrontLidarSensor.dir/clean
 # Target rules for target CMakeFiles/sdcSensorData.dir
 
 # All Build rule for target.
+CMakeFiles/sdcSensorData.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/sdcSensorData.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcSensorData.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcSensorData.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/sdcSensorData.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 	$(MAKE) -f CMakeFiles/sdcSensorData.dir/build.make CMakeFiles/sdcSensorData.dir/depend
 	$(MAKE) -f CMakeFiles/sdcSensorData.dir/build.make CMakeFiles/sdcSensorData.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=31,32 "Built target sdcSensorData"
@@ -316,11 +316,11 @@ clean: CMakeFiles/sdcSensorData.dir/clean
 # Target rules for target CMakeFiles/sdcGpsSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
+CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
-CMakeFiles/sdcGpsSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/depend
 	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=21,22 "Built target sdcGpsSensor"
@@ -432,14 +432,14 @@ clean: CMakeFiles/sdcFlyingBox.dir/clean
 # Target rules for target CMakeFiles/sdcIntersection.dir
 
 # All Build rule for target.
-CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcAngle.dir/all
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/sdcIntersection.dir/all: CMakeFiles/request.dir/all
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcSensorData.dir/all
+CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcManager.dir/all
 CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcIntersection.dir/all: CMakeFiles/instruction.dir/all
 CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcSensorData.dir/all
-CMakeFiles/sdcIntersection.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 	$(MAKE) -f CMakeFiles/sdcIntersection.dir/build.make CMakeFiles/sdcIntersection.dir/depend
 	$(MAKE) -f CMakeFiles/sdcIntersection.dir/build.make CMakeFiles/sdcIntersection.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=23,24 "Built target sdcIntersection"
@@ -476,11 +476,11 @@ clean: CMakeFiles/sdcIntersection.dir/clean
 # Target rules for target CMakeFiles/sdcBackLidarSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
+CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
-CMakeFiles/sdcBackLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 	$(MAKE) -f CMakeFiles/sdcBackLidarSensor.dir/build.make CMakeFiles/sdcBackLidarSensor.dir/depend
 	$(MAKE) -f CMakeFiles/sdcBackLidarSensor.dir/build.make CMakeFiles/sdcBackLidarSensor.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=9,10 "Built target sdcBackLidarSensor"
@@ -517,11 +517,11 @@ clean: CMakeFiles/sdcBackLidarSensor.dir/clean
 # Target rules for target CMakeFiles/sdcTopLidarSensor.dir
 
 # All Build rule for target.
+CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
+CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
-CMakeFiles/sdcTopLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 	$(MAKE) -f CMakeFiles/sdcTopLidarSensor.dir/build.make CMakeFiles/sdcTopLidarSensor.dir/depend
 	$(MAKE) -f CMakeFiles/sdcTopLidarSensor.dir/build.make CMakeFiles/sdcTopLidarSensor.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=35,36 "Built target sdcTopLidarSensor"
@@ -632,13 +632,13 @@ clean: CMakeFiles/sdcAngle.dir/clean
 # Target rules for target CMakeFiles/manager.dir
 
 # All Build rule for target.
-CMakeFiles/manager.dir/all: CMakeFiles/sdcAngle.dir/all
+CMakeFiles/manager.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/manager.dir/all: CMakeFiles/request.dir/all
+CMakeFiles/manager.dir/all: CMakeFiles/sdcSensorData.dir/all
+CMakeFiles/manager.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/manager.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/manager.dir/all: CMakeFiles/instruction.dir/all
 CMakeFiles/manager.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/manager.dir/all: CMakeFiles/sdcSensorData.dir/all
-CMakeFiles/manager.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 	$(MAKE) -f CMakeFiles/manager.dir/build.make CMakeFiles/manager.dir/depend
 	$(MAKE) -f CMakeFiles/manager.dir/build.make CMakeFiles/manager.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=3,4 "Built target manager"
@@ -712,13 +712,13 @@ clean: CMakeFiles/sdcBox.dir/clean
 # Target rules for target CMakeFiles/sdcManager.dir
 
 # All Build rule for target.
-CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcAngle.dir/all
+CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/request.dir/all
+CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcSensorData.dir/all
+CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcAngle.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/instruction.dir/all
 CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcLidarRay.dir/all
-CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcSensorData.dir/all
-CMakeFiles/sdcManager.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/depend
 	$(MAKE) -f CMakeFiles/sdcManager.dir/build.make CMakeFiles/sdcManager.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles --progress-num=29,30 "Built target sdcManager"
