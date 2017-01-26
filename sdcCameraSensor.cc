@@ -21,10 +21,15 @@
 #include "sdcCameraSensor.hh"
 #include "fadiff.h"
 #include <math.h>
+#include "linear.h"
+#include <iomanip>
+#include <map>
+#include <limits>
 
 using namespace fadbad;
 using namespace gazebo;
 using namespace cv;
+using namespace std;
 
 // Register this plugin with the simulator
 GZ_REGISTER_SENSOR_PLUGIN(sdcCameraSensor)
@@ -40,6 +45,7 @@ String cascade_file_path = "OpenCV/haarcascade_stop.xml";
 // some constants
 double MidPointHeight[5] = {0.5,2.0,4.5,8.0,12.5};
 int sdcCameraSensor::cameraCnt = 0;
+const int infinityInt = std::numeric_limits<int>::max();
 //FADBAD-wrapped forward differentiation for gradient calculations
 F<double> delG(const F<double>& x, const F<double>& y) {
 	F<double> dG = sqrt(pow(x,2)+pow(y,2));
@@ -74,6 +80,40 @@ bool isEqual(const cv::Vec4i& _l1, const cv::Vec4i& _l2) {
 			 return false;
 
 	 return true;
+}
+
+// convert resizable vector to non-resizable array
+double *convertVectorToArray(vector<double> vec) {
+	int size = vec.size();
+	double *arr = new double[size];
+	for (int i = 0; i < size; i++) {
+		arr[i] = vec.at(i);
+	}
+	return arr;
+}
+
+// calculate line segment with slope and intercept, cut by horizon lines
+// we need to catch the case when the slope is 0
+int *getLineSegment(double slope, double intercept, double upperY, double lowerY) {
+
+	int *quad = new int[4];
+	if (slope == 0) {
+		quad[0] = infinityInt;
+		quad[1] = infinityInt;
+		quad[2] = infinityInt;
+		quad[3] = infinityInt;
+	} else {
+		quad[0] = (int)((upperY - intercept)/(slope*1.0) + 0.5);
+		quad[1] = (int)(upperY + 0.5);
+		quad[2] = (int)((lowerY - intercept)/(slope*1.0));
+		quad[3] = (int)(lowerY);
+	}
+	//printf("The new line segment is %d %d %d %d\n", segment[0], segment[1], segment[2], segment[3]);
+	return quad;
+}
+
+double getIntercept(cv::Vec4i l, double slope) {
+	return l[1] - slope*l[0];
 }
 
 sdcCameraSensor::sdcCameraSensor(){
@@ -287,7 +327,7 @@ void sdcCameraSensor::OnUpdate() {
 		Point vanishPoint = getIntersectionPoint(leftLine, rightLine);
 		*/
 		// we should use section 2,3,4, which are indexed at 1,2,3
-		if (i == 1) {
+		if (i == 3) {
 			//line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 			// update the turn angle
 			//double newAngle = getNewTurningAngle(createLine(vanishPoint.x, vanishPoint.y, midPoint.x, midPoint.y + offset[i]*row/15));
@@ -299,16 +339,82 @@ void sdcCameraSensor::OnUpdate() {
 
 			// START OF THE NEW CHEVP algorithm
 			// apply partition fuction to clusterize lines of the same one
+			/*
 			for(size_t j = 0; j < lines.size(); j++)
 			{
 				Vec4i l = lines[j];
-				line(imageROI, Point(l[0], l[1] + offset[i]*row/15), Point(l[2], l[3] + offset[i]*row/15), Scalar(colors[j % 5][0],colors[j % 5][1],colors[j % 5][2]), 3, CV_AA);
+				line(imageROI, Point(l[0], l[1] + offset[i]*row/15), Point(l[2], l[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 			}
+			*/
 			std::vector<int> labels;
-			int numberOfLines = cv::partition(lines, labels, isEqual);
-			printf("The number of lines is %d\n", lines.size());
+			int numberOfClusters = cv::partition(lines, labels, isEqual);
+			/* merge close lines detected by partition function */
+			// first pass to store close lines into a map
+			map<int, vector<double>> xMap;
+			map<int, vector<double>> yMap;
+			for(size_t j = 0; j < lines.size(); j++)
+			{
+				int clusterNumber = labels[j];
+				Vec4i curLine = lines[j];
+				double curSlope = getSlope(curLine);
+				double curIntercept = getIntercept(curLine, curSlope);
+				//line(imageROI, Point(curLine[0], curLine[1] + offset[i]*row/15), Point(curLine[2], curLine[3] + offset[i]*row/15), Scalar(colors[clusterNumber][0],colors[clusterNumber][1],colors[clusterNumber][2]), 3, CV_AA);
+				//printf("The slope and intercept in original line is %f and %f\n", oriSlope, getIntercept(curLine, oriSlope));
+				printf("the original coordinate is %d %d %d %d\n", curLine[0], curLine[1], curLine[2], curLine[3]);
+				if (!xMap.count(clusterNumber)) {
+					//printf("Enter the map!\n");
+					vector<double> xVector;
+					vector<double> yVector;
+					xMap[clusterNumber] = xVector;
+					yMap[clusterNumber] = yVector;
+				}
+				for (int t = curLine[0]; t <= curLine[2]; t++) {
+					xMap[clusterNumber].push_back(t);
+					yMap[clusterNumber].push_back(t*curSlope + curIntercept);
+					//xMap[clusterNumber].push_back(curLine[2]);
+					//yMap[clusterNumber].push_back(curLine[3]);
+				}
+			}
+			// second pass to merge the lines by clusterNumber
+			std::vector<Vec4i> mergedLines;
+			for (size_t j = 0; j < numberOfClusters; j++) {
+				Maths::Regression::Linear A(xMap[j].size(), convertVectorToArray(xMap[j]), convertVectorToArray(yMap[j]));
+				double slope = A.getSlope();
+				double intercept = A.getIntercept();
+
+				Vec4i segment;
+				int *segmentArr = getLineSegment(slope, intercept, 0, horizons[i]*row/15 - horizons[i-1]*row/15);
+				segment[0] = segmentArr[0];
+				segment[1] = segmentArr[1];
+				segment[2] = segmentArr[2];
+				segment[3] = segmentArr[3];
+				printf("the merged coordinate is %d %d %d %d\n", segment[0], segment[1], segment[2], segment[3]);
+				mergedLines.push_back(segment);
+				//printf("The slope and intercept in merged line %d is %f and %f\n", j, slope, intercept);
+
+				/*
+				if (segment[0] != infinityInt) {
+					line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[j % 5][0],colors[j % 5][1],colors[j % 5][2]), 3, CV_AA);
+				}
+				*/
+			}
+			if (mergedLines.size() == 2) {
+					Vec4i l1 = mergedLines.at(0);
+					Vec4i l2 = mergedLines.at(1);
+					Point vanishPoint = getIntersectionPoint(l1, l2);
+					Point midPoint = Point((l1[2] + l2[2])/2, l1[3]);
+					line(imageROI, Point(vanishPoint.x, vanishPoint.y + offset[i]*row/15), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+					line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+					line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+			}
+
+
+	    //cout << "    Slope = " << A.getSlope() << endl;
+	    //cout << "Intercept = " << A.getIntercept() << endl << endl;
+
+			//printf("The number of lines is %d\n", lines.size());
 			//printf("The width and height of the section is %f and %f", col, row);
-			printf("The number of clusters is %d\n", numberOfLines);
+			//printf("The number of clusters is %d\n", numberOfLines);
 		}
 
 		//line(imageROI, Point(leftLine[0], leftLine[1] + offset[i]*row/15), Point(leftLine[2], leftLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
@@ -327,7 +433,7 @@ Fuction to get the slop of the input line
 double sdcCameraSensor::getSlope(cv::Vec4i l){
 	double vertSlope = 1000000000.00;
 	if(l[2]-l[0] == 0){
-		return vertSlope;
+		return infinityDouble;
 	}
 	else{
 		return ((l[3] - l[1])*1.0)/((l[2]-l[0])*1.0);
@@ -351,13 +457,6 @@ Point sdcCameraSensor::getIntersectionPoint(cv::Vec4i l1, cv::Vec4i l2){
 	}
 	return Point(std::round(xVal), std::round(yVal));
 }
-
-double sdcCameraSensor::getPointLineDist(cv::Point p1, cv::Vec4i l1){
-	double l1Slope = getSlope(l1);
-	double l1intercept = l1[1] - (l1[0]*l1Slope);
-	return std::abs((l1Slope*(p1.x) + (-1)*(p1.y) + l1intercept))/sqrt(pow(l1Slope,2) +(1));
-}
-
 
 bool sdcCameraSensor::isTooClose(cv::Vec4i leftLine, cv::Vec4i rightLine, int i, double row, double col) {
 	/*
