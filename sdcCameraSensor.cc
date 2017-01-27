@@ -54,6 +54,24 @@ F<double> delG(const F<double>& x, const F<double>& y) {
 
 /*Helper methods for Improved CHEVP algorithm*/
 
+//get the slope of a line
+double getSlope(cv::Vec4i l){
+	double vertSlope = 1000000000.00;
+	if(l[2]-l[0] == 0){
+		return infinityDouble;
+	}
+	else{
+		return ((l[3] - l[1])*1.0)/((l[2]-l[0])*1.0);
+	}
+}
+
+// get the distance from a point to a line segment
+double getPointLineDist(cv::Point p1, cv::Vec4i l1){
+ double l1Slope = getSlope(l1);
+ double l1intercept = l1[1] - (l1[0]*l1Slope);
+ return std::abs((l1Slope*(p1.x) + (-1)*(p1.y) + l1intercept))/sqrt(pow(l1Slope,2) +(1));
+}
+
 // test if two lines generated from Hough Transform are actually the same lines
 bool isEqual(const cv::Vec4i& _l1, const cv::Vec4i& _l2) {
 	 Vec4i l1(_l1), l2(_l2);
@@ -115,6 +133,24 @@ int *getLineSegment(double slope, double intercept, double upperY, double lowerY
 double getIntercept(cv::Vec4i l, double slope) {
 	return l[1] - slope*l[0];
 }
+
+int getIndexOfClosestLine(std::vector<Vec4i> lines, Point sectionMidPoint) {
+	double minDistance = infinityDouble;
+	int minIndex = infinityInt;
+
+	for(int j = 0; j < lines.size(); j++) {
+			Vec4i l = lines[j];
+			double xOfMidPoint = (l[0] + l[2])/2.0;
+			double curDistance = abs(xOfMidPoint - sectionMidPoint.x);
+
+			if (curDistance < minDistance) {
+				minDistance = curDistance;
+				minIndex = j;
+			}
+ 		}
+		return minIndex;
+}
+
 
 sdcCameraSensor::sdcCameraSensor(){
     this->cameraCnt ++;
@@ -252,7 +288,7 @@ void sdcCameraSensor::OnUpdate() {
 	Vec4i previousRightLine = tempPreviousRightLine;
 
 	// iterate through each of the five sections of the ROI
-	for(size_t i = 0; i < 5; i++) {
+	for(size_t i = 2; i < 4; i++) {
 		Rect section;
 		section = sections[i];
 		// get the image of the current section
@@ -327,7 +363,7 @@ void sdcCameraSensor::OnUpdate() {
 		Point vanishPoint = getIntersectionPoint(leftLine, rightLine);
 		*/
 		// we should use section 2,3,4, which are indexed at 1,2,3
-		if (i == 3) {
+		if (true) {
 			//line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 			// update the turn angle
 			//double newAngle = getNewTurningAngle(createLine(vanishPoint.x, vanishPoint.y, midPoint.x, midPoint.y + offset[i]*row/15));
@@ -360,7 +396,7 @@ void sdcCameraSensor::OnUpdate() {
 				double curIntercept = getIntercept(curLine, curSlope);
 				//line(imageROI, Point(curLine[0], curLine[1] + offset[i]*row/15), Point(curLine[2], curLine[3] + offset[i]*row/15), Scalar(colors[clusterNumber][0],colors[clusterNumber][1],colors[clusterNumber][2]), 3, CV_AA);
 				//printf("The slope and intercept in original line is %f and %f\n", oriSlope, getIntercept(curLine, oriSlope));
-				printf("the original coordinate is %d %d %d %d\n", curLine[0], curLine[1], curLine[2], curLine[3]);
+				//printf("the original coordinate is %d %d %d %d\n", curLine[0], curLine[1], curLine[2], curLine[3]);
 				if (!xMap.count(clusterNumber)) {
 					//printf("Enter the map!\n");
 					vector<double> xVector;
@@ -375,7 +411,7 @@ void sdcCameraSensor::OnUpdate() {
 					//yMap[clusterNumber].push_back(curLine[3]);
 				}
 			}
-			// second pass to merge the lines by clusterNumber
+			// second pass to merge the lines by clusterNumber and store them into mergeLines vector
 			std::vector<Vec4i> mergedLines;
 			for (size_t j = 0; j < numberOfClusters; j++) {
 				Maths::Regression::Linear A(xMap[j].size(), convertVectorToArray(xMap[j]), convertVectorToArray(yMap[j]));
@@ -388,25 +424,54 @@ void sdcCameraSensor::OnUpdate() {
 				segment[1] = segmentArr[1];
 				segment[2] = segmentArr[2];
 				segment[3] = segmentArr[3];
-				printf("the merged coordinate is %d %d %d %d\n", segment[0], segment[1], segment[2], segment[3]);
-				mergedLines.push_back(segment);
-				//printf("The slope and intercept in merged line %d is %f and %f\n", j, slope, intercept);
 
-				/*
-				if (segment[0] != infinityInt) {
-					line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[j % 5][0],colors[j % 5][1],colors[j % 5][2]), 3, CV_AA);
+				// check if the line is horizontal or near horizontal. if so, filter them out
+				if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.1) {
+					mergedLines.push_back(segment);
+					//line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
 				}
-				*/
 			}
+			// find the two closest lines to the center of the section, selected as the left and right lane boundaries
+			std::vector<Vec4i> leftBoundaries;
+			std::vector<Vec4i> rightBoundaries;
+			// first, split the merged lines into two groups, those appear to the left of the center, and those appear to the right of the center
+			for (int j = 0; j < mergedLines.size(); j++) {
+				Vec4i curLine = mergedLines.at(j);
+				double xOfMidPoint = (curLine[0] + curLine[2])/2.0;
+				double xOfSectionCenter = col/2.0;
+				if (xOfMidPoint <= xOfSectionCenter) {
+					leftBoundaries.push_back(curLine);
+				} else {
+					rightBoundaries.push_back(curLine);
+				}
+			}
+			// next, find the closest line on the left and on the right
+			int xOfSectionCenter = col/2;
+			int yOfSectionCenter = 0;
+			Point sectionMidPoint = Point(xOfSectionCenter, yOfSectionCenter);
+			int leftBoundaryIndex = getIndexOfClosestLine(leftBoundaries, sectionMidPoint);
+			int rightBoundaryIndex = getIndexOfClosestLine(rightBoundaries, sectionMidPoint);
+			if (leftBoundaryIndex != infinityInt && rightBoundaryIndex != infinityInt) {
+				Vec4i l1 = leftBoundaries[leftBoundaryIndex];
+				Vec4i l2 = rightBoundaries[rightBoundaryIndex];
+				//line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				//line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				Point vanishPoint = getIntersectionPoint(l1, l2);
+				Point midPoint = Point((l1[2] + l2[2])/2, l1[3]);
+				line(imageROI, Point(vanishPoint.x, vanishPoint.y + offset[i]*row/15), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+				line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+			}
+			/*
 			if (mergedLines.size() == 2) {
 					Vec4i l1 = mergedLines.at(0);
 					Vec4i l2 = mergedLines.at(1);
 					Point vanishPoint = getIntersectionPoint(l1, l2);
 					Point midPoint = Point((l1[2] + l2[2])/2, l1[3]);
-					line(imageROI, Point(vanishPoint.x, vanishPoint.y + offset[i]*row/15), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+					//line(imageROI, Point(vanishPoint.x, vanishPoint.y + offset[i]*row/15), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 					line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
 					line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
-			}
+			}*/
 
 
 	    //cout << "    Slope = " << A.getSlope() << endl;
@@ -415,6 +480,8 @@ void sdcCameraSensor::OnUpdate() {
 			//printf("The number of lines is %d\n", lines.size());
 			//printf("The width and height of the section is %f and %f", col, row);
 			//printf("The number of clusters is %d\n", numberOfLines);
+			//line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+			//line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
 		}
 
 		//line(imageROI, Point(leftLine[0], leftLine[1] + offset[i]*row/15), Point(leftLine[2], leftLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
@@ -425,19 +492,6 @@ void sdcCameraSensor::OnUpdate() {
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
 	imshow("Camera View", imageROI);
 	waitKey(4);
-}
-
-/*
-Fuction to get the slop of the input line
-*/
-double sdcCameraSensor::getSlope(cv::Vec4i l){
-	double vertSlope = 1000000000.00;
-	if(l[2]-l[0] == 0){
-		return infinityDouble;
-	}
-	else{
-		return ((l[3] - l[1])*1.0)/((l[2]-l[0])*1.0);
-	}
 }
 
 Point sdcCameraSensor::getIntersectionPoint(cv::Vec4i l1, cv::Vec4i l2){

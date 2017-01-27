@@ -24,9 +24,9 @@ namespace gazebo
         public: virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
     public: bool getSensor;
         public: void OnUpdate();
-        public: double getSlope(cv::Vec4i l);
+        //public: double getSlope(cv::Vec4i l);
         public: cv::Point getIntersectionPoint(cv::Vec4i l1, cv::Vec4i l2);
-        public: double getPointLineDist(cv::Point p1, cv::Vec4i l1);
+        //public: double getPointLineDist(cv::Point p1, cv::Vec4i l1);
         public: bool isTooClose(cv::Vec4i leftLine, cv::Vec4i rightLine, int i, double row, double col);
         //public: bool isEqual(const cv::Vec4i& _l1, const cv::Vec4i& _l2);
         public: cv::Vec4i extendLine(cv::Vec4i line, cv::Vec4i topHorizontal, cv::Vec4i bottomHorizontal);
