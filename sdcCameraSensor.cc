@@ -100,6 +100,17 @@ bool isEqual(const cv::Vec4i& _l1, const cv::Vec4i& _l2) {
 	 return true;
 }
 
+// calculate the angle between two midlines and store it in degree
+double getAngleDifference(cv::Vec4i l1, cv::Vec4i l2){
+	float length1 = sqrtf((l1[2] - l1[0])*(l1[2] - l1[0]) + (l1[3] - l1[1])*(l1[3] - l1[1]));
+	float length2 = sqrtf((l2[2] - l2[0])*(l2[2] - l2[0]) + (l2[3] - l2[1])*(l2[3] - l2[1]));
+	float length3 = sqrtf((l2[2] - l1[0])*(l2[2] - l1[0]) + (l2[3] - l1[1])*(l2[3] - l1[1]);
+
+	float product = (l1[2] - l1[0])*(l2[2] - l2[0]) + (l1[3] - l1[1])*(l2[3] - l2[1]);
+
+	return fabs(product / (length1 * length2)) * 180/ CV_PI;
+}
+
 // convert resizable vector to non-resizable array
 double *convertVectorToArray(vector<double> vec) {
 	int size = vec.size();
@@ -288,7 +299,8 @@ void sdcCameraSensor::OnUpdate() {
 	Vec4i previousRightLine = tempPreviousRightLine;
 
 	// iterate through each of the five sections of the ROI
-	for(size_t i = 2; i < 4; i++) {
+	std::vector<Vec4i> twoMidlines;
+	for(size_t i = 1; i < 3; i++) {
 		Rect section;
 		section = sections[i];
 		// get the image of the current section
@@ -375,13 +387,6 @@ void sdcCameraSensor::OnUpdate() {
 
 			// START OF THE NEW CHEVP algorithm
 			// apply partition fuction to clusterize lines of the same one
-			/*
-			for(size_t j = 0; j < lines.size(); j++)
-			{
-				Vec4i l = lines[j];
-				line(imageROI, Point(l[0], l[1] + offset[i]*row/15), Point(l[2], l[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
-			}
-			*/
 			std::vector<int> labels;
 			int numberOfClusters = cv::partition(lines, labels, isEqual);
 			/* merge close lines detected by partition function */
@@ -394,9 +399,7 @@ void sdcCameraSensor::OnUpdate() {
 				Vec4i curLine = lines[j];
 				double curSlope = getSlope(curLine);
 				double curIntercept = getIntercept(curLine, curSlope);
-				//line(imageROI, Point(curLine[0], curLine[1] + offset[i]*row/15), Point(curLine[2], curLine[3] + offset[i]*row/15), Scalar(colors[clusterNumber][0],colors[clusterNumber][1],colors[clusterNumber][2]), 3, CV_AA);
-				//printf("The slope and intercept in original line is %f and %f\n", oriSlope, getIntercept(curLine, oriSlope));
-				//printf("the original coordinate is %d %d %d %d\n", curLine[0], curLine[1], curLine[2], curLine[3]);
+
 				if (!xMap.count(clusterNumber)) {
 					//printf("Enter the map!\n");
 					vector<double> xVector;
@@ -454,40 +457,34 @@ void sdcCameraSensor::OnUpdate() {
 			if (leftBoundaryIndex != infinityInt && rightBoundaryIndex != infinityInt) {
 				Vec4i l1 = leftBoundaries[leftBoundaryIndex];
 				Vec4i l2 = rightBoundaries[rightBoundaryIndex];
-				//line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
-				//line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+
 				Point vanishPoint = getIntersectionPoint(l1, l2);
 				Point midPoint = Point((l1[2] + l2[2])/2, l1[3]);
+
 				line(imageROI, Point(vanishPoint.x, vanishPoint.y + offset[i]*row/15), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 				line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
 				line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				// find the midline we want
+				Vec4i realMidline;
+				realMidline[0] = vanishPoint.x;
+				realMidline[1] = vanishPoint.y;
+				realMidline[2] = midPoint.x;
+				realMidline[3] = midPoint.y;
+
+				twoMidlines.push_back(realMidline);
 			}
-			/*
-			if (mergedLines.size() == 2) {
-					Vec4i l1 = mergedLines.at(0);
-					Vec4i l2 = mergedLines.at(1);
-					Point vanishPoint = getIntersectionPoint(l1, l2);
-					Point midPoint = Point((l1[2] + l2[2])/2, l1[3]);
-					//line(imageROI, Point(vanishPoint.x, vanishPoint.y + offset[i]*row/15), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
-					line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
-					line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
-			}*/
-
-
-	    //cout << "    Slope = " << A.getSlope() << endl;
-	    //cout << "Intercept = " << A.getIntercept() << endl << endl;
-
-			//printf("The number of lines is %d\n", lines.size());
-			//printf("The width and height of the section is %f and %f", col, row);
-			//printf("The number of clusters is %d\n", numberOfLines);
-			//line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
-			//line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
 		}
-
-		//line(imageROI, Point(leftLine[0], leftLine[1] + offset[i]*row/15), Point(leftLine[2], leftLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
-		//line(imageROI, Point(rightLine[0], rightLine[1] + offset[i]*row/15), Point(rightLine[2], rightLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 	}
 
+	if (twoMidlines.size() == 2) {
+		double degree = getAngleDifference(twoMidlines.at(0), twoMidlines.at(1));
+		this->sensorData->setMidlineAngle(degree);
+	}
+
+	// assume we have the three midlines from section 2,3,4, we need to change the accelaration and direction based the angle
+	// here we will try to use the midlines from section 2 and 3 first
+	//sdcCar::Brake();
+	//printf("The speed of the car is %f\n", sdcCar::getSpeed());
 	// Display results to GUI
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
 	imshow("Camera View", imageROI);

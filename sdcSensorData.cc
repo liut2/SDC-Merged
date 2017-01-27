@@ -142,6 +142,14 @@ int sdcSensorData::LanePosition() {
     return this->lanePosition;
 }
 
+double sdcSensorData::getMidlineAngle() {
+  return this->midlineAngle;
+}
+
+void sdcSensorData::setMidlineAngle(double midlineAngle) {
+  this->midlineAngle = midlineAngle;
+}
+
 void sdcSensorData::UpdateSteeringMagnitude(double steerMag) {
   //  printf("newSteerMagnitude: %f\n", this->newSteerMagnitude);
    // printf("steerMag: %f\n", steerMag);

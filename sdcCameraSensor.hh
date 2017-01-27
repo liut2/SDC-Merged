@@ -32,10 +32,12 @@ namespace gazebo
         public: cv::Vec4i extendLine(cv::Vec4i line, cv::Vec4i topHorizontal, cv::Vec4i bottomHorizontal);
         public: cv::Vec4i createLine(double x1, double y1, double x2, double y2);
         public: double getNewTurningAngle(cv::Vec4i midLine);
+      public:
         private: sensors::MultiCameraSensorPtr parentSensor;
     private: sensors::SensorPtr sensor;
         private: event::ConnectionPtr updateConnection;
     private: sdcSensorData *sensorData;
+  private: double degree;
     private: int cameraId;
     public: static int cameraCnt;
     private: physics::LinkPtr link;

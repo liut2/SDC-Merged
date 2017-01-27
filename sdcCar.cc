@@ -111,9 +111,19 @@ void sdcCar::Drive()
 //        if (this->ObjectOnCollisionCourse()){
 //            this->currentState = avoidance;
 //        }
-    } else {
+      /* Temporarily put the lane driving code here */
       // road-driving
-      //currentState = road-driving;
+      //printf("the speed is %f\n", GetSpeed());
+      /*
+      if (GetSpeed() >= 5.9) {
+        Brake(3, 1);
+        //printf("the speed is %f\n", GetSpeed());
+
+      }*/
+      double degree = this->cameraSensorData->getMidlineAngle();
+      printf("The angle is %f\n", degree);
+    } else {
+
     }
 
     //this->ignoreStopSignsCounter = fmax(this->ignoreStopSignsCounter - 1, 0);
