@@ -24,7 +24,7 @@ void sdcFrontLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sd
     this->sensor = _sensor;
     printf("lidar sensor id: %i\n",this->sensor->GetId());
     int sensorId = this->sensor->GetId();
-    
+
     //printf("this camerasId: %i \n", this->cameraId);
     this->sensorData = manager::getSensorData(sensorId);
     // Get the parent sensor.
@@ -52,5 +52,7 @@ void sdcFrontLidarSensor::OnUpdate(){
     for (unsigned int i = 0; i < this->parentSensor->GetRayCount(); ++i){
         rays->push_back(this->parentSensor->GetRange(i));
     }
+    printf("onupdate frontlidar\n");
+    printf("first ray range: %f\n", this->parentSensor->GetRange(360));
     this->sensorData->UpdateLidar(FRONT, rays);
 }

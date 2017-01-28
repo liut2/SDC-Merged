@@ -1039,7 +1039,7 @@ void sdcCar::OnUpdate()
     //    }
     //this->sensorData = sdcManager::getSensorData(carId);
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 1; //in merged world use 0
+    int crudeSwitch = 2; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
 
@@ -1164,6 +1164,22 @@ void sdcCar::OnUpdate()
      // Get the cars current rotation
      this->yaw = sdcSensorData::GetYaw();
      */
+
+     //printf("Calling getobjectsonright\n");
+     std::vector<sdcVisibleObject> v = this->lidarSensorData->GetObjectsInFront();
+     //printf("here\n");
+     //if(v[0] != NULL){printf("objects in front: %f\n", v[0].GetEstimatedSpeed());}
+     //else{printf("no objects in front\n");}
+
+     if(v.size() > 0){
+       printf("object 0 left lateral: %f\n", v[0].GetLeft().GetLateralDist());
+       printf("object 0 left longitudinal: %f\n", v[0].GetLeft().GetLongitudinalDist());
+       printf("object 0 right lateral: %f\n", v[0].GetRight().GetLateralDist());
+       printf("object 0 right longitudinal: %f\n", v[0].GetRight().GetLongitudinalDist());
+       printf("object 0 dist: %f\n", v[0].GetDist());
+     } else {
+       //printf("no objects detected\n");
+     }
 
     // Call our Drive function, which is the brain for the car
     if(this->carId == 1){

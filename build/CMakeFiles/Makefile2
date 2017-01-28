@@ -193,8 +193,11 @@ clean: CMakeFiles/sdcWaypoint.dir/clean
 # All Build rule for target.
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcSensorData.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcVisibleObject.dir/all
+CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/request.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcAngle.dir/all
+CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/manager.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
+CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/instruction.dir/all
 CMakeFiles/sdcSideLidarSensor.dir/all: CMakeFiles/sdcLidarRay.dir/all
 	$(MAKE) -f CMakeFiles/sdcSideLidarSensor.dir/build.make CMakeFiles/sdcSideLidarSensor.dir/depend
 	$(MAKE) -f CMakeFiles/sdcSideLidarSensor.dir/build.make CMakeFiles/sdcSideLidarSensor.dir/build
@@ -208,7 +211,7 @@ all: CMakeFiles/sdcSideLidarSensor.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/sdcSideLidarSensor.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/build/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/build/CMakeFiles 18
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcSideLidarSensor.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/build/CMakeFiles 0
 .PHONY : CMakeFiles/sdcSideLidarSensor.dir/rule

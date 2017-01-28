@@ -345,6 +345,146 @@ std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
 }
 
 
+
+
+
+
+
+
+
+
+std::vector<sdcLidarRay> sdcSensorData::GetBlockedLeftRays(){
+    std::vector<sdcLidarRay> objectsOnLeft;
+    for (int i = 0; i < sideLeftFrontLidarRays->size(); i++) {
+        if (!std::isinf((*sideLeftFrontLidarRays)[i])) {
+            sdcAngle angle = sdcAngle(lidarInfoMap[SIDE_LEFT_FRONT].minAngle + i*lidarInfoMap[SIDE_LEFT_FRONT].resolution);
+            objectsOnLeft.push_back(sdcLidarRay(angle, (*sideLeftFrontLidarRays)[i]));
+        }
+    }
+    return objectsOnLeft;
+}
+
+
+std::vector<sdcVisibleObject> sdcSensorData::GetObjectsOnLeft(){
+    std::vector<sdcVisibleObject> objectList;
+
+    // With no blocked rays, there are no objects to record
+    std::vector<sdcLidarRay> blockedRays = GetBlockedLeftRays();
+    if(blockedRays.size() == 0){
+       // printf("no blocked rays\n");
+        return objectList;
+    }
+
+    double distMargin = 1;
+    double angleMargin = 0.01;
+
+    sdcAngle objMinAngle;
+    double objFirstDist;
+    double objMinDist;
+
+    sdcAngle prevAngle;
+    double prevDist;
+    bool ignorePrev = true;
+
+    // Parse the blocked rays into separate objects
+    for (int i = 0; i < blockedRays.size(); i++) {
+        sdcAngle curAngle = blockedRays[i].angle;
+        double curDist = blockedRays[i].dist;
+
+        if(!ignorePrev){
+            objMinDist = curDist < objMinDist ? curDist : objMinDist;
+
+            // If either the checked angles or distance fall outside the margins, the rays are looking at a new object
+            if(!((curAngle - prevAngle).WithinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
+                // Record the object just found
+                objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
+                ignorePrev = true;
+            }
+        }else{
+            ignorePrev = false;
+            objMinAngle = curAngle;
+            objMinDist = curDist;
+            objFirstDist = curDist;
+        }
+
+        prevAngle = curAngle;
+        prevDist = curDist;
+    }
+
+    // Since objects are recorded on the trailing end of the loop, this will make sure the last object is properly added
+    objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
+    return objectList;
+}
+
+
+
+
+std::vector<sdcLidarRay> sdcSensorData::GetBlockedRightRays(){
+    std::vector<sdcLidarRay> objectsOnRight;
+    for (int i = 0; i < sideRightFrontLidarRays->size(); i++) {
+        if (!std::isinf((*sideRightFrontLidarRays)[i])) {
+            printf("ray not inf\n");
+            sdcAngle angle = sdcAngle(lidarInfoMap[SIDE_RIGHT_FRONT].minAngle + i*lidarInfoMap[SIDE_RIGHT_FRONT].resolution);
+            objectsOnRight.push_back(sdcLidarRay(angle, (*sideRightFrontLidarRays)[i]));
+        }
+    }
+    return objectsOnRight;
+}
+
+
+std::vector<sdcVisibleObject> sdcSensorData::GetObjectsOnRight(){
+    std::vector<sdcVisibleObject> objectList;
+
+    // With no blocked rays, there are no objects to record
+    std::vector<sdcLidarRay> blockedRays = GetBlockedRightRays();
+    if(blockedRays.size() == 0){
+       // printf("no blocked rays\n");
+        return objectList;
+    }
+
+    double distMargin = 1;
+    double angleMargin = 0.01;
+
+    sdcAngle objMinAngle;
+    double objFirstDist;
+    double objMinDist;
+
+    sdcAngle prevAngle;
+    double prevDist;
+    bool ignorePrev = true;
+
+    // Parse the blocked rays into separate objects
+    for (int i = 0; i < blockedRays.size(); i++) {
+        sdcAngle curAngle = blockedRays[i].angle;
+        double curDist = blockedRays[i].dist;
+
+        if(!ignorePrev){
+            objMinDist = curDist < objMinDist ? curDist : objMinDist;
+
+            // If either the checked angles or distance fall outside the margins, the rays are looking at a new object
+            if(!((curAngle - prevAngle).WithinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
+                // Record the object just found
+                objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
+                ignorePrev = true;
+            }
+        }else{
+            ignorePrev = false;
+            objMinAngle = curAngle;
+            objMinDist = curDist;
+            objFirstDist = curDist;
+        }
+
+        prevAngle = curAngle;
+        prevDist = curDist;
+    }
+
+    // Since objects are recorded on the trailing end of the loop, this will make sure the last object is properly added
+    objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
+    return objectList;
+}
+
+
+
 // GPS variables
 /* road-driving branch
 double sdcSensorData::gpsX = 0;

@@ -83,7 +83,8 @@
     </model>
 
     <model name='obstacle'>
-      <pose>50 -1.25 1 0 0 0</pose>
+      <!-- <pose>15 -1.25 1 0 0 0</pose> -->
+      <pose>-2 -5 1 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision">

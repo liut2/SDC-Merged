@@ -17,6 +17,9 @@ namespace gazebo
 
         sdcVisibleObject();
         sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double dist);
+        sdcLidarRay GetLeft();
+        sdcLidarRay GetRight();
+        double GetDist();
 
         bool IsSameObject(sdcVisibleObject other);
         math::Vector2d EstimateUpdate();
