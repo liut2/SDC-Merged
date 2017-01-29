@@ -69,8 +69,8 @@ CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcVisibleObject.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcIntersection.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/request.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcAngle.dir/all
-CMakeFiles/sdcCar.dir/all: CMakeFiles/manager.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcManager.dir/all
+CMakeFiles/sdcCar.dir/all: CMakeFiles/manager.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcLidarSensorInfo.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/instruction.dir/all
 CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcLidarRay.dir/all
