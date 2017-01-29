@@ -837,6 +837,8 @@
             <chassis>chassis</chassis>
             <camera>camera::link</camera>
             <frontLidar>front_lidar</frontLidar>
+            <rightSideLidar>side_right_sensors</rightSideLidar>
+            <leftSideLidar>side_left_sensors</leftSideLidar>
             <!-- Radius of the wheel (DO NOT CHANGE UNLESS YOU ALSO CHANGE THE ACTUAL PARAMETER ABOVE PLS) -->
             <wheel_radius>0.21</wheel_radius>
             <!-- Power is multiplied by "gas" to determine force applied to wheels -->

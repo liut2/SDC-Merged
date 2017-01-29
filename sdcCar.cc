@@ -1039,7 +1039,7 @@ void sdcCar::OnUpdate()
     //    }
     //this->sensorData = sdcManager::getSensorData(carId);
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 2; //in merged world use 0
+    int crudeSwitch = 1; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
 
@@ -1167,11 +1167,12 @@ void sdcCar::OnUpdate()
 
      //printf("Calling getobjectsonright\n");
      std::vector<sdcVisibleObject> v = this->lidarSensorData->GetObjectsInFront();
+     std::vector<sdcVisibleObject> rightObjects = this->rightLidarSensorData->GetObjectsOnRight();
      //printf("here\n");
      //if(v[0] != NULL){printf("objects in front: %f\n", v[0].GetEstimatedSpeed());}
      //else{printf("no objects in front\n");}
 
-     if(v.size() > 0){
+    /* if(v.size() > 0){
        printf("object 0 left lateral: %f\n", v[0].GetLeft().GetLateralDist());
        printf("object 0 left longitudinal: %f\n", v[0].GetLeft().GetLongitudinalDist());
        printf("object 0 right lateral: %f\n", v[0].GetRight().GetLateralDist());
@@ -1179,15 +1180,23 @@ void sdcCar::OnUpdate()
        printf("object 0 dist: %f\n", v[0].GetDist());
      } else {
        //printf("no objects detected\n");
+     }*/
+     if(rightObjects.size() > 0){
+       printf("object 0 left lateral: %f\n", rightObjects[0].GetLeft().GetLateralDist());
+       printf("object 0 left longitudinal: %f\n", rightObjects[0].GetLeft().GetLongitudinalDist());
+       printf("object 0 right lateral: %f\n", rightObjects[0].GetRight().GetLateralDist());
+       printf("object 0 right longitudinal: %f\n", rightObjects[0].GetRight().GetLongitudinalDist());
+       printf("object 0 dist: %f\n", rightObjects[0].GetDist());
+     } else {
+       //printf("no objects detected\n");
      }
-
     // Call our Drive function, which is the brain for the car
-    if(this->carId == 1){
+    //if(this->carId == 1){
         this->Drive();
-    }
-    else{
-        this->Stop();
-    }
+    //}
+    //else{
+        //this->Stop();
+    //}
 
     //printf("after drive\n");
 
@@ -1276,10 +1285,16 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     this->camera = this->model->GetLink(_sdf->Get<std::string>("camera"));
     this->frontLidar = this->model->GetLink(_sdf->Get<std::string>("frontLidar"));
     this->frontLidarId = this->frontLidar->GetId() + 8;
-    printf("lidar Id: %i\n", this->frontLidarId);
+    //printf("lidar Id: %i\n", this->frontLidarId);
     this->cameraId = this->camera->GetId() + 2;
     //printf("camera ID: %i\n",this->cameraId);
+    this->leftSideLidar = this->model->GetLink(_sdf->Get<std::string>("leftSideLidar"));
+    this->leftLidarId = this->leftSideLidar->GetId() + 8;
+    printf("left id: %i\n", this->leftLidarId);
 
+    this->rightSideLidar = this->model->GetLink(_sdf->Get<std::string>("rightSideLidar"));
+    this->rightLidarId = this->rightSideLidar->GetId() + 8;
+    printf("right id: %i\n", this->rightLidarId);
     // Get all the wheel joints
     this->joints[0] = this->model->GetJoint(_sdf->Get<std::string>("front_left"));
     this->joints[1] = this->model->GetJoint(_sdf->Get<std::string>("front_right"));
@@ -1314,6 +1329,8 @@ void sdcCar::Init()
     this->laneStopped = false;
     this->cameraSensorData = manager::getSensorData(cameraId);
     this->lidarSensorData = manager::getSensorData(frontLidarId);
+    this->leftLidarSensorData = manager::getSensorData(this->leftLidarId);
+    this->rightLidarSensorData = manager::getSensorData(this->rightLidarId);
     // During init, sensors aren't available so pull position and rotation information
     // straight from the car
     math::Pose pose = this->chassis->GetWorldPose();

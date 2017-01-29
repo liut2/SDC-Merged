@@ -69,8 +69,12 @@ namespace gazebo {
         physics::LinkPtr chassis;
         physics::LinkPtr camera;
         physics::LinkPtr frontLidar;
+        physics::LinkPtr leftSideLidar;
+        physics::LinkPtr rightSideLidar;
         int cameraId;
         int frontLidarId;
+        int leftLidarId;
+        int rightLidarId;
         // The velocity of the car
         math::Vector3 velocity;
 
@@ -81,6 +85,8 @@ namespace gazebo {
         //sensorData object
         sdcSensorData *cameraSensorData;
         sdcSensorData *lidarSensorData;
+        sdcSensorData *rightLidarSensorData;
+        sdcSensorData *leftLidarSensorData;
 
         //sdcFrontLidarSensor frontSensor;
 
