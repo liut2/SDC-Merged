@@ -10,6 +10,7 @@ bool sdcManager::wStop = 0;
 int sdcManager::gridSize = 10;
 float sdcManager::maxTurnLeft = 6;
 float sdcManager::maxTurnRight = 4;
+time_t sdcManager::startTime = time(0);
 std::vector<int> sdcManager::carList = std::vector<int>();
 std::vector<std::vector<float>> sdcManager::grid = std::vector<std::vector<float>>();
 std::vector<int> sdcManager::carNorthQueue = std::vector<int>();
@@ -34,7 +35,8 @@ void sdcManager:: printid(){
 }
 
 void sdcManager::makeGrid(){
-    std::vector<float> columns = std::vector<float>(gridSize, 0);
+    time_t tm = difftime(time(0), startTime);
+    std::vector<float> columns = std::vector<float>(gridSize, tm);
     grid = std::vector<std::vector<float>> (gridSize, columns);
     //    for(int x = 0; x < gridSize; x++) {
     //        for (int y = 0; y < gridSize; y++) {
@@ -90,8 +92,15 @@ void sdcManager::laneStopRequest(int fromDir){
 
 instruction sdcManager::reservationRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir){
     //10 is the normal car max speed
-    printf("start of request carId: %d\n", fromDir);
-    clock_t tm = clock();
+  //  printf("start of request carId: %d\n", fromDir);
+    time_t tm = difftime(time(0),startTime);
+    //printf("time: %ld\n", tm);
+    if (speed == 0){
+      speed = 1;
+    }
+    float speedIntent = 10;
+
+    //float tm = 1;
     bool reserved = true;
     if(turning == 0){
       float timeWillTake = 0;
@@ -99,67 +108,100 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
       float distance = 0;
       if (fromDir == 0 || fromDir == 2) { //travelling y bound
         int xIndex = static_cast<int>(x-46);
-        printf("carId is y bound: %d\n", carId);
+        //printf("carId is y bound: %d\n", carId);
         for (int yIndex = 0; yIndex < gridSize; yIndex++) {
-          distance = std::abs(yIndex + 45 - x);
-          timeWillTake = tm + ((float)distance - 20.0) / speed;
-          timeWillLeave = tm + ((float)distance + 20.0) / speed;
-          printf("car old and reach diff: %f, %f\n", sdcManager::getGrid(xIndex, yIndex), timeWillTake);
+          distance = std::abs(yIndex + 45 - y);
+          timeWillTake = tm + (fmax(0,((float)distance - speed*2)) / speed);
+          //printf("distance: %f\n",fmax(0,((float)distance - speed*2)));
+          //timeWillLeave = tm + ((float)distance - speed) / speed;
+        //  printf("car speed: %f\n\n", speed);
+          //printf("car old and reach diff: %f, %f\n\n", sdcManager::getGrid(xIndex, yIndex), timeWillTake);
           for (int xWidth = 0; xWidth < 3; xWidth ++) { //xWidth is width buffer
             if (timeWillTake < sdcManager::getGrid(xIndex + xWidth, yIndex) || !reserved) {
               reserved = false;
-              printf("car rrejected: %d\n", carId);
+            //  printf("car rrejected: %d\n", carId);
               return instruction::instruction(carId, .2*speed, 0);
+            } else {
+              speedIntent = fmin(speedIntent, ((float)distance - speed) / (sdcManager::getGrid(xIndex + xWidth, yIndex) - tm));
+              if (speedIntent < 0){
+                speedIntent = 10;
+              }
             }
           }
         }
+
+        if (speedIntent < 2){
+          return instruction::instruction(carId, .2*speed, 0);
+        }
         if (reserved) {
           for (int yIndex = 0; yIndex < gridSize; yIndex++) {
-            distance = std::abs(yIndex + 45 - x);
-            timeWillTake = tm + (distance - 2) / speed;
-            timeWillLeave = tm + (distance + 2) / speed;
+            distance = std::abs(yIndex + 45 - y);
+            //timeWillTake = tm + (distance - (speed * 1.5)) / speed;
+            timeWillLeave = tm + (distance + (speedIntent * 1.5)) / speedIntent;
             for (int xWidth = 0; xWidth < 3; xWidth ++) { //xWidth is width buffer
                 sdcManager::setGrid(timeWillLeave, xIndex + xWidth, yIndex);
             }
           }
-          printf("carId got reserved: %d\n", carId);
-          return instruction::instruction(carId, speed, 1);
-        }
+        //  printf("carId got reserved: %d\n", carId);
+            //printf("carId intend: %d, %f\n", carId, speedIntent);
+            return instruction::instruction(carId, speedIntent, 1);
+          }
+
       }
       else if (fromDir == 1 || fromDir == 3) { //travelling x bound
-        printf("carId is x bound: %d\n", carId);
+      //  printf("carId is x bound: %d\n", carId);
         int yIndex = static_cast<int>(y-46);
         for (int xIndex = 0; xIndex < gridSize; xIndex++) {
           distance = std::abs(xIndex + 45 - x);
-          timeWillTake = 10*tm + ((float)distance - 20.0) / speed;
-          timeWillLeave = 10*tm + ((float)distance + 20.0) / speed;
-          printf("car old leave diff: %f, %f\n", sdcManager::getGrid(xIndex, yIndex), timeWillTake);
+          timeWillTake = tm + (fmax(0,((float)distance - speed*2)) / speed);
+          //timeWillLeave = tm + ((float)distance - speed) / speed;
+
+          //printf("car old leave diff: %f, %f\n", sdcManager::getGrid(xIndex, yIndex), timeWillTake);
           for (int yWidth = 0; yWidth < 3; yWidth ++) { //xWidth is width buffer
             if (timeWillTake < sdcManager::getGrid(xIndex, yIndex + yWidth) || !reserved) {
               reserved = false;
-              printf("car rrejected: %d\n", carId);
-              return instruction::instruction(carId, 0, 0);
+            //  printf("car rejected: %d\n", carId);
+              return instruction::instruction(carId, speed*.2, 0);
+            } else {
+
+              speedIntent = fmin(speedIntent, ((float)distance - speed) / (sdcManager::getGrid(xIndex, yIndex + yWidth) - tm));
+              //printf("gridTime: %f\n", sdcManager::getGrid(xIndex, yIndex + yWidth));
+            //  printf("tm: %ld\n", tm);
+            //  printf("carId intend: %d, %f\n", carId, speedIntent);
+              if (speedIntent < 0){
+                speedIntent = 10;
+              }
+
+              //speed = fmax(speed, speedIntent);
             }
           }
+
         }
+        if(speedIntent < 2){
+          return instruction::instruction(carId, speed*.2, 0);
+        }
+
         if (reserved) {
           for (int xIndex = 0; xIndex < gridSize; xIndex++) {
             distance = std::abs(xIndex + 45 - x);
-            timeWillTake = tm + (distance - 2) / speed;
-            timeWillLeave = tm + (distance + 2) / speed;
+            //timeWillTake = tm + (distance - speed) / speed;
+            timeWillLeave = tm + (distance + (speedIntent*1.5)) / speedIntent;
             for (int yWidth = 0; yWidth < 3; yWidth ++) {
                 sdcManager::setGrid(timeWillLeave, xIndex, yIndex + yWidth);
             }
           }
-          printf("carId got reserved: %d\n", carId);
-          return instruction::instruction(carId, speed, 1);
+          // if(speed < 1){
+          //   speed = 10;
+          // }
+          //printf("carId got reserved: %d, %f\n", carId, speedIntent);
+          return instruction::instruction(carId, speedIntent, 1);
         }
       }
       return instruction::instruction(carId, 0, 0);
     }
     //left?
     else if (turning == 1){
-      printf("maxTurnLeft: %f\n", sdcManager::maxTurnLeft);
+    //  printf("maxTurnLeft: %f\n", sdcManager::maxTurnLeft);
         return instruction::instruction(carId, sdcManager::maxTurnLeft, 1);
     }
     else if (turning == 2){

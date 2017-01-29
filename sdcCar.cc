@@ -412,25 +412,20 @@ void sdcCar::GridTurning(int turn){
     else if (turn == 0){
 
 
-        if(distance < 5){
+        if(distance < .5 && WAYPOINT_VEC[0].hasReservation){
             this->waypointProgress = 1;
             this->turning = false;
             printf("turn == 0\n");
             return;
-
         }
         else{
-            if (distance < 25){
+            if (distance < 25 && progress == 0){
+            //  printf("progress: %i", progress);
                 if(!WAYPOINT_VEC[progress].hasReservation){
                     auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
                     this->SetTargetSpeed(instruction.getSpeed());
-                    printf("reservation target speed: %f\n", this->targetSpeed);
-                    while(!instruction.getHasReservation()) {
-                      instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-                    }
                     if (instruction.getHasReservation() == 1){
                         WAYPOINT_VEC[progress].hasReservation = true;
-                        //printf("straight got reservation\n");
                     }
                 }
             }
@@ -455,11 +450,6 @@ void sdcCar::GridTurning(int turn){
 //                sdcManager::laneStopRequest(this->fromDir);
 //                laneStopped = true;
 //            }
-            if(!WAYPOINT_VEC[progress].hasReservation){
-                this->Stop();
-            }
-
-
             //car sends reservation request when velocity is below threshold
             //sdcManager sends back response and car sets hasReservation to true
             //car needs to be able to send "out of intersection" message to sdcManager
@@ -478,29 +468,22 @@ void sdcCar::GridTurning(int turn){
             sdcAngle margin = this->GetOrientation().FindMargin(targetAngle);
             if(margin < .1 && margin > -.1){
                 this->turning = false;
-                this->waypointProgress++;
+                this->waypointProgress = 1;
                 this->targetSpeed = this->maxCarSpeed;
             }
         }
-        if (distance < 25){
+        if (distance < 25 && progress == 0){
             if(!WAYPOINT_VEC[progress].hasReservation){
                 auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
                 this->SetTargetSpeed(instruction.getSpeed());
-                printf("current speed: %f\n", this->GetSpeed());
-                printf("reservation target speed: %f\n", this->targetSpeed);
-                while(!instruction.getHasReservation()) {
-                  instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-                }
+                //printf("current speed: %f\n", this->GetSpeed());
+              //  printf("reservation target speed: %f\n", this->targetSpeed);
                 if (instruction.getHasReservation() == 1){
                     WAYPOINT_VEC[progress].hasReservation = true;
-                    printf("turning got reservation");
-            }
+                  //  printf("turning got reservation");
+                }
             }
         }
-        if(!WAYPOINT_VEC[progress].hasReservation){
-            this->Stop();
-        }
-
 
 //        else{
 //            if(GetSpeed() < .1){

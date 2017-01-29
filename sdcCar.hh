@@ -27,6 +27,7 @@
 #include <time.h>
 #include <random>
 #include "gazebo/common/Plugin.hh"
+#include <gazebo/common/common.hh>
 #include "gazebo/physics/physics.hh"
 #include "gazebo/transport/transport.hh"
 #include "gazebo/util/system.hh"

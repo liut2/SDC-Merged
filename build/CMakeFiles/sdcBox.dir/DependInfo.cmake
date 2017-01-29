@@ -4,17 +4,17 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/Users/spoderman/Desktop/SDC-Merged/sdcBox.cpp" "/Users/spoderman/Desktop/SDC-Merged/build/CMakeFiles/sdcBox.dir/sdcBox.cpp.o"
+  "/Accounts/mawbye/Desktop/SDC-Merged/sdcBox.cpp" "/Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles/sdcBox.dir/sdcBox.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "Clang")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/usr/local/Cellar/gazebo6/HEAD-5ef70d513ac1_2/include"
-  "/usr/local/Cellar/gazebo6/HEAD-5ef70d513ac1_2/include/gazebo-6.6"
+  "/usr/local/Cellar/gazebo6/6.6.0/include"
+  "/usr/local/Cellar/gazebo6/6.6.0/include/gazebo-6.6"
   "/usr/local/include"
-  "/usr/local/Cellar/sdformat3/3.7.0_2/include/sdformat-3.7"
-  "/usr/local/Cellar/ignition-math2/2.6.0/include/ignition/math2"
+  "/usr/local/Cellar/sdformat3/3.7.0/include/sdformat-3.7"
+  "/usr/local/Cellar/ignition-math2/2.5.0/include/ignition/math2"
   "/usr/local/Cellar/ogre/1.7.4/include/OGRE"
   "/usr/local/Cellar/ogre/1.7.4/include"
   "/usr/local/Cellar/ogre/1.7.4/include/OGRE/Terrain"

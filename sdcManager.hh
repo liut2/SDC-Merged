@@ -39,7 +39,7 @@ private:
     static std::vector<std::vector<float>> grid;
     static float maxTurnLeft;
     static float maxTurnRight;
-
+    static time_t startTime;
 
 
 
