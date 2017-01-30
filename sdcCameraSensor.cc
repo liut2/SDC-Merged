@@ -102,13 +102,18 @@ bool isEqual(const cv::Vec4i& _l1, const cv::Vec4i& _l2) {
 
 // calculate the angle between two midlines and store it in degree
 double getAngleDifference(cv::Vec4i l1, cv::Vec4i l2){
+	int *vector1 = new int[2];
+	int *vector2 = new int[2];
+	vector1[0] = l1[0] - l1[2];
+	vector1[1] = l1[1] - l1[3];
+	vector2[0] = l2[0] - l2[2];
+	vector2[1] = l2[1] - l2[3];
+
 	float length1 = sqrtf((l1[2] - l1[0])*(l1[2] - l1[0]) + (l1[3] - l1[1])*(l1[3] - l1[1]));
 	float length2 = sqrtf((l2[2] - l2[0])*(l2[2] - l2[0]) + (l2[3] - l2[1])*(l2[3] - l2[1]));
-	float length3 = sqrtf((l2[2] - l1[0])*(l2[2] - l1[0]) + (l2[3] - l1[1])*(l2[3] - l1[1]);
-
-	float product = (l1[2] - l1[0])*(l2[2] - l2[0]) + (l1[3] - l1[1])*(l2[3] - l2[1]);
-
-	return fabs(product / (length1 * length2)) * 180/ CV_PI;
+	float product = vector1[0]*vector2[0] + vector1[1]*vector2[1];
+	double cosValue = product / (length1 * length2);
+	return acos(cosValue) * 180.0 / CV_PI;
 }
 
 // convert resizable vector to non-resizable array
