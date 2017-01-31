@@ -144,7 +144,7 @@ void sdcCar::Drive()
       if (isInCurveRoad && !isInStraightRoad){
         //Do Nothing
         printf("Case 1: In Curve\n");
-        this->cameraSensorData->UpdateSteeringMagnitude(std::abs(degree/50));
+        this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
         this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
       }
       else if (isInStraightRoad && !isInCurveRoad){
@@ -183,7 +183,7 @@ void sdcCar::Drive()
             Brake(4,4.5);
             //brakesOn = true;
             //this->cameraSensorData->UpdateSteeringMagnitude(.815);
-            this->cameraSensorData->UpdateSteeringMagnitude(std::abs(degree/50));
+            this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
             this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
             brakeTimes++;
           }
