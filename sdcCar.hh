@@ -47,7 +47,8 @@ namespace gazebo {
     class GAZEBO_VISIBLE sdcCar : public ModelPlugin {
         // Constructor for sdcCar
         public: sdcCar();
-
+                void driveOnStraightRoad(double degree);
+                void driveOnCurvedRoad(double degree);
         // These methods are called by Gazebo during the loading and initializing
         // stages of world building and populating
         virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);

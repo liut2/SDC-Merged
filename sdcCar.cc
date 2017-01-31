@@ -122,6 +122,11 @@ void sdcCar::Drive()
       }*/
       double degree = this->cameraSensorData->getMidlineAngle();
       printf("The angle is %f\n", degree);
+      if (abs(degree) <= 30) {
+        driveOnStraightRoad(degree);
+      } else {
+        driveOnCurvedRoad(degree);
+      }
     } else {
 
     }
@@ -181,9 +186,7 @@ void sdcCar::Drive()
         break;
 
     }
-    this->MatchTargetDirection();
-    // Attempts to match the target speed
-    this->MatchTargetSpeed();
+
 }
 
 /*
@@ -1412,4 +1415,26 @@ sdcCar::sdcCar(){
 
     // Variables for avoidance
     this->trackingNavWaypoint = false;
+}
+
+/*Helper methods for sdc car, SDC-Merged*/
+
+// execute this logic when the car detects a straight road
+void sdcCar::driveOnStraightRoad(double degree) {
+  this->cameraSensorData->UpdateSteeringMagnitude(0);
+  this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+  //this->MatchTargetDirection();
+  // Attempts to match the target speed
+  this->MatchTargetSpeed();
+}
+
+// execute this logic when the car detects a curved road
+void sdcCar::driveOnCurvedRoad(double degree) {
+  int direction = degree >= 0? 1 : -1;
+  this->cameraSensorData->UpdateSteeringMagnitude(1 * direction);
+  this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+  //this->MatchTargetDirection();
+  // Attempts to match the target speed
+  //this->MatchTargetSpeed();
+  Brake(2,1);
 }

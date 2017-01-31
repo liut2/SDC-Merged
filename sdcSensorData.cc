@@ -154,7 +154,7 @@ void sdcSensorData::UpdateSteeringMagnitude(double steerMag) {
   //  printf("newSteerMagnitude: %f\n", this->newSteerMagnitude);
    // printf("steerMag: %f\n", steerMag);
    // printf("Update mag sensorID: %i\n", this->sensorId);
-    this->newSteerMagnitude = 0;
+    this->newSteerMagnitude = steerMag;
     //printf("newSteerMagnitude: %f\n", this->newSteerMagnitude);
 }
 

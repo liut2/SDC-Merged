@@ -113,7 +113,13 @@ double getAngleDifference(cv::Vec4i l1, cv::Vec4i l2){
 	float length2 = sqrtf((l2[2] - l2[0])*(l2[2] - l2[0]) + (l2[3] - l2[1])*(l2[3] - l2[1]));
 	float product = vector1[0]*vector2[0] + vector1[1]*vector2[1];
 	double cosValue = product / (length1 * length2);
-	return acos(cosValue) * 180.0 / CV_PI;
+	double degree =  acos(cosValue) * 180.0 / CV_PI;
+	// add the direction of the angle, left or right
+	if (l1[0] - l1[2] >= 0) {
+		return degree;
+	} else {
+		return (-1)*degree;
+	}
 }
 
 // convert resizable vector to non-resizable array
