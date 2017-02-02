@@ -76,6 +76,11 @@ const int size = 5;
 int sdcCar::carIdCount = 0;
 
 
+
+//These are the variables for lane overtaking
+int changeTurnCounter = 0;
+
+
 ////////////////////////////////
 ////////////////////////////////
 // BEGIN THE BRAIN OF THE CAR //
@@ -171,9 +176,43 @@ void sdcCar::Drive()
         break;
 
     }
-    this->MatchTargetDirection();
+
+    /* New Code for Lane Overtaking */
+    if (this->carId == 1) {
+      // The logic for the car that does the Overtaking
+      printf("car speed: %f\n", this->GetSpeed());
+      if(this->GetSpeed() > this->targetSpeed - 0.1){
+        if(changeTurnCounter < 5){
+          this->steeringAmount = -0.2;
+          this->SetTargetSpeed(this->GetSpeed() + 5);
+          printf("turning left\n");
+        }else if (5 <= changeTurnCounter && changeTurnCounter < 400){
+          this->steeringAmount = 2;
+          printf("turning right\n");
+        }
+        else if ((changeTurnCounter >= 400 && changeTurnCounter <= 1900)  || (changeTurnCounter >= 2700)){
+          this->steeringAmount = 0;
+          printf(" going straight\n");
+        } else if(changeTurnCounter > 1900 && changeTurnCounter <= 2300){
+          this->steeringAmount = 0.2;
+          //this->SetTargetSpeed(this->GetSpeed() + 5);
+          printf("turning right\n");
+        } else if (2300 <= changeTurnCounter && changeTurnCounter < 2700){
+          this->steeringAmount = -2;
+          printf("turning left\n");
+        }
+        changeTurnCounter++;
+      }
+
+
+    }
+    //printf("The car id is %i and the front lidar id is%i\n", this->carId, this->frontLidar->GetId() + 8);
+    //this->MatchTargetDirection();
     // Attempts to match the target speed
     this->MatchTargetSpeed();
+
+
+
 }
 
 /*
@@ -1182,11 +1221,11 @@ void sdcCar::OnUpdate()
        //printf("no objects detected\n");
      }*/
      if(rightObjects.size() > 0){
-       printf("object 0 left lateral: %f\n", rightObjects[0].GetLeft().GetLateralDist());
-       printf("object 0 left longitudinal: %f\n", rightObjects[0].GetLeft().GetLongitudinalDist());
-       printf("object 0 right lateral: %f\n", rightObjects[0].GetRight().GetLateralDist());
-       printf("object 0 right longitudinal: %f\n", rightObjects[0].GetRight().GetLongitudinalDist());
-       printf("object 0 dist: %f\n", rightObjects[0].GetDist());
+       //printf("object 0 left lateral: %f\n", rightObjects[0].GetLeft().GetLateralDist());
+       //printf("object 0 left longitudinal: %f\n", rightObjects[0].GetLeft().GetLongitudinalDist());
+       //printf("object 0 right lateral: %f\n", rightObjects[0].GetRight().GetLateralDist());
+       //printf("object 0 right longitudinal: %f\n", rightObjects[0].GetRight().GetLongitudinalDist());
+       //printf("object 0 dist: %f\n", rightObjects[0].GetDist());
      } else {
        //printf("no objects detected\n");
      }

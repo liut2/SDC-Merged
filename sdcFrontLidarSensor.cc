@@ -55,4 +55,5 @@ void sdcFrontLidarSensor::OnUpdate(){
   //  printf("onupdate frontlidar\n");
   //  printf("first ray range: %f\n", this->parentSensor->GetRange(360));
     this->sensorData->UpdateLidar(FRONT, rays);
+    //printf("The sensor id is %i and the size of rays is %i\n", this->sensor->GetId(), rays->size());
 }

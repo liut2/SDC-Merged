@@ -423,7 +423,7 @@ std::vector<sdcLidarRay> sdcSensorData::GetBlockedRightRays(){
     std::vector<sdcLidarRay> objectsOnRight;
     for (int i = 0; i < sideRightFrontLidarRays->size(); i++) {
         if (!std::isinf((*sideRightFrontLidarRays)[i])) {
-            printf("ray not inf\n");
+            //printf("ray not inf\n");
             sdcAngle angle = sdcAngle(lidarInfoMap[SIDE_RIGHT_FRONT].minAngle + i*lidarInfoMap[SIDE_RIGHT_FRONT].resolution);
             objectsOnRight.push_back(sdcLidarRay(angle, (*sideRightFrontLidarRays)[i]));
         }
