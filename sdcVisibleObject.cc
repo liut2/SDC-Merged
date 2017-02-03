@@ -114,6 +114,7 @@ math::Vector2d sdcVisibleObject::GetProjectedPosition(int numSteps){
  */
 void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double newDist){
     this->confidence = fmin(1.0, this->confidence + 0.01);
+    printf("VisObject Ubdate called\n");
 
     // Get the centerpoint of the new information
     math::Vector2d newCenterpoint = this->GetCenterPoint(newLeft, newRight, newDist);
