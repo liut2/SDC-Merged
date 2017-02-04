@@ -1278,7 +1278,7 @@
         <gravity>1</gravity>
       </link>
     </model>
-    <model name='obstacle'>
+    <!-- <model name='obstacle'>
       <pose frame=''>100 1.5 1 0 -0 0</pose>
       <static>1</static>
       <link name='link'>
@@ -1311,7 +1311,7 @@
         <kinematic>0</kinematic>
         <gravity>1</gravity>
       </link>
-    </model>
+    </model> -->
     <physics name='default_physics' default='0' type='ode'>
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1</real_time_factor>
@@ -2671,7 +2671,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='obstacle'>
+      <!-- <model name='obstacle'>
         <pose frame=''>-2 -8 1 0 -0 0</pose>
         <link name='link'>
           <pose frame=''>-2 -5 1 0 -0 0</pose>
@@ -2679,7 +2679,7 @@
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
-      </model>
+      </model> -->
       <model name='road_2_0_1'>
         <pose frame=''>25 0 0 0 -0 0</pose>
         <link name='link'>
