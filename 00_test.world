@@ -2671,15 +2671,15 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <!--<model name='obstacle'>
-        <pose frame=''>-2 -5 1 0 -0 0</pose>
+      <model name='obstacle'>
+        <pose frame=''>-2 -8 1 0 -0 0</pose>
         <link name='link'>
           <pose frame=''>-2 -5 1 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
-      </model>-->
+      </model>
       <model name='road_2_0_1'>
         <pose frame=''>25 0 0 0 -0 0</pose>
         <link name='link'>

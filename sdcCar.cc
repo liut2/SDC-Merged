@@ -180,41 +180,75 @@ void sdcCar::Drive()
     /* New Code for Lane Overtaking */
 
     if (this->carId == 1) {
-      //std::vector<sdcVisibleObject> listOfObjectsFront = this->lidarSensorData->GetObjectsInFront();
-      //this->UpdateFrontObjects();
-
-      this->SetTargetSpeed(2);
-      printf("Our speed: %f\n", this->GetSpeed());
-      std::vector<sdcVisibleObject> listOfObjectsFront = this->frontObjects;
-      printf("listOfObjectsFront size: %d\n", listOfObjectsFront.size());
-
-
-      //printf("object 0 left lateral: %f\n", v[0].GetLeft().GetLateralDist());
-      //printf("object 0 left longitudinal: %f\n", v[0].GetLeft().GetLongitudinalDist());
-      //printf("object 0 right lateral: %f\n", v[0].GetRight().GetLateralDist());
-      //printf("object 0 right longitudinal: %f\n", v[0].GetRight().GetLongitudinalDist());
-      //printf("object 0 dist: %f\n", v[0].GetDist());
-
+      this->SetTargetSpeed(3);
+      std::vector<sdcVisibleObject> listOfFrontObjects = this->frontObjects;
+      std::vector<sdcVisibleObject> filteredListOfFrontObjects;
+      std::vector<sdcVisibleObject> sameLaneObjects;
+      std::vector<sdcVisibleObject> otherLaneObjects;
+      std::vector<sdcVisibleObject> leftLaneObjects;
+      std::vector<sdcVisibleObject> rightLaneObjects;
+      //printf("the size is %i\n", listOfFrontObjects.size());
       bool carInFront = false;
       bool leftLaneFree = true;
 
-      //loop through list of front objects and check if any are in front or in the left lane
-      for(int j=0; j<listOfObjectsFront.size(); j++){
-        printf("left lateral dis: %f\n", listOfObjectsFront[j].GetLeft().GetLateralDist());
-        printf("right lateral dis: %f\n", listOfObjectsFront[j].GetRight().GetLateralDist());
-
+      // First pass to filter out unreasonably small objects
+      for(int j = 0; j < listOfFrontObjects.size(); j++){
+        double leftLateralDist = listOfFrontObjects[j].GetLeft().GetLateralDist();
+        double rightLateralDist = listOfFrontObjects[j].GetRight().GetLateralDist();
+        double lateralWidth = std::abs(leftLateralDist - rightLateralDist);
+        //checks whether width of object is greater than 0.2
+        if (lateralWidth >= 0.2) {
+          filteredListOfFrontObjects.push_back(listOfFrontObjects[j]);
+        }
+      }
+      // Second pass to decide if the object is on the same lane or the other lane
+      for(int j = 0; j < filteredListOfFrontObjects.size(); j++) {
+        double leftLateralDist = filteredListOfFrontObjects[j].GetLeft().GetLateralDist();
+        double rightLateralDist = filteredListOfFrontObjects[j].GetRight().GetLateralDist();
+        double midpoint = (leftLateralDist + rightLateralDist)*0.5;
+        //checks if the midpoint is close enough to the car to be in the same lane
+        //TO DO: we need another filter to check if it's left or right
+        if (std::abs(midpoint) >= 2 && std::abs(midpoint) <= 5) {
+          otherLaneObjects.push_back(filteredListOfFrontObjects[j]);
+        } else if (std::abs(midpoint) < 2){
+          sameLaneObjects.push_back(filteredListOfFrontObjects[j]);
+        }
+      }
+      // Partition objects into left and right lane objects based on our car's position
+      bool ourCarOnRight = true;
+      if (ourCarOnRight) {
+        leftLaneObjects = otherLaneObjects;
+        rightLaneObjects = sameLaneObjects;
+      } else {
+        leftLaneObjects = sameLaneObjects;
+        rightLaneObjects = otherLaneObjects;
+      }
+        //printf("left lateral distance: %f \n", leftLateralDist);
+        //printf("right lateral distance: %f \n", rightLateralDist);
+        //printf("difference between lateral: %f \n", );
+        //printf("midpoint: %f \n", midpoint);
+        //printf("left lateral dis: %f\n", listOfObjectsFront[j].GetLeft().GetLateralDist());
+        //printf("right lateral dis: %f\n", listOfObjectsFront[j].GetRight().GetLateralDist());
+        //printf("car speed: %f\n", listOfObjectsFront[j].GetEstimatedSpeed());
         //if left end of object is left of right boundary of car, and right end of object is right of left boundary of car
-        if(listOfObjectsFront[j].GetLeft().GetLateralDist() < .5 && listOfObjectsFront[j].GetRight().GetLateralDist() > -.5){
+        /*if(listOfObjectsFront[j].GetLeft().GetLateralDist() < .5 && listOfObjectsFront[j].GetRight().GetLateralDist() > -.5){
           //Then we have an object in front fo the car
           carInFront = true;
-          printf("car speed: %f\n", listOfObjectsFront[j].GetEstimatedSpeed());
+          //printf("car speed: %f\n", listOfObjectsFront[j].GetEstimatedSpeed());
         }
         //if left end of object is left of right boundary of lane, and right end of object is right of left boundary of lane
         if(listOfObjectsFront[j].GetLeft().GetLateralDist() < -1 && listOfObjectsFront[j].GetRight().GetLateralDist() > -3) {
           //printf("left longitudinal dis: %f\n", listOfObjectsFront[j].GetLeft().GetLongitudinalDist());
           //printf("right longitudinal dis: %f\n", listOfObjectsFront[j].GetRight().GetLongitudinalDist());
           leftLaneFree = false;
-        }
+        }*/
+
+      //printf("the size is %i\n", filteredListOfFrontObjects.size());
+      if(leftLaneObjects.size() > 0) {
+        leftLaneFree = false;
+      }
+      if(rightLaneObjects.size() > 0) {
+        carInFront = true;
       }
       if(carInFront) {
         printf("car in front!\n");

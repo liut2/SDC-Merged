@@ -114,21 +114,26 @@ math::Vector2d sdcVisibleObject::GetProjectedPosition(int numSteps){
  */
 void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double newDist){
     this->confidence = fmin(1.0, this->confidence + 0.01);
-    printf("VisObject Ubdate called\n");
+    //printf("VisObject Update called\n");
 
     // Get the centerpoint of the new information
     math::Vector2d newCenterpoint = this->GetCenterPoint(newLeft, newRight, newDist);
 
     // Calculate the speed moving from the current point to the new point
     double newEstimatedXSpeed = (newCenterpoint.x - this->centerpoint.x);
+    //printf("new estimatedXSpeed %f\n", newEstimatedXSpeed);
     double newEstimatedYSpeed = (newCenterpoint.y - this->centerpoint.y);
+    //printf("new estimatedYSpeed %f\n", newEstimatedYSpeed);
 
     // If this object has already been updated at least once, try to learn the speed
     // over time
     if(!this->brandSpankinNew){
+        //printf("trying to learn speed over time\n");
         double alpha = fmax((newDist * .005), (.1 - newDist * .005));
         newEstimatedXSpeed = (alpha * newEstimatedXSpeed) + ((1 - alpha) * this->estimatedXSpeed);
         newEstimatedYSpeed = (alpha * newEstimatedYSpeed) + ((1 - alpha) * this->estimatedYSpeed);
+    } else {
+        //printf("detected new object\n");
     }
 
     // Update the estimates for this object's speed
