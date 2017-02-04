@@ -80,6 +80,7 @@ int sdcCar::carIdCount = 0;
 //These are the variables for lane overtaking
 int changeTurnCounter = 0;
 std::vector<sdcVisibleObject> rightObjects;
+int straightRoadModifier = 8000;
 
 
 ////////////////////////////////
@@ -261,9 +262,9 @@ void sdcCar::Drive()
           this->steeringAmount = 2;
           //printf("turning right\n");
         }
-        else if (changeTurnCounter >= 400 && changeTurnCounter <= 1900){
+        else if (changeTurnCounter >= 400 && changeTurnCounter <= straightRoadModifier){
           this->steeringAmount = 0;
-          printf(" going straight\n");
+          //printf(" going straight\n");
           // use side lidar to decide when we can move back to right lane
           double leftMostLateral = 0;
           //printf("The number of right objects is %lu\n", rightObjects.size());
@@ -273,18 +274,22 @@ void sdcCar::Drive()
                 leftMostLateral = leftLateral;
             }
           }
+
+          if (leftMostLateral >= 0) {
+            straightRoadModifier = changeTurnCounter - 1;
+          }
           printf("The leftmost lateral is %f\n", leftMostLateral);
-        } else if(changeTurnCounter > 1900 && changeTurnCounter <= 2300){
+        } else if(changeTurnCounter > straightRoadModifier && changeTurnCounter <= straightRoadModifier + 400){
           this->steeringAmount = 1.2;
           //this->SetTargetSpeed(this->GetSpeed() + 5);
           //printf("turning right\n");
-        }else if (2300 <= changeTurnCounter && changeTurnCounter < 6300){
+        }else if (straightRoadModifier + 400 <= changeTurnCounter && changeTurnCounter < straightRoadModifier + 4400){
           this->steeringAmount = 0;
           //printf("going straight\n");
-        }else if (6300 <= changeTurnCounter && changeTurnCounter < 6700){
+        }else if (straightRoadModifier + 4400 <= changeTurnCounter && changeTurnCounter < straightRoadModifier + 4800){
           this->steeringAmount = -1.2;
           //printf("turning left\n");
-        }else if (changeTurnCounter >= 6700) {
+        }else if (changeTurnCounter >= straightRoadModifier + 4800) {
           this->steeringAmount = 0;
           //printf(" going straight\n");
         }
