@@ -180,7 +180,7 @@ void sdcCar::Drive()
     /* New Code for Lane Overtaking */
 
     if (this->carId == 1) {
-      this->SetTargetSpeed(3);
+      this->SetTargetSpeed(5);
       std::vector<sdcVisibleObject> listOfFrontObjects = this->frontObjects;
       std::vector<sdcVisibleObject> filteredListOfFrontObjects;
       std::vector<sdcVisibleObject> sameLaneObjects;
