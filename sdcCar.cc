@@ -63,6 +63,14 @@ const std::vector<std::pair<double,double>> ends = {
     std::pair<double,double>(90, 48),
     std::pair<double,double>(48, 10),
     std::pair<double,double>(10,52.5)};
+
+
+const std::vector<std::pair<double,double>> intExit = {
+    std::pair<double,double>(52.5, 55),
+    std::pair<double,double>(55, 48),
+    std::pair<double,double>(48,45),
+    std::pair<double,double>(45, 52.5)
+    };
 //n, e, s, w
 //dijkstra's stuff
 std::vector<int> unvisited;
@@ -138,7 +146,7 @@ void sdcCar::Drive()
 //          this->Accelerate();
         //  this->Stop();
            // printf("inWaypoint\n");
-            this->WaypointDriving(WAYPOINT_VEC);
+            this->WaypointDriving();
 
         break;
 
@@ -324,17 +332,18 @@ void sdcCar::MatchTargetSpeed(){
 /*
  * Drive from point to point in the given list
  */
-void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
+void sdcCar::WaypointDriving() {
     int progress = this->waypointProgress;
     //printf("waypointvec size: %lu \n", WAYPOINT_VEC.size());
+
     if(progress < WAYPOINT_VEC.size()){
         // Pull the next waypoint and set the car to drive towards it
-        //printf("waypointvec.size: %i", WAYPOINT_VEC.size());
+        //printf("waypointvec.size: %lu\n", WAYPOINT_VEC.size());
         //this->Accelerate();
 
         // Check if the car is close enough to the target to move on
         double distance = sqrt(pow(WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(WAYPOINT_VEC[progress].pos.second - this->y,2));
-        //printf("distance %f", distance);
+      //  printf("distance %f", distance);
 
         // CODE FROM LAST GROUP THAT ASSUMES THAT THE CAR WILL TURN ONCE WE HAVE REACHED AN INTERSECTION
         if (distance < (this->GetSpeed() * this->GetSpeed())/2.9) {
@@ -342,27 +351,47 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
             //fflush(stdout);
             this->turning = true;
         }
-        if(this->turning == true){
+        //printf("progress: %i\n", progress);
+        //printf("waypointType: %i\n", WAYPOINT_VEC[progress].waypointType);
+        //printf("carId: %i, hasReservation: %i\n",carId, WAYPOINT_VEC[0].hasReservation);
+        if(WAYPOINT_VEC[progress].waypointType == 3 && (distance < (this->GetSpeed() * this->GetSpeed())/2.9)){
+            printf("stopping\n");
+            //this->waypointProgress++;
+            this->currentState = stop;
+            this->targetSpeed = 0;
+            return;
+        }
+        if (WAYPOINT_VEC[0].hasReservation == false && (distance < 20 && progress == 0)){
+            //printf("carId making request: %i\n", carId);
+            auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
+            this->targetSpeed = instruction.getSpeed();
+            if (instruction.getHasReservation() == 1){
+                //printf("carId: %i, got reservation, progress: %i\n", carId, progress);
+                WAYPOINT_VEC[0].hasReservation = true;
+                printf("carId :%i, set to true: %i\n", carId, WAYPOINT_VEC[0].hasReservation);
+            }
+            else{
+              printf("carId:%i instructionSpeed: %f\n", carId, this->targetSpeed);
+            }
+        }
+        else if(WAYPOINT_VEC[progress].waypointType != 3){
 
 
             //USE SPEED TO DETERMINE TURNING LIM
             if (WAYPOINT_VEC[progress].waypointType == 1) {
                 //LEFT
-                this->SetTurningLimit(this->GetSpeed()*6);
+                this->SetTurningLimit(this->GetSpeed()*6+20);
             } else if(WAYPOINT_VEC[progress].waypointType == 2) {
                 //RIGHT
                 this->SetTurningLimit(this->GetSpeed()*19);
             }
             GridTurning(WAYPOINT_VEC[progress].waypointType);
-        } else {
-            math::Vector2d nextTarget = {WAYPOINT_VEC[progress].pos.first,WAYPOINT_VEC[progress].pos.second};
-            //printf("nextTarget.x: %f \n", WAYPOINT_VEC[1].pos.first);
-            fflush(stdout);
-            //printf("first: %f second: %f", WAYPOINT_VEC[progress].pos.first, WAYPOINT_VEC[progress].pos.second);
-            sdcAngle targetAngle = AngleToTarget(nextTarget);
-            this->SetTargetDirection(targetAngle);
-            // this->LanedDriving();
         }
+        math::Vector2d nextTarget = {WAYPOINT_VEC[progress].pos.first,WAYPOINT_VEC[progress].pos.second};
+        sdcAngle targetAngle = AngleToTarget(nextTarget);
+        this->SetTargetDirection(targetAngle);
+            // this->LanedDriving();
+
     } else {
         printf("should stop!\n");
         this->currentState = stop;
@@ -398,37 +427,27 @@ void sdcCar::GridTurning(int turn){
     //turn == 3 means stop
     float destX = WAYPOINT_VEC[progress].pos.first;
     float destY = WAYPOINT_VEC[progress].pos.second;
-    float distance = std::abs(destX - this->x) + std::abs(destY - this->y);
+    float distance = sqrt(pow(WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(WAYPOINT_VEC[progress].pos.second - this->y,2));
 
-    if(turn == 3){
-        this->waypointProgress++;
 
-        this->currentState = stop;
-        return;
-    }
     //If the car has a reservation then proceed. If not stop and wait for a reservation
 
     //turn == 0 means go straight
-    else if (turn == 0){
-
-
-        if(distance < .5 && WAYPOINT_VEC[0].hasReservation){
-            this->waypointProgress = 1;
-            this->turning = false;
-            printf("turn == 0\n");
+     if (turn == 0){
+        if (carId == 1){
+          printf("woops\n");
+        }
+        if(distance < 3 && WAYPOINT_VEC[0].hasReservation){
+            if(progress < 2){
+                this->waypointProgress++;
+                printf("carId: %i, progress: %i\n", carId, this->waypointProgress);
+            }
+            //printf("turn == 0\n");
+            //this->targetSpeed = this->maxCarSpeed;
             return;
         }
         else{
-            if (distance < 25 && progress == 0){
-            //  printf("progress: %i", progress);
-                if(!WAYPOINT_VEC[progress].hasReservation){
-                    auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-                    this->SetTargetSpeed(instruction.getSpeed());
-                    if (instruction.getHasReservation() == 1){
-                        WAYPOINT_VEC[progress].hasReservation = true;
-                    }
-                }
-            }
+
            /* if(GetSpeed() < .1){
                 //printf("waypointType: %i\n", WAYPOINT_VEC[progress].waypointType);
                 //printf("progress: %i\n", progress);
@@ -453,34 +472,25 @@ void sdcCar::GridTurning(int turn){
             //car sends reservation request when velocity is below threshold
             //sdcManager sends back response and car sets hasReservation to true
             //car needs to be able to send "out of intersection" message to sdcManager
+            //this->targetSpeed = this->maxCarSpeed;
             return;
         }
     }
     //turn == 1 or 2 means turn
     else {
-        if(distance < 3 && WAYPOINT_VEC[progress].hasReservation){
-            math::Vector2d nextTarget = {WAYPOINT_VEC[progress+1].pos.first,WAYPOINT_VEC[progress+1].pos.second};
-//            printf("next target pos.first: %f\n",WAYPOINT_VEC[progress+1].pos.first);
-//            printf("next target pos.second: %f\n",WAYPOINT_VEC[progress+1].pos.second);
-            fflush(stdout);
-            sdcAngle targetAngle = AngleToTarget(nextTarget);
-            this->SetTargetDirection(targetAngle);
-            sdcAngle margin = this->GetOrientation().FindMargin(targetAngle);
-            if(margin < .1 && margin > -.1){
-                this->turning = false;
-                this->waypointProgress = 1;
-                this->targetSpeed = this->maxCarSpeed;
-            }
-        }
-        if (distance < 25 && progress == 0){
-            if(!WAYPOINT_VEC[progress].hasReservation){
-                auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-                this->SetTargetSpeed(instruction.getSpeed());
-                //printf("current speed: %f\n", this->GetSpeed());
-              //  printf("reservation target speed: %f\n", this->targetSpeed);
-                if (instruction.getHasReservation() == 1){
-                    WAYPOINT_VEC[progress].hasReservation = true;
-                  //  printf("turning got reservation");
+        if(WAYPOINT_VEC[0].hasReservation){
+            if ((progress == 0 && distance < 1) || (progress == 1 && distance < 7)){
+                math::Vector2d nextTarget = {WAYPOINT_VEC[progress+1].pos.first,WAYPOINT_VEC[progress+1].pos.second};
+                sdcAngle targetAngle = AngleToTarget(nextTarget);
+                this->SetTargetDirection(targetAngle);
+                if (progress == 1){
+                    printf("distance: %f, x: %f, y: %f\n", distance, WAYPOINT_VEC[progress].pos.first, WAYPOINT_VEC[progress].pos.second);
+                }
+                printf("turning\n");
+
+                if(progress < 2){
+                    this->waypointProgress++;
+                    printf("progress: %i\n", this->waypointProgress);
                 }
             }
         }
@@ -521,8 +531,13 @@ void sdcCar::GenerateWaypoints(){
     GetNSEW();
     initializeGraph();
     insertWaypointTypes(this->currentDir);
+    WAYPOINT_VEC.push_back(intersections[2].waypoint);
     WAYPOINT_VEC.push_back(intersections[1].waypoint);
     WAYPOINT_VEC.push_back(intersections[0].waypoint);
+    // for (int i = 0; i < WAYPOINT_VEC.size(); i++){
+    //   printf("i: %i, x: %f, y: %f\n", i, WAYPOINT_VEC[i].pos.first, WAYPOINT_VEC[i].pos.second);
+    // }
+
    // printf("end of genwaypoints\n");
 }
 
@@ -532,14 +547,19 @@ void sdcCar::initializeGraph() {
     //make the sdcIntersections
     sdcIntersection destIntersection;
     destIntersection.place = 0;
+    sdcIntersection exitIntersection;
+    exitIntersection.place = 1;
     sdcIntersection centerIntersection;
-    centerIntersection.place = 1;
+    centerIntersection.place = 2;
     int turnType = 0;//genRand(2); //returns if the car goes straight (0) left (1) or right (2)
-    printf("turnType: %i carId: %i\n", turnType, this->carId);
+    if (carId == 1){
+      turnType = 2;
+    }
+    //printf("turnType: %i carId: %i\n", turnType, this->carId);
     fflush(stdout);
 
     if(this->x > 46 && this->x < 50){ //NORTH END
-        printf("idfirst:%i",carId);
+      //  printf("idfirst:%i",carId);
         fflush(stdout);
         //right turns first dest is 3 past intersection
         //left turns first dest is 7 past intersection
@@ -548,30 +568,52 @@ void sdcCar::initializeGraph() {
         switch(turnType){
             case 0:
                 destIntersection.waypoint = sdcWaypoint(0,ends[2]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[2]);
                 break;
             case 1:
                 destIntersection.waypoint = sdcWaypoint(0,ends[1]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[1]);
                 break;
             case 2:
                 destIntersection.waypoint = sdcWaypoint(0,ends[3]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[3]);
                 break;
         }
         centerIntersection.waypoint = sdcWaypoint(0,std::pair<double,double>(48,55));
 
     }
+    /*
+    const std::vector<std::pair<double,double>> ends = {
+        std::pair<double,double>(52.5, 90),
+        std::pair<double,double>(90, 48),
+        std::pair<double,double>(48, 10),
+        std::pair<double,double>(10,52.5)};
+
+
+    const std::vector<std::pair<double,double>> intExit = {
+        std::pair<double,double>(52.5, 55),
+        std::pair<double,double>(55, 48),
+        std::pair<double,double>(48,45),
+        std::pair<double,double>(45, 52.5)
+        };
+      */
     else if(this->y > 50 && this->y < 54){ //EAST
         sdcManager::stopSignQueue(carId, 1);
         this->fromDir = 1;
         switch(turnType){
 
             case 0:
+                printf("from east carid: %i\n",carId);
                 destIntersection.waypoint = sdcWaypoint(0,ends[3]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[3]);
                 break;
             case 1:
                 destIntersection.waypoint = sdcWaypoint(0,ends[2]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[2]);
                 break;
             case 2:
                 destIntersection.waypoint = sdcWaypoint(0,ends[0]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[0]);
                 break;
         }
         centerIntersection.waypoint = sdcWaypoint(0,std::pair<double,double>(55,52.5));
@@ -583,12 +625,15 @@ void sdcCar::initializeGraph() {
         switch(turnType){
             case 0:
                 destIntersection.waypoint = sdcWaypoint(0,ends[0]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[0]);
                 break;
             case 1:
                 destIntersection.waypoint = sdcWaypoint(0,ends[3]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[3]);
                 break;
             case 2:
                 destIntersection.waypoint = sdcWaypoint(0,ends[1]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[1]);
                 break;
         }
         centerIntersection.waypoint = sdcWaypoint(0,std::pair<double,double>(52.5,45));
@@ -598,12 +643,15 @@ void sdcCar::initializeGraph() {
         switch(turnType){
             case 0:
                 destIntersection.waypoint = sdcWaypoint(0,ends[1]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[1]);
                 break;
             case 1:
                 destIntersection.waypoint = sdcWaypoint(0,ends[0]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[0]);
                 break;
             case 2:
                 destIntersection.waypoint = sdcWaypoint(0,ends[2]);
+                exitIntersection.waypoint = sdcWaypoint(0,intExit[2]);
                 break;
         }
         centerIntersection.waypoint = sdcWaypoint(0,std::pair<double,double>(45,48));
@@ -615,22 +663,23 @@ void sdcCar::initializeGraph() {
 
 
     centerIntersection.waypoint.waypointType = turnType;
+    exitIntersection.waypoint.waypointType = turnType;
     destIntersection.waypoint.waypointType = 3;
     centerIntersection.waypoint.hasReservation = false;
     //make the distance to all intersections infinity
-    printf("centerWPtype: %i\n", centerIntersection.waypoint.waypointType);
-    intersections = {destIntersection, centerIntersection};
+  //  printf("centerIntersection wp type: %i\n", centerIntersection.waypoint.waypointType);
+    intersections = {destIntersection, exitIntersection, centerIntersection};
     for (int i = 0; i < intersections.size(); ++i) {
         intersections[i].dist = std::numeric_limits<double>::infinity();
         intersections[i].place = i;
     }
-    printf("end of graph\n");
+  //  printf("end of graph\n");
 }
 
 void sdcCar::insertWaypointTypes(Direction startDir) {
     Direction curDir = startDir;
-    int nextDir = intersections[1].waypoint.waypointType;
-    printf("nextDir: %i\n", nextDir);
+    int nextDir = intersections[2].waypoint.waypointType;
+  //  printf("nextDir: %i\n", nextDir);
     int current = 1;
     int next = 0;
   // get the direction the car heads in from the current intersection to
@@ -638,7 +687,7 @@ void sdcCar::insertWaypointTypes(Direction startDir) {
     // 0 = straight, 1 = left, 2 = right, 3 = stop
     switch (curDir) {
       case north:
-        printf("north\n");
+      //  printf("north\n");
         switch (nextDir) {
             case 0:
                 this->destDirection = 0;
@@ -655,7 +704,7 @@ void sdcCar::insertWaypointTypes(Direction startDir) {
         }
         break;
     case east:
-            printf("east\n");
+          //  printf("east\n");
             switch (nextDir) {
                 case 1:
                     this->destDirection = 0;
@@ -671,7 +720,7 @@ void sdcCar::insertWaypointTypes(Direction startDir) {
             }
             break;
       case south:
-        printf("south");
+        //printf("south");
         switch (nextDir) {
             case 0:
                 this->destDirection = 2;
@@ -688,7 +737,7 @@ void sdcCar::insertWaypointTypes(Direction startDir) {
         break;
 
       case west:
-        printf("west");
+      //  printf("west");
         switch (nextDir) {
           case 2:
                 this->destDirection = 0;
@@ -1006,7 +1055,7 @@ void sdcCar::SetTargetSteeringAmount(double a){
  */
 void sdcCar::SetTargetSpeed(double s){
     this->targetSpeed = fmax(fmin(s, this->maxCarSpeed), 0);
-    //printf("--stopping bool: %i--", this->stopping);
+    //printf("-- bool: %i--", this->stopping);
     this->stopping = (this->targetSpeed == 0);
     this->SetAccelRate();
     this->SetBrakeRate();
@@ -1340,7 +1389,7 @@ sdcCar::sdcCar(){
     this->aeroLoad = 0.1;
     this->swayForce = 10;
 
-    this->maxSpeed = 10;
+    this->maxSpeed = 6;
     this->maxTurnLeft = 5;
     this->maxTurnRight = 5;
     this->frontPower = 50;

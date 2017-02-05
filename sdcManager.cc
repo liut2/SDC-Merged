@@ -98,7 +98,7 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
     if (speed == 0){
       speed = 1;
     }
-    float speedIntent = 10;
+    float speedIntent = 6;
 
     //float tm = 1;
     bool reserved = true;
@@ -124,7 +124,7 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
             } else {
               speedIntent = fmin(speedIntent, ((float)distance - speed) / (sdcManager::getGrid(xIndex + xWidth, yIndex) - tm));
               if (speedIntent < 0){
-                speedIntent = 10;
+                speedIntent = 6;
               }
             }
           }
@@ -201,10 +201,11 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
     }
     //left?
     else if (turning == 1){
-    //  printf("maxTurnLeft: %f\n", sdcManager::maxTurnLeft);
+      //  printf("maxTurnLeft: %f\n", sdcManager::maxTurnLeft);
         return instruction::instruction(carId, sdcManager::maxTurnLeft, 1);
     }
     else if (turning == 2){
+        //printf("turning right\n");
         return instruction::instruction(carId, sdcManager::maxTurnRight, 1);
     }
     else{
