@@ -368,10 +368,10 @@ void sdcCar::WaypointDriving() {
             if (instruction.getHasReservation() == 1){
                 //printf("carId: %i, got reservation, progress: %i\n", carId, progress);
                 WAYPOINT_VEC[0].hasReservation = true;
-                printf("carId :%i, set to true: %i\n", carId, WAYPOINT_VEC[0].hasReservation);
+                //printf("carId :%i, set to true: %i\n", carId, WAYPOINT_VEC[0].hasReservation);
             }
             else{
-              printf("carId:%i instructionSpeed: %f\n", carId, this->targetSpeed);
+              //printf("carId:%i instructionSpeed: %f\n", carId, this->targetSpeed);
             }
         }
         else if(WAYPOINT_VEC[progress].waypointType != 3){
@@ -380,7 +380,7 @@ void sdcCar::WaypointDriving() {
             //USE SPEED TO DETERMINE TURNING LIM
             if (WAYPOINT_VEC[progress].waypointType == 1) {
                 //LEFT
-                this->SetTurningLimit(this->GetSpeed()*6+20);
+                this->SetTurningLimit(this->GetSpeed()*6+10);
             } else if(WAYPOINT_VEC[progress].waypointType == 2) {
                 //RIGHT
                 this->SetTurningLimit(this->GetSpeed()*19);
@@ -434,9 +434,6 @@ void sdcCar::GridTurning(int turn){
 
     //turn == 0 means go straight
      if (turn == 0){
-        if (carId == 1){
-          printf("woops\n");
-        }
         if(distance < 3 && WAYPOINT_VEC[0].hasReservation){
             if(progress < 2){
                 this->waypointProgress++;
@@ -551,9 +548,9 @@ void sdcCar::initializeGraph() {
     exitIntersection.place = 1;
     sdcIntersection centerIntersection;
     centerIntersection.place = 2;
-    int turnType = 0;//genRand(2); //returns if the car goes straight (0) left (1) or right (2)
-    if (carId == 1){
-      turnType = 2;
+    int turnType = 2;//genRand(2); //returns if the car goes straight (0) left (1) or right (2)
+    if (carId == 4 || carId == 3){
+      turnType = 0;
     }
     //printf("turnType: %i carId: %i\n", turnType, this->carId);
     fflush(stdout);

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <time.h>
+#include <chrono>
 #include "request.hh"
 #include "instruction.hh"
 #include "sdcSensorData.hh"
@@ -26,7 +27,7 @@ public:
     void makeGrid();
     static void setGrid(float filled, int x, int y);
     static float getGrid(int x, int y);
-
+    static float quadraticRoot(float a, float b, float c);
     static instruction reservationRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
     static bool stopSignHandleRequest(int carId, int turning, int direction, int fromDir);
     static void stopSignCarLeft(int carId);
@@ -34,12 +35,15 @@ public:
     static bool shouldStop(int carId, int fromDir);
     static gazebo::sdcSensorData *getSensorData(int cameraId);
 private:
+    static instruction rightTurnRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
+    static instruction leftTurnRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
     static int carAmt;
     static std::vector<int> carList;
     static std::vector<std::vector<float>> grid;
     static float maxTurnLeft;
     static float maxTurnRight;
     static time_t startTime;
+    static std::chrono::milliseconds msStartTime;
 
 
 
