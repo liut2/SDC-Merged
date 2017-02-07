@@ -1,4 +1,4 @@
-# Install script for directory: /Accounts/liut2/Desktop/SDC-Merged
+# Install script for directory: /Accounts/brownb2/Desktop/sdcMerged/SDC-Merged
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -35,5 +35,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Accounts/liut2/Desktop/SDC-Merged/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

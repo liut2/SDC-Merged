@@ -82,6 +82,7 @@ int changeTurnCounter = 0;
 std::vector<sdcVisibleObject> rightObjects;
 int straightRoadModifier = 2000000;
 bool isOvertaking = false;
+bool ourCarOnRight = true;
 
 
 ////////////////////////////////
@@ -218,7 +219,8 @@ void sdcCar::Drive()
         }
       }
       // Partition objects into left and right lane objects based on our car's position
-      bool ourCarOnRight = true;
+      ourCarOnRight = true;
+
       if (ourCarOnRight) {
         leftLaneObjects = otherLaneObjects;
         rightLaneObjects = sameLaneObjects;
@@ -238,9 +240,11 @@ void sdcCar::Drive()
         //printf("car in front!\n");
         //printf("\n");
       }
-      if(!leftLaneFree) {
+      if(!leftLaneFree && !isOvertaking) {
+        printf("Our car speed: %f\n", this->GetSpeed());
         //printf("left lane blocked!\n");
         //printf("\n");
+        //this->SetTargetSpeed(6);
       }
       if (leftLaneFree && carInFront) {
         double closestlongitude = 100;
@@ -260,30 +264,30 @@ void sdcCar::Drive()
 
       /* The logic for the car that does the Overtaking */
       if((this->GetSpeed() > this->targetSpeed - 0.1) && isOvertaking){
-        printf("enter the overtaking part\n");
-        printf("counter is %d\n", changeTurnCounter);
-        printf("straight road modifier is %d\n", straightRoadModifier);
-        printf("\n");
+        //printf("enter the overtaking part\n");
+        //printf("counter is %d\n", changeTurnCounter);
+        //printf("straight road modifier is %d\n", straightRoadModifier);
+        //printf("\n");
         //if(changeTurnCounter < 5){
         if(changeTurnCounter < 400){
           this->steeringAmount = -2;
           this->SetTargetSpeed(this->GetSpeed() + 5);
-          printf("turning left\n");
-          printf("\n");
+          //printf("turning left\n");
+          //printf("\n");
         }else if (400 <= changeTurnCounter && changeTurnCounter < 4400){
           this->steeringAmount = 0;
-          printf("going straight\n");
+          //printf("going straight\n");
         //}else if (5 <= changeTurnCounter && changeTurnCounter < 400){
         }else if (4400 <= changeTurnCounter && changeTurnCounter < 4800){
           this->steeringAmount = 2;
-          printf("turning right\n");
-          printf("\n");
+          //printf("turning right\n");
+          //printf("\n");
         }
         //  else if (changeTurnCounter >= 400 && changeTurnCounter <= straightRoadModifier){
         else if (changeTurnCounter >= 4800 && changeTurnCounter <= straightRoadModifier){
           this->steeringAmount = 0;
-          printf("going straight\n");
-          printf("\n");
+          //printf("going straight\n");
+          //printf("\n");
           // use side lidar to decide when we can move back to right lane
           double leftMostLateral = 0;
           //printf("The number of right objects is %lu\n", rightObjects.size());
