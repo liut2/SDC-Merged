@@ -150,6 +150,14 @@ void sdcSensorData::setMidlineAngle(double midlineAngle) {
   this->midlineAngle = midlineAngle;
 }
 
+double sdcSensorData::getVerticalDifference() {
+  return this->verticalDifference;
+}
+
+void sdcSensorData::setVerticalDifference(double verticalDifference) {
+  this->verticalDifference = verticalDifference;
+}
+
 void sdcSensorData::UpdateSteeringMagnitude(double steerMag) {
   //  printf("newSteerMagnitude: %f\n", this->newSteerMagnitude);
    // printf("steerMag: %f\n", steerMag);

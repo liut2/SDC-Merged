@@ -80,6 +80,7 @@ int sdcCar::carIdCount = 0;
 bool isInStraightRoad = 1;
 bool isInCurveRoad = 0;
 int brakeTimes = 0;
+int turnCounter = 0;
 
 
 
@@ -131,7 +132,7 @@ void sdcCar::Drive()
 
 
       double degree = this->cameraSensorData->getMidlineAngle();
-      printf("The angle is %f\n", degree);
+      //printf("The angle is %f\n", degree);
 
       if(std::abs(degree) <= 15){
         isInStraightRoad = true;
@@ -143,7 +144,7 @@ void sdcCar::Drive()
       //When its in the curve
       if (isInCurveRoad && !isInStraightRoad){
         //Do Nothing
-        printf("Case 1: In Curve\n");
+        //printf("Case 1: In Curve\n");
         this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
         this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
       }
@@ -154,24 +155,55 @@ void sdcCar::Drive()
           this->gas = 1.0;
           this->brake = 0.0;
         }
-        this->cameraSensorData->UpdateSteeringMagnitude(0);
-        this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+        // re-adjust angles if the difference between midline and vertical is too large
+        // say >= 15 degree
+        double verticalDifference = this->cameraSensorData->getVerticalDifference();
+        /*double squaredDifference = (verticalDifference - 10)*(verticalDifference - 10);
+        if (verticalDifference < 0) {
+          squaredDifference = -1 * squaredDifference;
+        }*/
+
+        if (std::abs(verticalDifference) > 20 && turnCounter <= 400) {
+          //printf("angle updated by %f\n", (-1)*verticalDifference/1000);
+          this->cameraSensorData->UpdateSteeringMagnitude(-verticalDifference/290);
+          this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+          //printf("turn counter: %i\n", turnCounter);
+          turnCounter++;
+          printf("step 1\n");
+          printf("\n");
+        } else if (turnCounter > 400 && turnCounter < 500) {
+          this->cameraSensorData->UpdateSteeringMagnitude(verticalDifference/1000);
+          this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+          turnCounter++;
+          printf("step 2\n");
+          printf("\n");
+        }
+        else {
+          this->cameraSensorData->UpdateSteeringMagnitude(0);
+          this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+          //turnCounter = 0;
+          //printf("step 3\n");
+          //printf("\n");
+        }
       }
       else{
         //if its about to exit curve and get back on straight road
         if(std::abs(degree) <= 15){
-          printf("Case 3: About to exit curve\n");
+          //printf("Case 3: About to exit curve\n");
           isInStraightRoad = true;
           isInCurveRoad = false;
           //this->Accelerate(3,1);
           if(this->GetSpeed() < this->targetSpeed){
-            printf("Subcase: Accelerating\n");
-            this->gas = 1.0;
+            //printf("Subcase: Accelerating\n");
+            this->gas = 0.7;
             this->brake = 0.0;
           }
+          double verticalDifference = this->cameraSensorData->getVerticalDifference();
+          //this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
           this->cameraSensorData->UpdateSteeringMagnitude(0);
+          //printf("the angle is %f\n", verticalDifference/200);
           this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-
+          turnCounter = 0;
         }
         else if(std::abs(degree) >= 30){
           if (brakeTimes >= 10) {
@@ -179,7 +211,7 @@ void sdcCar::Drive()
             isInCurveRoad = true;
             brakeTimes = 0;
           } else {
-            printf("Actually braking\n");
+            //printf("Actually braking\n");
             Brake(4,4.5);
             //brakesOn = true;
             //this->cameraSensorData->UpdateSteeringMagnitude(.815);
@@ -187,7 +219,7 @@ void sdcCar::Drive()
             this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
             brakeTimes++;
           }
-          printf("Case 4: About to enter curve\n");
+          //printf("Case 4: About to enter curve\n");
 
 
         }

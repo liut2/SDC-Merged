@@ -37,6 +37,9 @@ namespace gazebo
         void setMidlineAngle(double angle);
         double getMidlineAngle();
 
+        void setVerticalDifference(double verticalDifference);
+        double getVerticalDifference();
+
         std::vector<sdcLidarRay> GetBlockedFrontRays();
         std::vector<sdcLidarRay> GetBlockedBackRays();
         std::vector<sdcVisibleObject> GetObjectsInFront();
@@ -59,6 +62,7 @@ namespace gazebo
         int lanePosition;
         double newSteerMagnitude;
         double midlineAngle;
+        double verticalDifference;
 
         // GPS variables and methods
         double gpsX;

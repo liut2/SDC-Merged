@@ -490,6 +490,16 @@ void sdcCameraSensor::OnUpdate() {
 	if (twoMidlines.size() == 2) {
 		double degree = getAngleDifference(twoMidlines.at(0), twoMidlines.at(1));
 		this->sensorData->setMidlineAngle(degree);
+		// set the angle difference between the vertical line and bottomm midline
+		Vec4i verticalLine;
+		verticalLine[0] = col/2;
+		verticalLine[1] = 0;
+		verticalLine[2] = col/2;
+		verticalLine[3] = 10;
+
+		double verticalDifference = getAngleDifference(twoMidlines.at(1), verticalLine);
+		//printf("The vertical difference is %f\n", verticalDifference);
+		this->sensorData->setVerticalDifference(verticalDifference);
 	}
 
 	// assume we have the three midlines from section 2,3,4, we need to change the accelaration and direction based the angle
