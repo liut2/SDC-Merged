@@ -66,7 +66,7 @@ add_library(sdcTopLidarSensor SHARED sdcTopLidarSensor.cc)
 target_link_libraries(sdcTopLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcSideLidarSensor SHARED sdcSideLidarSensor.cc)
-target_link_libraries(sdcSideLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcSideLidarSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcBackLidarSensor SHARED sdcBackLidarSensor.cc)
 target_link_libraries(sdcBackLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

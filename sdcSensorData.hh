@@ -44,6 +44,11 @@ namespace gazebo
         std::vector<sdcLidarRay> GetBlockedBackRays();
         std::vector<sdcVisibleObject> GetObjectsInFront();
 
+        std::vector<sdcVisibleObject> GetObjectsOnLeft();
+        std::vector<sdcLidarRay> GetBlockedLeftRays();
+        std::vector<sdcVisibleObject> GetObjectsOnRight();
+        std::vector<sdcLidarRay> GetBlockedRightRays();
+
         int GetLidarLastUpdate(LidarPos lidar);
         int GetLidarNumRays(LidarPos lidar);
         sdcAngle GetLidarMinAngle(LidarPos lidar);

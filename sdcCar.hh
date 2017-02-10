@@ -50,6 +50,7 @@ namespace gazebo {
                 void driveOnStraightRoad(double degree);
                 void driveOnCurvedRoad(double degree);
                 void laneDriving2017();
+                void overtaking2017();
         // These methods are called by Gazebo during the loading and initializing
         // stages of world building and populating
         virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
@@ -72,8 +73,12 @@ namespace gazebo {
         physics::LinkPtr chassis;
         physics::LinkPtr camera;
         physics::LinkPtr frontLidar;
+        physics::LinkPtr leftSideLidar;
+        physics::LinkPtr rightSideLidar;
         int cameraId;
         int frontLidarId;
+        int leftLidarId;
+        int rightLidarId;
         // The velocity of the car
         math::Vector3 velocity;
 
@@ -84,6 +89,8 @@ namespace gazebo {
         //sensorData object
         sdcSensorData *cameraSensorData;
         sdcSensorData *lidarSensorData;
+        sdcSensorData *rightLidarSensorData;
+        sdcSensorData *leftLidarSensorData;
 
         //sdcFrontLidarSensor frontSensor;
 

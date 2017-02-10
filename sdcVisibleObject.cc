@@ -1,5 +1,5 @@
 /*
- * This class provides a wrapper for objects we see, created by two lidar rays and 
+ * This class provides a wrapper for objects we see, created by two lidar rays and
  * a distance. This class provides methods that return information about these
  * objects, including estimates about future position based upon past data.
  */
@@ -36,6 +36,18 @@ sdcVisibleObject::sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double d
 
     this->tracking = false;
     this->brandSpankinNew = true;
+}
+
+sdcLidarRay sdcVisibleObject::GetLeft() {
+  return this->left;
+}
+
+sdcLidarRay sdcVisibleObject::GetRight() {
+  return this->right;
+}
+
+double sdcVisibleObject::GetDist() {
+  return this->dist;
 }
 
 /*
@@ -87,7 +99,7 @@ math::Vector2d sdcVisibleObject::EstimateUpdate(){
 
 /*
  * Method to calculate the projected position some numSteps into the future.
- * 
+ *
  * Currently unused.
  */
 math::Vector2d sdcVisibleObject::GetProjectedPosition(int numSteps){
@@ -102,20 +114,26 @@ math::Vector2d sdcVisibleObject::GetProjectedPosition(int numSteps){
  */
 void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double newDist){
     this->confidence = fmin(1.0, this->confidence + 0.01);
+    //printf("VisObject Update called\n");
 
     // Get the centerpoint of the new information
     math::Vector2d newCenterpoint = this->GetCenterPoint(newLeft, newRight, newDist);
 
     // Calculate the speed moving from the current point to the new point
     double newEstimatedXSpeed = (newCenterpoint.x - this->centerpoint.x);
+    //printf("new estimatedXSpeed %f\n", newEstimatedXSpeed);
     double newEstimatedYSpeed = (newCenterpoint.y - this->centerpoint.y);
+    //printf("new estimatedYSpeed %f\n", newEstimatedYSpeed);
 
     // If this object has already been updated at least once, try to learn the speed
     // over time
     if(!this->brandSpankinNew){
+        //printf("trying to learn speed over time\n");
         double alpha = fmax((newDist * .005), (.1 - newDist * .005));
         newEstimatedXSpeed = (alpha * newEstimatedXSpeed) + ((1 - alpha) * this->estimatedXSpeed);
         newEstimatedYSpeed = (alpha * newEstimatedYSpeed) + ((1 - alpha) * this->estimatedYSpeed);
+    } else {
+        //printf("detected new object\n");
     }
 
     // Update the estimates for this object's speed
@@ -149,7 +167,7 @@ void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double 
 /*
  * This method takes in a vector of multiple points and attemps to fit a line to these points.
  * This allows us to project its path and determine whether or not there is a chance for
- * the object to hit us. Method returns the predicted slope and Y-intercept based upon the 
+ * the object to hit us. Method returns the predicted slope and Y-intercept based upon the
  * vector of points.
  */
 math::Vector2d sdcVisibleObject::FitLineToPoints(std::vector<math::Vector2d> points, math::Vector2d newPoint){

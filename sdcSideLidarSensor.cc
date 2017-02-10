@@ -22,6 +22,13 @@ sensors::RaySensorPtr parentSensor;
 
 void sdcSideLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
     // Get the parent sensor.
+    this->sensor = _sensor;
+    printf("lidar sensor id: %i\n",this->sensor->GetId());
+    int sensorId = this->sensor->GetId();
+
+    //printf("this camerasId: %i \n", this->cameraId);
+    this->sensorData = manager::getSensorData(sensorId);
+
     this->parentSensor =
     boost::dynamic_pointer_cast<sensors::RaySensor>(_sensor);
 
@@ -49,7 +56,7 @@ void sdcSideLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf
         this->lidarPos = SIDE_RIGHT_BACK;
     }
 
-    //this->sdcSensorData.InitLidar(this->lidarPos, this->parentSensor->AngleMin().Radian(), this->parentSensor->GetAngleResolution(), this->parentSensor->GetRangeMax(), this->parentSensor->GetRayCount());
+    this->sensorData->InitLidar(this->lidarPos, this->parentSensor->AngleMin().Radian(), this->parentSensor->GetAngleResolution(), this->parentSensor->GetRangeMax(), this->parentSensor->GetRayCount());
 }
 
 // Called by the world update start event
@@ -57,7 +64,9 @@ void sdcSideLidarSensor::OnUpdate(){
     std::vector<double>* rays = new std::vector<double>();
     for (unsigned int i = 0; i < this->parentSensor->GetRayCount(); ++i){
         rays->push_back(this->parentSensor->GetRange(i));
+        //printf("side lidar is onupdate\n");
+        //printf("rays size: %lu", rays->size());
     }
 
-  //  this->sdcSensorData.UpdateLidar(this->lidarPos, rays);
+    this->sensorData->UpdateLidar(this->lidarPos, rays);
 }
