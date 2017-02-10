@@ -63,7 +63,7 @@
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>91.25 -2.5 -0.05 0 0 -1.575</pose>
+      <pose frame=''>91.25 -2.5 -0.13 0 0 -1.575</pose>
     </model>
     <model name='car'>
       <link name='chassis'>
@@ -1573,7 +1573,7 @@
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>151.942 -44.8313 -0.05 0 0 -1.575</pose>
+      <pose frame=''>151.942 -44.8313 -0.13 0 0 -1.575</pose>
     </model>
     <model name='road_2_0_2_clone_clone'>
       <pose frame=''>309.611 -152.455 -0.05 0 0 -0.78</pose>
@@ -1700,20 +1700,20 @@
         </link>
       </model>
       <model name='curved_road'>
-        <pose frame=''>91.1223 -5.1822 -0.05 0 0 -1.575</pose>
+        <pose frame=''>91.1223 -5.1822 -0.13 0 0 -1.575</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>91.1223 -5.1822 -0.05 0 0 -1.575</pose>
+          <pose frame=''>91.1223 -5.1822 -0.13 0 0 -1.575</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='curved_road_clone'>
-        <pose frame=''>243.27 -138.224 -0.05 0 -0 1.56957</pose>
+        <pose frame=''>243.27 -138.224 -0.13 0 -0 1.56957</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>243.27 -138.224 -0.05 0 -0 1.56957</pose>
+          <pose frame=''>243.27 -138.224 -0.13 0 -0 1.56957</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
