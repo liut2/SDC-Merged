@@ -97,43 +97,17 @@ bool ourCarOnRight = true;
  */
 void sdcCar::Drive()
 {
-
-
-//     If not in avoidance, check if we should start following the thing
-//     in front of us. If following is done, kick out to default state
     if(this->currentState != intersection){
-        //printf("in if\n");
-        // If there's a stop sign, assume we're at an intersection
-//        if(this->ignoreStopSignsCounter == 0 && sdcSensorData::stopSignFrameCount > 5){
-//            this->currentState = intersection;
-//        }
-
-        // If something is ahead of us, default to trying to follow it
-//        if (this->ObjectDirectlyAhead()){
-//            printf("currentstate = follow\n");
-//            this->currentState = follow;
-//        }else if(this->currentState == follow && !this->isTrackingObject){
-//            this->currentState = waypoint;;
-//        }
-
-        // Look for objects in danger of colliding with us, react appropriately
-//        if (this->ObjectOnCollisionCourse()){
-//            this->currentState = avoidance;
-//        }
+      // We should lane driving or overtaking functions here
+      overtaking2017();
     } else {
-      // road-driving
-      //currentState = road-driving;
+      // intersection functions
     }
 
-    //this->ignoreStopSignsCounter = fmax(this->ignoreStopSignsCounter - 1, 0);
-
-
     // Possible states: stop, waypoint, intersection, follow, avoidance
-
     switch(this->currentState)
     {
         // Final state, car is finished driving
-
         case stop:
             //printf("in stop\n");
             this->Stop();
@@ -180,158 +154,6 @@ void sdcCar::Drive()
         break;
 
     }
-
-    /* New Code for Lane Overtaking */
-    /* Overtaking decision part */
-    if (this->carId == 1) {
-      this->SetTargetSpeed(7);
-      std::vector<sdcVisibleObject> listOfFrontObjects = this->frontObjects;
-      std::vector<sdcVisibleObject> filteredListOfFrontObjects;
-      std::vector<sdcVisibleObject> sameLaneObjects;
-      std::vector<sdcVisibleObject> otherLaneObjects;
-      std::vector<sdcVisibleObject> leftLaneObjects;
-      std::vector<sdcVisibleObject> rightLaneObjects;
-      //printf("the size is %i\n", listOfFrontObjects.size());
-      bool carInFront = false;
-      bool leftLaneFree = true;
-
-      // First pass to filter out unreasonably small objects
-      for(int j = 0; j < listOfFrontObjects.size(); j++){
-        double leftLateralDist = listOfFrontObjects[j].GetLeft().GetLateralDist();
-        double rightLateralDist = listOfFrontObjects[j].GetRight().GetLateralDist();
-        double lateralWidth = std::abs(leftLateralDist - rightLateralDist);
-        //checks whether width of object is greater than 0.2
-        if (lateralWidth >= 0.2) {
-          filteredListOfFrontObjects.push_back(listOfFrontObjects[j]);
-        }
-      }
-      // Second pass to decide if the object is on the same lane or the other lane
-      for(int j = 0; j < filteredListOfFrontObjects.size(); j++) {
-        double leftLateralDist = filteredListOfFrontObjects[j].GetLeft().GetLateralDist();
-        double rightLateralDist = filteredListOfFrontObjects[j].GetRight().GetLateralDist();
-        double midpoint = (leftLateralDist + rightLateralDist)*0.5;
-        //checks if the midpoint is close enough to the car to be in the same lane
-        //TO DO: we need another filter to check if it's left or right
-        if (std::abs(midpoint) >= 2 && std::abs(midpoint) <= 5) {
-          otherLaneObjects.push_back(filteredListOfFrontObjects[j]);
-        } else if (std::abs(midpoint) < 2){
-          sameLaneObjects.push_back(filteredListOfFrontObjects[j]);
-        }
-      }
-      // Partition objects into left and right lane objects based on our car's position
-      ourCarOnRight = true;
-
-      if (ourCarOnRight) {
-        leftLaneObjects = otherLaneObjects;
-        rightLaneObjects = sameLaneObjects;
-      } else {
-        leftLaneObjects = sameLaneObjects;
-        rightLaneObjects = otherLaneObjects;
-      }
-
-      //printf("the size is %i\n", filteredListOfFrontObjects.size());
-      if(leftLaneObjects.size() > 0) {
-        leftLaneFree = false;
-      }
-      if(rightLaneObjects.size() > 0) {
-        carInFront = true;
-      }
-      if(carInFront) {
-        //printf("car in front!\n");
-        //printf("\n");
-      }
-      if(!leftLaneFree && !isOvertaking) {
-        printf("Our car speed: %f\n", this->GetSpeed());
-        //printf("left lane blocked!\n");
-        //printf("\n");
-        //this->SetTargetSpeed(6);
-      }
-      if (leftLaneFree && carInFront) {
-        double closestlongitude = 100;
-        for(int q = 0; q < rightLaneObjects.size(); q++){
-          if (rightLaneObjects[q].GetLeft().GetLongitudinalDist() < closestlongitude){
-            closestlongitude = rightLaneObjects[q].GetLeft().GetLongitudinalDist();
-          }
-        }
-        if (closestlongitude < 5){
-          isOvertaking = true;
-          //printf("is about to overtake\n");
-          //printf("\n");
-        }
-        //printf("yes, do the overtaking\n");
-        //printf("\n");
-      }
-
-      /* The logic for the car that does the Overtaking */
-      if((this->GetSpeed() > this->targetSpeed - 0.1) && isOvertaking){
-        //printf("enter the overtaking part\n");
-        //printf("counter is %d\n", changeTurnCounter);
-        //printf("straight road modifier is %d\n", straightRoadModifier);
-        //printf("\n");
-        //if(changeTurnCounter < 5){
-        if(changeTurnCounter < 400){
-          this->steeringAmount = -2;
-          this->SetTargetSpeed(this->GetSpeed() + 5);
-          //printf("turning left\n");
-          //printf("\n");
-        }else if (400 <= changeTurnCounter && changeTurnCounter < 4400){
-          this->steeringAmount = 0;
-          //printf("going straight\n");
-        //}else if (5 <= changeTurnCounter && changeTurnCounter < 400){
-        }else if (4400 <= changeTurnCounter && changeTurnCounter < 4800){
-          this->steeringAmount = 2;
-          //printf("turning right\n");
-          //printf("\n");
-        }
-        //  else if (changeTurnCounter >= 400 && changeTurnCounter <= straightRoadModifier){
-        else if (changeTurnCounter >= 4800 && changeTurnCounter <= straightRoadModifier){
-          this->steeringAmount = 0;
-          //printf("going straight\n");
-          //printf("\n");
-          // use side lidar to decide when we can move back to right lane
-          double leftMostLateral = 0;
-          //printf("The number of right objects is %lu\n", rightObjects.size());
-          for (int t = 0; t < rightObjects.size(); t++) {
-            double leftLateral = rightObjects[t].GetLeft().GetLateralDist();
-            if(leftLateral <= leftMostLateral) {
-                leftMostLateral = leftLateral;
-            }
-          }
-
-          if (leftMostLateral >= 0) {
-            straightRoadModifier = changeTurnCounter - 1;
-          }
-          //printf("The leftmost lateral is %f\n", leftMostLateral);
-        } else if(changeTurnCounter > straightRoadModifier && changeTurnCounter <= straightRoadModifier + 400){
-          this->steeringAmount = 2;
-          //this->SetTargetSpeed(this->GetSpeed() + 5);
-          //printf("turning right\n");
-        }else if (straightRoadModifier + 400 <= changeTurnCounter && changeTurnCounter < straightRoadModifier + 4400){
-          this->steeringAmount = 0;
-          //printf("going straight\n");
-        }else if (straightRoadModifier + 4400 <= changeTurnCounter && changeTurnCounter < straightRoadModifier + 4800){
-          this->steeringAmount = -2;
-          //printf("turning left\n");
-        }else if (changeTurnCounter >= straightRoadModifier + 4800 && changeTurnCounter < straightRoadModifier + 6000) {
-          this->steeringAmount = 0;
-          //printf(" going straight\n");
-        } else if (changeTurnCounter >= straightRoadModifier + 6000 && changeTurnCounter <= straightRoadModifier + 6001) {
-          isOvertaking = false;
-          straightRoadModifier = 2000000;
-          changeTurnCounter = -1;
-        }
-        changeTurnCounter++;
-      }
-
-
-    }
-    //printf("The car id is %i and the front lidar id is%i\n", this->carId, this->frontLidar->GetId() + 8);
-    //this->MatchTargetDirection();
-    // Attempts to match the target speed
-    this->MatchTargetSpeed();
-
-
-    //this->MatchTargetSpeed();
 
 
 }
@@ -1595,4 +1417,141 @@ sdcCar::sdcCar(){
 
     // Variables for avoidance
     this->trackingNavWaypoint = false;
+}
+
+/* New Code for Lane Overtaking */
+void sdcCar::overtaking2017() {
+  /* Overtaking decision part */
+  if (this->carId == 1) {
+    this->SetTargetSpeed(7);
+    std::vector<sdcVisibleObject> listOfFrontObjects = this->frontObjects;
+    std::vector<sdcVisibleObject> filteredListOfFrontObjects;
+    std::vector<sdcVisibleObject> sameLaneObjects;
+    std::vector<sdcVisibleObject> otherLaneObjects;
+    std::vector<sdcVisibleObject> leftLaneObjects;
+    std::vector<sdcVisibleObject> rightLaneObjects;
+    //printf("the size is %i\n", listOfFrontObjects.size());
+    bool carInFront = false;
+    bool leftLaneFree = true;
+
+    // First pass to filter out unreasonably small objects
+    for(int j = 0; j < listOfFrontObjects.size(); j++){
+      double leftLateralDist = listOfFrontObjects[j].GetLeft().GetLateralDist();
+      double rightLateralDist = listOfFrontObjects[j].GetRight().GetLateralDist();
+      double lateralWidth = std::abs(leftLateralDist - rightLateralDist);
+      //checks whether width of object is greater than 0.2
+      if (lateralWidth >= 0.2) {
+        filteredListOfFrontObjects.push_back(listOfFrontObjects[j]);
+      }
+    }
+    // Second pass to decide if the object is on the same lane or the other lane
+    for(int j = 0; j < filteredListOfFrontObjects.size(); j++) {
+      double leftLateralDist = filteredListOfFrontObjects[j].GetLeft().GetLateralDist();
+      double rightLateralDist = filteredListOfFrontObjects[j].GetRight().GetLateralDist();
+      double midpoint = (leftLateralDist + rightLateralDist)*0.5;
+      //checks if the midpoint is close enough to the car to be in the same lane
+      //TO DO: we need another filter to check if it's left or right
+      if (std::abs(midpoint) >= 2 && std::abs(midpoint) <= 5) {
+        otherLaneObjects.push_back(filteredListOfFrontObjects[j]);
+      } else if (std::abs(midpoint) < 2){
+        sameLaneObjects.push_back(filteredListOfFrontObjects[j]);
+      }
+    }
+    // Partition objects into left and right lane objects based on our car's position
+    ourCarOnRight = true;
+
+    if (ourCarOnRight) {
+      leftLaneObjects = otherLaneObjects;
+      rightLaneObjects = sameLaneObjects;
+    } else {
+      leftLaneObjects = sameLaneObjects;
+      rightLaneObjects = otherLaneObjects;
+    }
+
+    //printf("the size is %i\n", filteredListOfFrontObjects.size());
+    if(leftLaneObjects.size() > 0) {
+      leftLaneFree = false;
+    }
+    if(rightLaneObjects.size() > 0) {
+      carInFront = true;
+    }
+    if(carInFront) {
+      //printf("car in front!\n");
+    }
+    if(!leftLaneFree && !isOvertaking) {
+      //printf("Our car speed: %f\n", this->GetSpeed());
+      //printf("left lane blocked!\n");
+    }
+    if (leftLaneFree && carInFront) {
+      double closestlongitude = 100;
+      for(int q = 0; q < rightLaneObjects.size(); q++){
+        if (rightLaneObjects[q].GetLeft().GetLongitudinalDist() < closestlongitude){
+          closestlongitude = rightLaneObjects[q].GetLeft().GetLongitudinalDist();
+        }
+      }
+      if (closestlongitude < 5){
+        isOvertaking = true;
+        //printf("is about to overtake\n");
+      }
+      //printf("yes, do the overtaking\n");
+    }
+
+    /* The logic for the car that does the Overtaking */
+    if((this->GetSpeed() > this->targetSpeed - 0.1) && isOvertaking){
+      //printf("enter the overtaking part\n");
+      if(changeTurnCounter < 400){
+        this->steeringAmount = -2;
+        this->SetTargetSpeed(this->GetSpeed() + 5);
+        //printf("turning left\n");
+      }else if (400 <= changeTurnCounter && changeTurnCounter < 4400){
+        this->steeringAmount = 0;
+        //printf("going straight\n");
+      }else if (4400 <= changeTurnCounter && changeTurnCounter < 4800){
+        this->steeringAmount = 2;
+        //printf("turning right\n");
+      }
+      else if (changeTurnCounter >= 4800 && changeTurnCounter <= straightRoadModifier){
+        this->steeringAmount = 0;
+        //printf("going straight\n");
+
+        // use side lidar to decide when we can move back to right lane
+        double leftMostLateral = 0;
+        //printf("The number of right objects is %lu\n", rightObjects.size());
+        for (int t = 0; t < rightObjects.size(); t++) {
+          double leftLateral = rightObjects[t].GetLeft().GetLateralDist();
+          if(leftLateral <= leftMostLateral) {
+              leftMostLateral = leftLateral;
+          }
+        }
+
+        if (leftMostLateral >= 0) {
+          straightRoadModifier = changeTurnCounter - 1;
+        }
+        //printf("The leftmost lateral is %f\n", leftMostLateral);
+      } else if(changeTurnCounter > straightRoadModifier && changeTurnCounter <= straightRoadModifier + 400){
+        this->steeringAmount = 2;
+        //printf("turning right\n");
+      }else if (straightRoadModifier + 400 <= changeTurnCounter && changeTurnCounter < straightRoadModifier + 4400){
+        this->steeringAmount = 0;
+        //printf("going straight\n");
+      }else if (straightRoadModifier + 4400 <= changeTurnCounter && changeTurnCounter < straightRoadModifier + 4800){
+        this->steeringAmount = -2;
+        //printf("turning left\n");
+      }else if (changeTurnCounter >= straightRoadModifier + 4800 && changeTurnCounter < straightRoadModifier + 6000) {
+        this->steeringAmount = 0;
+        //printf(" going straight\n");
+      } else if (changeTurnCounter >= straightRoadModifier + 6000 && changeTurnCounter <= straightRoadModifier + 6001) {
+        isOvertaking = false;
+        straightRoadModifier = 2000000;
+        changeTurnCounter = -1;
+      }
+      changeTurnCounter++;
+    }
+
+
+  }
+  //printf("The car id is %i and the front lidar id is%i\n", this->carId, this->frontLidar->GetId() + 8);
+  //this->MatchTargetDirection();
+  // Attempts to match the target speed
+  this->MatchTargetSpeed();
 }

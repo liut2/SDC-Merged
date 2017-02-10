@@ -47,6 +47,7 @@ namespace gazebo {
     class GAZEBO_VISIBLE sdcCar : public ModelPlugin {
         // Constructor for sdcCar
         public: sdcCar();
+                void overtaking2017();
 
         // These methods are called by Gazebo during the loading and initializing
         // stages of world building and populating
