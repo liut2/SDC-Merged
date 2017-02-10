@@ -98,219 +98,13 @@ double maxAdjust = 0.2;
 void sdcCar::Drive()
 {
 
-
-//     If not in avoidance, check if we should start following the thing
-//     in front of us. If following is done, kick out to default state
     if(this->currentState != intersection){
-      //printf("current speed: %f\n", this->GetSpeed());
-        //printf("in if\n");
-        // If there's a stop sign, assume we're at an intersection
-//        if(this->ignoreStopSignsCounter == 0 && sdcSensorData::stopSignFrameCount > 5){
-//            this->currentState = intersection;
-//        }
-
-        // If something is ahead of us, default to trying to follow it
-//        if (this->ObjectDirectlyAhead()){
-//            printf("currentstate = follow\n");
-//            this->currentState = follow;
-//        }else if(this->currentState == follow && !this->isTrackingObject){
-//            this->currentState = waypoint;;
-//        }
-
-        // Look for objects in danger of colliding with us, react appropriately
-//        if (this->ObjectOnCollisionCourse()){
-//            this->currentState = avoidance;
-//        }
-      /* Temporarily put the lane driving code here */
-      // road-driving
-      //printf("the speed is %f\n", GetSpeed());
-      /*
-      if (GetSpeed() >= 5.9) {
-        Brake(3, 1);
-        //printf("the speed is %f\n", GetSpeed());
-
-      }*/
-      //bool brakesOn = false;
-      if (turnCounter > 0) {
-        turnCounter++;
-      }
-
-      if (turnCounter > 3000) {
-        turnCounter = 0;
-      }
-      double degree = this->cameraSensorData->getMidlineAngle();
-      //printf("The angle is %f\n", degree);
-
-      if(std::abs(degree) < 20){
-        //printf("in straight road!\n");
-        isInStraightRoad = true;
-      }
-      else if (std::abs(degree) >= 25) {
-        //printf("in curved road!\n");
-        isInCurveRoad = true;
-      }
-
-      //When its in the curve
-      if (isInCurveRoad && !isInStraightRoad){
-        //Do Nothing
-        //printf("Case 1: In Curve\n");
-        printf("adjustment to steer mag: %f\n", degree/40);
-        this->cameraSensorData->UpdateSteeringMagnitude(degree/40);
-        this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-      }
-      else if (isInStraightRoad && !isInCurveRoad){
-        //printf("Case 2: In Straight\n");
-        if(this->GetSpeed() < this->targetSpeed){
-          //printf("Subcase: Accelerating\n");
-          //printf("Get speed: %f, targed speed: %f\n", this->GetSpeed(), this->targetSpeed);
-          this->gas = 1.0;
-          this->brake = 0.0;
-        }
-        else{
-          this->gas = 0;
-        }
-        // re-adjust angles if the difference between midline and vertical is too large
-        // say >= 15 degree
-        double verticalDifference = this->cameraSensorData->getVerticalDifference();
-        double latestAdjustAmount;
-        /*double squaredDifference = (verticalDifference - 10)*(verticalDifference - 10);
-        if (verticalDifference < 0) {
-          squaredDifference = -1 * squaredDifference;
-        }*/
-
-
-        if (std::abs(verticalDifference) > 5 && turnCounter <= 1200) {
-          //new "episode"
-
-          //shrink abs(vertical) by 15
-          double compressedVertical;
-          if (verticalDifference > 0) {
-            compressedVertical = verticalDifference - 10;
-          } else {
-            compressedVertical = verticalDifference + 10;
-          }
-
-          //square compressedVertical to react more strongly to large angles
-          double squared = compressedVertical * compressedVertical;
-          if (compressedVertical < 0) {
-            squared = -squared;
-          }
-
-          //latestAdjustAmount is the angle difference for this turn
-          latestAdjustAmount = -squared/10000;
-          if (latestAdjustAmount > maxAdjust) {
-            latestAdjustAmount = fmin(latestAdjustAmount, maxAdjust);
-          } else {
-            latestAdjustAmount = fmax(latestAdjustAmount, -maxAdjust);
-          }
-
-          //set adjustAmount, which is the average angle change at beginning
-          //of counter cycle
-          //limit absolute value to 0.1
-
-          if (turnCounter == 0) {
-            printf("updated adjustamount!\n");
-            adjustAmount = -squared/10000;
-            if (adjustAmount > maxAdjust) {
-              adjustAmount = fmin(adjustAmount, maxAdjust);
-            } else {
-              adjustAmount = fmax(adjustAmount, -maxAdjust);
-            }
-            turnCounter++;
-          } else {
-            adjustAmount *= turnCounter;
-            adjustAmount += latestAdjustAmount;
-            adjustAmount /= (turnCounter + 1);
-          }
-
-
-          if (turnCounter % 50 == 0) {
-            //printf("ADJUST: angle %f, update %f, adjust amount %f, counter %i\n", verticalDifference, latestAdjustAmount, adjustAmount, turnCounter);
-            //printf("\n");
-          }
-
-          this->cameraSensorData->UpdateSteeringMagnitude(latestAdjustAmount);
-          this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-          //printf("turn counter: %i\n", turnCounter);
-          //turnCounter++;
-          //printf("step 1\n");
-          //printf("\n");
-        } else if (turnCounter > 1200 && turnCounter < 1900) {
-          //reverses turning angle to put the car back on track
-          if (adjustAmount > 0.85*maxAdjust) {
-            adjustAmount = fmin(adjustAmount, 0.85*maxAdjust);
-          } else if (adjustAmount < -0.85*maxAdjust){
-            adjustAmount = fmax(adjustAmount, -0.85*maxAdjust);
-          }
-          if(turnCounter % 50 == 0) {
-            //printf("BACKTRACKING: angle is %f, updated by %f, counter %i\n", verticalDifference, -1.1*adjustAmount, turnCounter);
-            //printf("\n");
-          }
-
-          this->cameraSensorData->UpdateSteeringMagnitude(-1.1*adjustAmount);
-          this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-          //turnCounter++;
-          //printf("step 2\n");
-          //printf("\n");
-        } else {
-          this->cameraSensorData->UpdateSteeringMagnitude(0);
-          this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-          if(turnCounter>0) {
-            printf("step 3 - reset counter\n");
-            printf("\n");
-          }
-          turnCounter = 0;
-          //printf("step 3 - reset counter\n");
-          //printf("\n");
-        }
-      }
-      else{
-        //if its about to exit curve and get back on straight road
-
-        //lets try implementing an extra turn "counter" here so that we continue turning for a little bit long when we exit the curve
-        if(std::abs(degree) <= 20){
-          //printf("Case 3: About to exit curve\n");
-          isInStraightRoad = true;
-          isInCurveRoad = false;
-          //this->Accelerate(3,1);
-          if(this->GetSpeed() < this->targetSpeed){
-            //printf("Subcase: Accelerating\n");
-            this->gas = 0.7;
-            this->brake = 0.0;
-          }
-          double verticalDifference = this->cameraSensorData->getVerticalDifference();
-          printf("adjustment to steer mag: %f\n", degree/25);
-          this->cameraSensorData->UpdateSteeringMagnitude(degree/25);
-          //this->cameraSensorData->UpdateSteeringMagnitude(0);
-          //printf("the angle is %f\n", verticalDifference/200);
-          this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-          //turnCounter = 0;
-        }
-        else if(std::abs(degree) >= 25){
-          if (brakeTimes >= 10) {
-            isInStraightRoad = false;
-            isInCurveRoad = true;
-            brakeTimes = 0;
-          } else {
-            //printf("Actually braking\n");
-            Brake(4,4.5);
-            //brakesOn = true;
-            //this->cameraSensorData->UpdateSteeringMagnitude(.815);
-            printf("adjustment to steer mag: %f\n", degree/50);
-            this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
-            this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-            brakeTimes++;
-          }
-          //printf("Case 4: About to enter curve\n");
-
-
-        }
-      }
-
+      //Call our lane driving helper function
+      this->laneDriving2017();
 
 
     } else {
-
+      //Then we are in the intersection
     }
 
     //this->ignoreStopSignsCounter = fmax(this->ignoreStopSignsCounter - 1, 0);
@@ -1619,4 +1413,159 @@ void sdcCar::driveOnCurvedRoad(double degree) {
   // Attempts to match the target speed
   //this->MatchTargetSpeed();
   Brake(2,1);
+}
+
+
+//This is the Lane Driving portion
+void sdcCar::laneDriving2017(){
+
+  if (turnCounter > 0) {
+    turnCounter++;
+  }
+
+  if (turnCounter > 3000) {
+    turnCounter = 0;
+  }
+  double degree = this->cameraSensorData->getMidlineAngle();
+  //printf("The angle is %f\n", degree);
+
+  if(std::abs(degree) < 20){
+    //printf("in straight road!\n");
+    isInStraightRoad = true;
+  }
+  else if (std::abs(degree) >= 25) {
+    //printf("in curved road!\n");
+    isInCurveRoad = true;
+  }
+
+  //When its in the curve
+  if (isInCurveRoad && !isInStraightRoad){
+    //printf("Case 1: In Curve\n");
+    //printf("adjustment to steer mag: %f\n", degree/40);
+    this->cameraSensorData->UpdateSteeringMagnitude(degree/40);
+    this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+  }
+  else if (isInStraightRoad && !isInCurveRoad){
+    //printf("Case 2: In Straight\n");
+    if(this->GetSpeed() < this->targetSpeed){
+      //printf("Subcase: Accelerating\n");
+      //printf("Get speed: %f, targed speed: %f\n", this->GetSpeed(), this->targetSpeed);
+      this->gas = 1.0;
+      this->brake = 0.0;
+    }
+    else{
+      this->gas = 0;
+    }
+    // re-adjust angles if the difference between midline and vertical is too large
+    // say >= 15 degree
+    double verticalDifference = this->cameraSensorData->getVerticalDifference();
+    double latestAdjustAmount;
+
+    if (std::abs(verticalDifference) > 5 && turnCounter <= 1200) {
+      //shrink abs(vertical) by 15
+      double compressedVertical;
+      if (verticalDifference > 0) {
+        compressedVertical = verticalDifference - 10;
+      } else {
+        compressedVertical = verticalDifference + 10;
+      }
+
+      //square compressedVertical to react more strongly to large angles
+      double squared = compressedVertical * compressedVertical;
+      if (compressedVertical < 0) {
+        squared = -squared;
+      }
+
+      //latestAdjustAmount is the angle difference for this turn
+      latestAdjustAmount = -squared/10000;
+      if (latestAdjustAmount > maxAdjust) {
+        latestAdjustAmount = fmin(latestAdjustAmount, maxAdjust);
+      } else {
+        latestAdjustAmount = fmax(latestAdjustAmount, -maxAdjust);
+      }
+
+      //set adjustAmount, which is the average angle change at beginning
+      //of counter cycle
+      //limit absolute value to 0.1
+      if (turnCounter == 0) {
+        //printf("updated adjustamount!\n");
+        adjustAmount = -squared/10000;
+        if (adjustAmount > maxAdjust) {
+          adjustAmount = fmin(adjustAmount, maxAdjust);
+        } else {
+          adjustAmount = fmax(adjustAmount, -maxAdjust);
+        }
+        turnCounter++;
+      } else {
+        adjustAmount *= turnCounter;
+        adjustAmount += latestAdjustAmount;
+        adjustAmount /= (turnCounter + 1);
+      }
+
+      if (turnCounter % 50 == 0) {
+        //printf("ADJUST: angle %f, update %f, adjust amount %f, counter %i\n", verticalDifference, latestAdjustAmount, adjustAmount, turnCounter);
+      }
+
+      this->cameraSensorData->UpdateSteeringMagnitude(latestAdjustAmount);
+      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+      //printf("turn counter: %i\n", turnCounter);
+    } else if (turnCounter > 1200 && turnCounter < 1900) {
+      //reverses turning angle to put the car back on track
+      if (adjustAmount > 0.85*maxAdjust) {
+        adjustAmount = fmin(adjustAmount, 0.85*maxAdjust);
+      } else if (adjustAmount < -0.85*maxAdjust){
+        adjustAmount = fmax(adjustAmount, -0.85*maxAdjust);
+      }
+      if(turnCounter % 50 == 0) {
+        //printf("BACKTRACKING: angle is %f, updated by %f, counter %i\n", verticalDifference, -1.1*adjustAmount, turnCounter);
+      }
+
+      this->cameraSensorData->UpdateSteeringMagnitude(-1.1*adjustAmount);
+      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+      //turnCounter++;
+    } else {
+      this->cameraSensorData->UpdateSteeringMagnitude(0);
+      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+      if(turnCounter>0) {
+        //printf("step 3 - reset counter\n");
+      }
+      turnCounter = 0;
+      //printf("step 3 - reset counter\n");
+    }
+  }
+  else{
+    //if its about to exit curve and get back on straight road
+    //lets try implementing an extra turn "counter" here so that we continue turning for a little bit long when we exit the curve
+    if(std::abs(degree) <= 20){
+      //printf("Case 3: About to exit curve\n");
+      isInStraightRoad = true;
+      isInCurveRoad = false;
+      if(this->GetSpeed() < this->targetSpeed){
+        //printf("Subcase: Accelerating\n");
+        this->gas = 0.7;
+        this->brake = 0.0;
+      }
+      double verticalDifference = this->cameraSensorData->getVerticalDifference();
+      //printf("adjustment to steer mag: %f\n", degree/25);
+      this->cameraSensorData->UpdateSteeringMagnitude(degree/25);
+      //this->cameraSensorData->UpdateSteeringMagnitude(0);
+      //printf("the angle is %f\n", verticalDifference/200);
+      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+    }
+    else if(std::abs(degree) >= 25){
+      //printf("Case 4: About to enter curve\n");
+      if (brakeTimes >= 10) {
+        isInStraightRoad = false;
+        isInCurveRoad = true;
+        brakeTimes = 0;
+      } else {
+        //printf("Actually braking\n");
+        Brake(4,4.5);
+        //printf("adjustment to steer mag: %f\n", degree/50);
+        this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
+        this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+        brakeTimes++;
+      }
+    }
+  }
 }
