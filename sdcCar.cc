@@ -82,7 +82,8 @@ bool isInCurveRoad = 0;
 int brakeTimes = 0;
 int turnCounter = 0;
 double adjustAmount = 0.0;
-double maxAdjust = 0.2;
+//double maxAdjust = 0.2;
+double maxAdjust = .2;
 
 //These are the variables for lane overtaking
 int changeTurnCounter = 0;
