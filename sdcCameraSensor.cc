@@ -21,10 +21,15 @@
 #include "sdcCameraSensor.hh"
 #include "fadiff.h"
 #include <math.h>
+#include "linear.h"
+#include <iomanip>
+#include <map>
+#include <limits>
 
 using namespace fadbad;
 using namespace gazebo;
 using namespace cv;
+using namespace std;
 
 // Register this plugin with the simulator
 GZ_REGISTER_SENSOR_PLUGIN(sdcCameraSensor)
@@ -40,11 +45,134 @@ String cascade_file_path = "OpenCV/haarcascade_stop.xml";
 // some constants
 double MidPointHeight[5] = {0.5,2.0,4.5,8.0,12.5};
 int sdcCameraSensor::cameraCnt = 0;
+const int infinityInt = std::numeric_limits<int>::max();
 //FADBAD-wrapped forward differentiation for gradient calculations
 F<double> delG(const F<double>& x, const F<double>& y) {
 	F<double> dG = sqrt(pow(x,2)+pow(y,2));
 	return dG;
 }
+
+/*Helper methods for Improved CHEVP algorithm*/
+
+//get the slope of a line
+double getSlope(cv::Vec4i l){
+	double vertSlope = 1000000000.00;
+	if(l[2]-l[0] == 0){
+		return infinityDouble;
+	}
+	else{
+		return ((l[3] - l[1])*1.0)/((l[2]-l[0])*1.0);
+	}
+}
+
+// get the distance from a point to a line segment
+double getPointLineDist(cv::Point p1, cv::Vec4i l1){
+ double l1Slope = getSlope(l1);
+ double l1intercept = l1[1] - (l1[0]*l1Slope);
+ return std::abs((l1Slope*(p1.x) + (-1)*(p1.y) + l1intercept))/sqrt(pow(l1Slope,2) +(1));
+}
+
+// test if two lines generated from Hough Transform are actually the same lines
+bool isEqual(const cv::Vec4i& _l1, const cv::Vec4i& _l2) {
+	 Vec4i l1(_l1), l2(_l2);
+
+	 float length1 = sqrtf((l1[2] - l1[0])*(l1[2] - l1[0]) + (l1[3] - l1[1])*(l1[3] - l1[1]));
+	 float length2 = sqrtf((l2[2] - l2[0])*(l2[2] - l2[0]) + (l2[3] - l2[1])*(l2[3] - l2[1]));
+
+	 float product = (l1[2] - l1[0])*(l2[2] - l2[0]) + (l1[3] - l1[1])*(l2[3] - l2[1]);
+
+	 // test if the slope differs too much
+
+	 if (fabs(product / (length1 * length2)) < cos(CV_PI / 30))
+			 return false;
+
+	 float mx1 = (l1[0] + l1[2]) * 0.5f;
+	 float mx2 = (l2[0] + l2[2]) * 0.5f;
+
+	 float my1 = (l1[1] + l1[3]) * 0.5f;
+	 float my2 = (l2[1] + l2[3]) * 0.5f;
+	 float dist = sqrtf((mx1 - mx2)*(mx1 - mx2) + (my1 - my2)*(my1 - my2));
+
+	 // test if two lines are too far away from each other
+	 if (dist > std::max(length1, length2) * 0.5f)
+			 return false;
+
+	 return true;
+}
+
+// calculate the angle between two midlines and store it in degree
+double getAngleDifference(cv::Vec4i l1, cv::Vec4i l2){
+	int *vector1 = new int[2];
+	int *vector2 = new int[2];
+	vector1[0] = l1[0] - l1[2];
+	vector1[1] = l1[1] - l1[3];
+	vector2[0] = l2[0] - l2[2];
+	vector2[1] = l2[1] - l2[3];
+
+	float length1 = sqrtf((l1[2] - l1[0])*(l1[2] - l1[0]) + (l1[3] - l1[1])*(l1[3] - l1[1]));
+	float length2 = sqrtf((l2[2] - l2[0])*(l2[2] - l2[0]) + (l2[3] - l2[1])*(l2[3] - l2[1]));
+	float product = vector1[0]*vector2[0] + vector1[1]*vector2[1];
+	double cosValue = product / (length1 * length2);
+	double degree =  acos(cosValue) * 180.0 / CV_PI;
+	// add the direction of the angle, left or right
+	if (l1[0] - l1[2] >= 0) {
+		return degree;
+	} else {
+		return (-1)*degree;
+	}
+}
+
+// convert resizable vector to non-resizable array
+double *convertVectorToArray(vector<double> vec) {
+	int size = vec.size();
+	double *arr = new double[size];
+	for (int i = 0; i < size; i++) {
+		arr[i] = vec.at(i);
+	}
+	return arr;
+}
+
+// calculate line segment with slope and intercept, cut by horizon lines
+// we need to catch the case when the slope is 0
+int *getLineSegment(double slope, double intercept, double upperY, double lowerY) {
+
+	int *quad = new int[4];
+	if (slope == 0) {
+		quad[0] = infinityInt;
+		quad[1] = infinityInt;
+		quad[2] = infinityInt;
+		quad[3] = infinityInt;
+	} else {
+		quad[0] = (int)((upperY - intercept)/(slope*1.0) + 0.5);
+		quad[1] = (int)(upperY + 0.5);
+		quad[2] = (int)((lowerY - intercept)/(slope*1.0));
+		quad[3] = (int)(lowerY);
+	}
+	//printf("The new line segment is %d %d %d %d\n", segment[0], segment[1], segment[2], segment[3]);
+	return quad;
+}
+
+double getIntercept(cv::Vec4i l, double slope) {
+	return l[1] - slope*l[0];
+}
+
+int getIndexOfClosestLine(std::vector<Vec4i> lines, Point sectionMidPoint) {
+	double minDistance = infinityDouble;
+	int minIndex = infinityInt;
+
+	for(int j = 0; j < lines.size(); j++) {
+			Vec4i l = lines[j];
+			double xOfMidPoint = (l[0] + l[2])/2.0;
+			double curDistance = abs(xOfMidPoint - sectionMidPoint.x);
+
+			if (curDistance < minDistance) {
+				minDistance = curDistance;
+				minIndex = j;
+			}
+ 		}
+		return minIndex;
+}
+
 
 sdcCameraSensor::sdcCameraSensor(){
     this->cameraCnt ++;
@@ -58,8 +186,8 @@ void sdcCameraSensor::Init(){
 }
 
 void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
-    
-    
+
+
     //printf("sdcCamera Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
    // printf("sdcCamera sensorId: %i\n",this->sensorData->sensorId);
     //sdcSensorData();
@@ -90,30 +218,22 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 
 
 
-    
-    
+
+
 }
 
-// Called by the world update start event
+// Called by the world update event
 void sdcCameraSensor::OnUpdate() {
-//    if(this->getSensor){
-//        
-//        this->getSensor = false;
-//    }
-
-   
 	//std::cout << "onupdate camera sensor" << std::endl;
 	// Pull raw data from camera sensor object as an unsigned character array with 3 channels.
 	const unsigned char* img = this->parentSensor->GetImageData(0);
-    
 	Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
 
 	//Select Region of Interest (ROI) for lane detection - currently this is the bottom half of the image.
 	//set area for ROI as a rectangle
-
 	Rect ROI = cv::Rect(0, image.rows/2, image.cols, image.rows/2);
 	Mat imageROI = image(ROI);
-	blur(imageROI, imageROI, Size(3,3));
+	//blur(imageROI, imageROI, Size(3,3));
 
 	// Canny algorithm for edge dectection
 	//Mat contours, contours_thresh;
@@ -127,10 +247,7 @@ void sdcCameraSensor::OnUpdate() {
 	cvtColor(imageROI,imageGray,CV_BGR2GRAY);
 	adaptiveThreshold(imageGray,imageInv, 255,CV_ADAPTIVE_THRESH_MEAN_C,CV_THRESH_BINARY,201, -20 );*/
 
-// BEGIN STRAIGHT LANE DETECTION
-
-	// Hough Transform detects lines within the edge map, stores result in lines.
-	//float PI = 3.14159;
+	// BEGIN STRAIGHT LANE DETECTION
 	double col = imageROI.cols;
 	double row = imageROI.rows;
 	Rect section1 = cv::Rect(0, 0, col, (1.0/15)*row);
@@ -192,28 +309,31 @@ void sdcCameraSensor::OnUpdate() {
 	tempPreviousRightLine[3] = row;
 	Vec4i previousRightLine = tempPreviousRightLine;
 
-
-	for(size_t i = 0; i < 5; i++) {
+	// iterate through each of the five sections of the ROI
+	std::vector<Vec4i> twoMidlines;
+	for(size_t i = 1; i < 3; i++) {
 		Rect section;
 		section = sections[i];
+		// get the image of the current section
 		Mat sectionImage = imageROI(section);
-
-
+		// apply canny edge detection with min and max threshhold, 50 and 150
 		Canny(sectionImage,sectionImage,50,150, 3);
-
+		// apply hough transform and the result is stored in lines vector, 30 ,30, the larger the number of intersections,
+		// the longer the line is, intuitively
 		vector<Vec4i> lines;
- 		HoughLinesP(sectionImage, lines, 1, CV_PI/180, 30, 30, 10);
+ 		HoughLinesP(sectionImage, lines, 1, CV_PI/180, 15, 15, 10);
 		//std::cout << "number of lines " << lines.size() << "     ***********"<<std::endl;
-		Vec4i leftLine, rightLine;
-		double leftMinDistance, rightMinDistance;
+		//Vec4i leftLine, rightLine;
+		//double leftMinDistance, rightMinDistance;
 		//these two points are the id-height points of each section - for use in
 		//determining the line we will use for the vanishing point
-		Point leftMidPoint = Point(0,MidPointHeight[i]*row/15);
-		Point rightMidPoint = Point(col,MidPointHeight[i]*row/15);
+		//Point leftMidPoint = Point(0,MidPointHeight[i]*row/15);
+		//Point rightMidPoint = Point(col,MidPointHeight[i]*row/15);
 
- 		for( size_t j = 0; j < lines.size(); j++ )
+		// iterate through each of the lines in current section
+		/*
+ 		for(size_t j = 0; j < lines.size(); j++)
  		{
-
 			Vec4i l = lines[j];
 			// calculate the slope of current line
 			double tempLeftDistance = getPointLineDist(leftMidPoint,l);
@@ -233,10 +353,12 @@ void sdcCameraSensor::OnUpdate() {
 					rightLine = l;
 				}
 			}
-	 		//line(imageROI, Point(l[0], l[1] + offset[i]*row/15), Point(l[2], l[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
- 		}
+			// draw all the lines from Hough transform in current section
+	 		line(imageROI, Point(l[0], l[1] + offset[i]*row/15), Point(l[2], l[3] + offset[i]*row/15), Scalar(colors[j][0],colors[j][1],colors[j][2]), 3, CV_AA);
+ 		}*/
 
 		// edge case checking: case1: 0 or 1 line detected; case2: two lines exsist on the same side
+		/*
 		if ((lines.size() == 0 || lines.size() == 1 || isTooClose(leftLine, rightLine, i, row, col)) && (i != 0)) {
 			if (previousLeftLine != tempPreviousLeftLine) {
 				leftLine = extendLine(previousLeftLine, createLine(0, horizons[i-1]*row/15, col, horizons[i-1]*row/15),
@@ -262,374 +384,133 @@ void sdcCameraSensor::OnUpdate() {
 		// get the mid point on horizon
 		Point midPoint = Point((leftEnd.x + rightEnd.x)/2, leftEnd.y);
 		Point vanishPoint = getIntersectionPoint(leftLine, rightLine);
-		if (i == 4) {
-			line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+		*/
+		// we should use section 2,3,4, which are indexed at 1,2,3
+		if (true) {
+			//line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 			// update the turn angle
-			double newAngle = getNewTurningAngle(createLine(vanishPoint.x, vanishPoint.y, midPoint.x, midPoint.y + offset[i]*row/15));
-			this->sensorData->UpdateSteeringMagnitude(newAngle);
+			//double newAngle = getNewTurningAngle(createLine(vanishPoint.x, vanishPoint.y, midPoint.x, midPoint.y + offset[i]*row/15));
+			//this->sensorData->UpdateSteeringMagnitude(newAngle);
             //this->sensorData.sensorId++;
            // printf("sensorData steering mag: %f\n", this->sensorData.GetNewSteeringMagnitude());
             //printf("GET mag sensorID: %i\n", this->sensorData.sensorId);
            // printf("CamData newAngle : %f carId: %i\n", newAngle, cameraId);
+
+			// START OF THE NEW CHEVP algorithm
+			// apply partition fuction to clusterize lines of the same one
+			std::vector<int> labels;
+			int numberOfClusters = cv::partition(lines, labels, isEqual);
+			/* merge close lines detected by partition function */
+			// first pass to store close lines into a map
+			map<int, vector<double>> xMap;
+			map<int, vector<double>> yMap;
+			for(size_t j = 0; j < lines.size(); j++)
+			{
+				int clusterNumber = labels[j];
+				Vec4i curLine = lines[j];
+				double curSlope = getSlope(curLine);
+				double curIntercept = getIntercept(curLine, curSlope);
+
+				if (!xMap.count(clusterNumber)) {
+					//printf("Enter the map!\n");
+					vector<double> xVector;
+					vector<double> yVector;
+					xMap[clusterNumber] = xVector;
+					yMap[clusterNumber] = yVector;
+				}
+				for (int t = curLine[0]; t <= curLine[2]; t++) {
+					xMap[clusterNumber].push_back(t);
+					yMap[clusterNumber].push_back(t*curSlope + curIntercept);
+					//xMap[clusterNumber].push_back(curLine[2]);
+					//yMap[clusterNumber].push_back(curLine[3]);
+				}
+			}
+			// second pass to merge the lines by clusterNumber and store them into mergeLines vector
+			std::vector<Vec4i> mergedLines;
+			for (size_t j = 0; j < numberOfClusters; j++) {
+				Maths::Regression::Linear A(xMap[j].size(), convertVectorToArray(xMap[j]), convertVectorToArray(yMap[j]));
+				double slope = A.getSlope();
+				double intercept = A.getIntercept();
+
+				Vec4i segment;
+				int *segmentArr = getLineSegment(slope, intercept, 0, horizons[i]*row/15 - horizons[i-1]*row/15);
+				segment[0] = segmentArr[0];
+				segment[1] = segmentArr[1];
+				segment[2] = segmentArr[2];
+				segment[3] = segmentArr[3];
+
+				// check if the line is horizontal or near horizontal. if so, filter them out
+				if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.1) {
+					mergedLines.push_back(segment);
+					//line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				}
+			}
+			// find the two closest lines to the center of the section, selected as the left and right lane boundaries
+			std::vector<Vec4i> leftBoundaries;
+			std::vector<Vec4i> rightBoundaries;
+			// first, split the merged lines into two groups, those appear to the left of the center, and those appear to the right of the center
+			for (int j = 0; j < mergedLines.size(); j++) {
+				Vec4i curLine = mergedLines.at(j);
+				double xOfMidPoint = (curLine[0] + curLine[2])/2.0;
+				double xOfSectionCenter = col/2.0;
+				if (xOfMidPoint <= xOfSectionCenter) {
+					leftBoundaries.push_back(curLine);
+				} else {
+					rightBoundaries.push_back(curLine);
+				}
+			}
+			// next, find the closest line on the left and on the right
+			int xOfSectionCenter = col/2;
+			int yOfSectionCenter = 0;
+			Point sectionMidPoint = Point(xOfSectionCenter, yOfSectionCenter);
+			int leftBoundaryIndex = getIndexOfClosestLine(leftBoundaries, sectionMidPoint);
+			int rightBoundaryIndex = getIndexOfClosestLine(rightBoundaries, sectionMidPoint);
+			if (leftBoundaryIndex != infinityInt && rightBoundaryIndex != infinityInt) {
+				Vec4i l1 = leftBoundaries[leftBoundaryIndex];
+				Vec4i l2 = rightBoundaries[rightBoundaryIndex];
+
+				Point vanishPoint = getIntersectionPoint(l1, l2);
+				Point midPoint = Point((l1[2] + l2[2])/2, l1[3]);
+
+				line(imageROI, Point(vanishPoint.x, vanishPoint.y + offset[i]*row/15), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+				line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				// find the midline we want
+				Vec4i realMidline;
+				realMidline[0] = vanishPoint.x;
+				realMidline[1] = vanishPoint.y;
+				realMidline[2] = midPoint.x;
+				realMidline[3] = midPoint.y;
+
+				twoMidlines.push_back(realMidline);
+			}
 		}
-
-		line(imageROI, Point(leftLine[0], leftLine[1] + offset[i]*row/15), Point(leftLine[2], leftLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
-		line(imageROI, Point(rightLine[0], rightLine[1] + offset[i]*row/15), Point(rightLine[2], rightLine[3] + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
-
 	}
 
+	if (twoMidlines.size() == 2) {
+		double degree = getAngleDifference(twoMidlines.at(0), twoMidlines.at(1));
+		this->sensorData->setMidlineAngle(degree);
+		// set the angle difference between the vertical line and bottomm midline
+		Vec4i verticalLine;
+		verticalLine[0] = col/2;
+		verticalLine[1] = 0;
+		verticalLine[2] = col/2;
+		verticalLine[3] = 10;
+
+		double verticalDifference = getAngleDifference(twoMidlines.at(1), verticalLine);
+		//printf("The vertical difference is %f\n", verticalDifference);
+		this->sensorData->setVerticalDifference(verticalDifference);
+		printf("Calculated the midline\n");
+	}
+
+	// assume we have the three midlines from section 2,3,4, we need to change the accelaration and direction based the angle
+	// here we will try to use the midlines from section 2 and 3 first
+	//sdcCar::Brake();
+	//printf("The speed of the car is %f\n", sdcCar::getSpeed());
 	// Display results to GUI
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
 	imshow("Camera View", imageROI);
 	waitKey(4);
-	/*
-	std::vector<Vec2f>::const_iterator it = lines.begin();
-
-	Vec2f left_lane_marker = Vec2f(0.0, PI);
-	Vec2f right_lane_marker = Vec2f(0.0, 0.0);
-
-	while (it!=lines.end()) {
-			float rho= (*it)[0];   // first element is distance rho
-			float theta= (*it)[1]; // second element is angle theta
-
-				if ( 0 < theta < (PI/2 - 0.1) && theta < left_lane_marker[1]) {
-					left_lane_marker = Vec2f(rho,theta);
-				}
-				if ((PI/2 + 0.1) < theta < (PI - 0.1) && theta > right_lane_marker[1]) {
-					right_lane_marker = Vec2f(rho,theta);
-				}
-
-			// This code can be uncommented to display all of the lines found with the Hough Line Transform
-			// Point pt1(rho/cos(theta),0);
-			// Point pt2((rho-imageROI.rows*sin(theta))/cos(theta),imageROI.rows);
-			// line(image, pt1, pt2, Scalar(0,0,255), 1);
-			++it;
-	}
-	// ATTN: need to have imageROI.rows in numerator because of trig. It isnt an oversight!
-	// Lines are drawn on the image, not the region of interest.
-
-	// Update our steering based on the lane markers
-	double angle_average = (left_lane_marker[1]+right_lane_marker[1])/2;
-	double newSteeringAmount = -20*PI*(fabs(angle_average - PI/2))+50;
-	sdcSensorData::UpdateSteeringMagnitude(newSteeringAmount);
-
-	//draw left lane marker
-	Point leftp1 = Point(left_lane_marker[0]/cos(left_lane_marker[1]),0.5*image.rows);
-	Point leftp2 = Point((left_lane_marker[0] - (imageROI.rows) * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), (image.rows));
-	line(image, leftp1, leftp2, Scalar(255), 3);
-
-	//draw right lane marker
-	Point rightp1 = Point(right_lane_marker[0]/cos(right_lane_marker[1]),0.5*image.rows);
-	Point rightp2 = Point((right_lane_marker[0] - (imageROI.rows) * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), (image.rows));
-	line(image, rightp1, rightp2, Scalar(255), 3);
-	*/
-// END STRAIGHT LANE DETECTION
-/*
-// BEGIN LCF LANE DETECTION
-	// This algorithm was decribed in the paper "A lane-curve detection based on an LCF"
-	// Where possible, we have kept the variables named the same as described by the paper.
-
-	double leftNearLaneSlope, rightNearLaneSlope, leftLaneIntercept, rightLaneIntercept;
-	double a, b, c, d, e, n, u, v, k, lane_midpoint, eps = 200.0;
-
-	std::vector<double> vec_of_i_vals(50);
-	std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -25);
-
-	// Using the two lane markers
-	Point vanishingPoint;
-
-	// using the left lane
-	if (leftp1.x - leftp2.x != 0) {
-			leftNearLaneSlope = (1.*leftp2.y - leftp1.y)/(leftp2.x - leftp1.x);
-	}
-
-	// using the right lane
-	if (rightp2.x - rightp1.x != 0) {
-			rightNearLaneSlope = (1.*rightp2.y - rightp1.y)/(rightp2.x - rightp1.x);
-	}
-
-	// Calculate y-intercepts of the lanes
-	//b = y - mx
-	leftLaneIntercept = leftp1.y - leftNearLaneSlope*leftp1.x;
-	rightLaneIntercept = rightp1.y - rightNearLaneSlope*rightp1.x;
-
-	// SOLVE VANISHING POINT (u,v), which is intersection of two lines
-	//v is the height component of the vanishing point, described as vp = (u,v)
-
-	u = abs((leftLaneIntercept - rightLaneIntercept) / (leftNearLaneSlope - rightNearLaneSlope));
-	v = (leftNearLaneSlope * u) + leftLaneIntercept;
-	Point vp = Point(u,v);
-	circle(image,vp, 4, Scalar(30,255,0), 3);
-
-	lane_midpoint = (leftp2.x + rightp2.x)/2;
-
-	// n is our position relative to the center of the lane directly in front of us.
-	n = (image.cols/2) - lane_midpoint;
-
-	// Push data to brain
-	sdcSensorData::UpdateCameraData(n);
-
-	// Display midpoint of current lane
-	line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 0), Scalar(0, 255, 0), 1);
-	line(image, Point(lane_midpoint, 480), vp, Scalar(0, 255, 0), 1);
-
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////LEFT LANE MARKER CALCULATION////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
-
-	a = leftNearLaneSlope/2;
-	b = (v+leftLaneIntercept)/2;
-	c = pow(leftNearLaneSlope,2)/4;
-	d = a * (leftLaneIntercept-v);
-
-	//DRAW LEFT NEAR FIELD AND FAR FIELD ASYMPTOTES
-
-	ffa_p1.x = 0.;
-	ffa_p2.x = u; // Cx, center of computer image
-	ffa_p1.y = v; //Cy, center of computer image
-	ffa_p2.y = v;
-
-	nfa_p1.x = 0.;
-	nfa_p2.x = u;
-	nfa_p1.y = (leftNearLaneSlope)*(nfa_p1.x) + leftLaneIntercept;
-	nfa_p2.y = (leftNearLaneSlope)*(nfa_p2.x) + leftLaneIntercept;
-
-	line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
-	line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
-	double left_max_score = 0, left_optimal_i = 0;
-
-	//generate curvature list
-	for (std::vector<double>::const_iterator q = vec_of_i_vals.begin(); q != vec_of_i_vals.end(); q++) {
-		// calculate e as decribed in Park et al. 2001
-		e = pow((b-v),2) + (eps * a * *q);
-
-		std::vector<Point> left_curve_points_top, left_curve_points_bot;
-
-		for (int x = 0; x < u; x++ ) {
-			double left_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
-			double left_y_bot = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
-
-			if(left_y_top >= v) {
-					Point left_curve_point_top = Point(x,left_y_top);
-					left_curve_points_top.push_back(left_curve_point_top);
-			}
-
-			if(left_y_bot >= v) {
-					Point left_curve_point_bot = Point(x,left_y_bot);
-					left_curve_points_bot.push_back(left_curve_point_bot);
-			}
-		}
-
-		// Not necessarily needed since we examine the bottom half of the LCF
-		// but this is the section that Park et al. 2001 uses for scoring
-
-		// if(left_curve_points_top.size() > 1) {
-		// 	for (int j = 0; j < left_curve_points_top.size() - 1; j++) {
-		// 		line(image, left_curve_points_top[j], left_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
-		// 	}
-		// }
-
-		double left_curve_magnitude = 0;
-		if(left_curve_points_bot.size() > 1) {
-			for (int j = 0; j < left_curve_points_bot.size(); j++) {
-				//This is where we would do LROI calculations
-				//LROI is a triangle, the top point is height of vanishing point.
-				//LROI is only calculated for the bottom half of the LCF
-
-				//Uncomment to show all of the parabolic paths considered
-				//line(image, left_curve_points_bot[j], left_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
-				int xf,yf;
-				int g;
-				xf = left_curve_points_bot[j].x;
-				yf = left_curve_points_bot[j].y;
-
-				g = contours_thresh.at<unsigned char>(yf-240,xf);
-				double bin_g = g/255.;
-				left_curve_magnitude += bin_g;
-
-			}
-		}
-
-		// Make sure to update the optimal i value if the current curve's score is higher
-		// than the current high score
-
-		double left_curve_magnitude_total = (left_curve_points_bot.size() - left_curve_magnitude);
-		if (left_curve_magnitude_total > left_max_score) {
-			left_max_score = left_curve_magnitude_total;
-			left_optimal_i = *q;
-		}
-	}
-
-	//DISPLAY LEFT LANE CURVE WITH OPTIMAL CURVATURE VALUE
-	e = pow((b-v),2) + (eps * a * left_optimal_i);
-	std::vector<Point> left_curve_points_top, left_curve_points_bot;
-
-	for (float x = 0.; x < 640.; x++ ) {
-		float left_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
-		float left_y_bot = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
-
-		if(left_y_top >= v) {
-				Point left_curve_point_top = Point(x,left_y_top);
-				left_curve_points_top.push_back(left_curve_point_top);
-		}
-
-		if(left_y_bot >= v) {
-				Point left_curve_point_bot = Point(x,left_y_bot);
-				left_curve_points_bot.push_back(left_curve_point_bot);
-		}
-	}
-
-	if(left_curve_points_top.size() > 1) {
-		for (int i = 0; i < left_curve_points_top.size() - 1; i++){
-			line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
-		}
-	}
-
-	if(left_curve_points_bot.size() > 1) {
-		for (int i = 0; i < left_curve_points_bot.size(); i++){
-			line(image, left_curve_points_bot[i], left_curve_points_bot[i + 1], Scalar(0,255,0), 3, CV_AA);
-		}
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////RIGHT LANE MARKER CALCULATION////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	a = rightNearLaneSlope/2;
-	b = (v+rightLaneIntercept)/2;
-	c = pow(rightNearLaneSlope,2)/4;
-	d = a * (rightLaneIntercept-v);
-
-	//DRAW RIGHT NEAR FIELD AND FAR FIELD ASYMPTOTES
-	ffa_p1.x = 639.;
-	ffa_p2.x = u;
-	ffa_p1.y = v; //Cy, center of computer image
-	ffa_p2.y = v;
-
-	nfa_p1.x = 639.;
-	nfa_p2.x = u;
-	nfa_p1.y = (rightNearLaneSlope)*(nfa_p1.x) + rightLaneIntercept;
-	nfa_p2.y = (rightNearLaneSlope)*(nfa_p2.x) + rightLaneIntercept;
-
-	line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
-	line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
-
-	double right_max_score = 0, right_optimal_i = 0;
-
-	//generate curvature list
-	for (std::vector<double>::const_iterator q = vec_of_i_vals.begin(); q != vec_of_i_vals.end(); q++) {
-		// calculate e as decribed in Park et al. 2001
-		e = pow((b-v),2) + (eps * a * *q);
-
-		std::vector<Point> right_curve_points_top, right_curve_points_bot;
-
-		for (float x = u+1; x < 640; x++ ) {
-			float right_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
-			float right_y_bot = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
-
-			if(right_y_top >= v) {
-					Point right_curve_point_top = Point(x,right_y_top);
-					right_curve_points_top.push_back(right_curve_point_top);
-			}
-
-			if(right_y_bot >= v) {
-					Point right_curve_point_bot = Point(x,right_y_bot);
-					right_curve_points_bot.push_back(right_curve_point_bot);
-			}
-		}
-
-		// Not necessarily needed since we examine the bottom half of the LCF
-		// but this is the section that Park et al. 2001 uses for scoring
-
-		// if(right_curve_points_top.size() > 1) {
-		// 	for (int j = 0; j < right_curve_points_top.size() - 1; j++){
-		// 		line(image, right_curve_points_top[j], right_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
-		// 	}
-		// }
-
-		double right_curve_magnitude = 0;
-		if(right_curve_points_bot.size() > 1) {
-			for (int j = 0; j < right_curve_points_bot.size(); j++) {
-				//This is where we would do LROI calculations
-				//LROI is a triangle, the top point is height of vanishing point.
-				//LROI is only calculated for the bottom half of the LCF
-
-				//Uncomment to show all of the parabolic paths considered
-				//line(image, right_curve_points_bot[j], right_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
-
-				int xf,yf;
-				int dg;
-				xf = right_curve_points_bot[j].x;
-				yf = right_curve_points_bot[j].y;
-				dg = contours_thresh.at<unsigned char>(yf-240,xf);
-				int bin_dg = dg/255;
-				right_curve_magnitude += bin_dg;
-
-			}
-		}
-
-		double right_curve_magnitude_total = ((1.*right_curve_points_bot.size()) - right_curve_magnitude);
-
-		// Make sure to update the optimal i value if the current curve's score is higher
-		// than the current high score
-		if (right_curve_magnitude_total > right_max_score) {
-			right_max_score = right_curve_magnitude_total;
-			right_optimal_i = *q;
-		}
-	}
-
-	//DISPLAY RIGHT LANE CURVE WITH OPTIMAL CURVATURE VALUE
-	e = pow((b-v),2) + (eps * a * right_optimal_i);
-	std::vector<Point> right_curve_points_top, right_curve_points_bot;
-
-	for (float x = 0.; x < 640.; x++ ) {
-		float right_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
-		float right_y_bot = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
-
-		if(right_y_top >= v) {
-				Point right_curve_point_top = Point(x,right_y_top);
-				right_curve_points_top.push_back(right_curve_point_top);
-		}
-
-		if(right_y_bot >= v) {
-				Point right_curve_point_bot = Point(x,right_y_bot);
-				right_curve_points_bot.push_back(right_curve_point_bot);
-		}
-	}
-
-	if(right_curve_points_top.size() > 1) {
-		for (int i = 0; i < right_curve_points_top.size() - 1; i++){
-			line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
-		}
-	}
-
-	if(right_curve_points_bot.size() > 1) {
-		for (int i = 0; i < right_curve_points_bot.size(); i++){
-			line(image, right_curve_points_bot[i], right_curve_points_bot[i + 1], Scalar(0,255,0), 3, CV_AA);
-		}
-	}
-
-// END LCF LANE DETECTION /////////////////////////////
-*/
-
-
-
-}
-
-/*
-Fuction to get the slop of the input line
-*/
-double sdcCameraSensor::getSlope(cv::Vec4i l){
-	double vertSlope = 1000000000.00;
-	if(l[2]-l[0] == 0){
-		return vertSlope;
-	}
-	else{
-		return ((l[3] - l[1])*1.0)/((l[2]-l[0])*1.0);
-	}
 }
 
 Point sdcCameraSensor::getIntersectionPoint(cv::Vec4i l1, cv::Vec4i l2){
@@ -649,13 +530,6 @@ Point sdcCameraSensor::getIntersectionPoint(cv::Vec4i l1, cv::Vec4i l2){
 	}
 	return Point(std::round(xVal), std::round(yVal));
 }
-
-double sdcCameraSensor::getPointLineDist(cv::Point p1, cv::Vec4i l1){
-	double l1Slope = getSlope(l1);
-	double l1intercept = l1[1] - (l1[0]*l1Slope);
-	return std::abs((l1Slope*(p1.x) + (-1)*(p1.y) + l1intercept))/sqrt(pow(l1Slope,2) +(1));
-}
-
 
 bool sdcCameraSensor::isTooClose(cv::Vec4i leftLine, cv::Vec4i rightLine, int i, double row, double col) {
 	/*

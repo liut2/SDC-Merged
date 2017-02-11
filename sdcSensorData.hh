@@ -34,10 +34,20 @@ namespace gazebo
         void UpdateSteeringMagnitude(double steerMag);
 
         double GetNewSteeringMagnitude();
+        void setMidlineAngle(double angle);
+        double getMidlineAngle();
+
+        void setVerticalDifference(double verticalDifference);
+        double getVerticalDifference();
 
         std::vector<sdcLidarRay> GetBlockedFrontRays();
         std::vector<sdcLidarRay> GetBlockedBackRays();
         std::vector<sdcVisibleObject> GetObjectsInFront();
+
+        std::vector<sdcVisibleObject> GetObjectsOnLeft();
+        std::vector<sdcLidarRay> GetBlockedLeftRays();
+        std::vector<sdcVisibleObject> GetObjectsOnRight();
+        std::vector<sdcLidarRay> GetBlockedRightRays();
 
         int GetLidarLastUpdate(LidarPos lidar);
         int GetLidarNumRays(LidarPos lidar);
@@ -56,6 +66,8 @@ namespace gazebo
         bool stopSignInRightCamera;
         int lanePosition;
         double newSteerMagnitude;
+        double midlineAngle;
+        double verticalDifference;
 
         // GPS variables and methods
         double gpsX;
@@ -65,7 +77,7 @@ namespace gazebo
 
         math::Vector2d GetPosition();
         sdcAngle GetYaw();
-        
+
         void UpdateGPS(double x, double y, double yaw);
 
     private:
@@ -83,7 +95,7 @@ namespace gazebo
         std::vector<double>* sideRightBackLidarRays;
 
         std::map<LidarPos, sdcLidarSensorInfo> lidarInfoMap;
-        
+
     };
 }
 

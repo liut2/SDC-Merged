@@ -7,8 +7,8 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 
 include_directories(FADBAD++)
 
-#find_package(OpenCV REQUIRED)
-#include_directories(${OpenCV_INCLUDE_DIRS})
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
 # link_directories(${OpenCV_LIBS}) Spits out error messages, and also doesn't seem necessary to work
 
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
@@ -55,10 +55,6 @@ target_link_libraries(sdcWaypoint ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 add_library(sdcCar SHARED sdcCar.cc)
 target_link_libraries(sdcCar sdcManager manager sdcWaypoint sdcAngle  sdcSensorData sdcIntersection request instruction ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
-
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
-
 add_library(sdcFrontLidarSensor SHARED sdcFrontLidarSensor.cc)
 target_link_libraries(sdcFrontLidarSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
@@ -66,7 +62,7 @@ add_library(sdcTopLidarSensor SHARED sdcTopLidarSensor.cc)
 target_link_libraries(sdcTopLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcSideLidarSensor SHARED sdcSideLidarSensor.cc)
-target_link_libraries(sdcSideLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcSideLidarSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcBackLidarSensor SHARED sdcBackLidarSensor.cc)
 target_link_libraries(sdcBackLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
@@ -76,3 +72,5 @@ target_link_libraries(sdcGpsSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIB
 
 #add_library(sdcCameraSensor SHARED sdcCameraSensor.cc)
 #target_link_libraries(sdcCameraSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")

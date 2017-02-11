@@ -1730,6 +1730,8 @@
         <chassis>chassis</chassis>
         <camera>camera::link</camera>
         <frontLidar>front_lidar</frontLidar>
+        <rightSideLidar>side_right_sensors</rightSideLidar>
+        <leftSideLidar>side_left_sensors</leftSideLidar>
         <wheel_radius>0.21</wheel_radius>
         <front_power>10</front_power>
         <rear_power>10</rear_power>
@@ -2901,6 +2903,8 @@
         <chassis>chassis</chassis>
         <camera>camera::link</camera>
         <frontLidar>front_lidar</frontLidar>
+        <rightSideLidar>side_right_sensors</rightSideLidar>
+        <leftSideLidar>side_left_sensors</leftSideLidar>
         <wheel_radius>0.21</wheel_radius>
         <front_power>10</front_power>
         <rear_power>10</rear_power>
@@ -4072,6 +4076,8 @@
         <chassis>chassis</chassis>
         <camera>camera::link</camera>
         <frontLidar>front_lidar</frontLidar>
+        <rightSideLidar>side_right_sensors</rightSideLidar>
+        <leftSideLidar>side_left_sensors</leftSideLidar>
         <wheel_radius>0.21</wheel_radius>
         <front_power>10</front_power>
         <rear_power>10</rear_power>
@@ -5243,6 +5249,8 @@
         <chassis>chassis</chassis>
         <camera>camera::link</camera>
         <frontLidar>front_lidar</frontLidar>
+        <rightSideLidar>side_right_sensors</rightSideLidar>
+        <leftSideLidar>side_left_sensors</leftSideLidar>
         <wheel_radius>0.21</wheel_radius>
         <front_power>10</front_power>
         <rear_power>10</rear_power>

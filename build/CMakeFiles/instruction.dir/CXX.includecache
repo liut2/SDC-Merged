@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Accounts/liut2/Desktop/SDC-Merged/instruction.cc
+instruction.hh
+/Accounts/liut2/Desktop/SDC-Merged/instruction.hh
+
+/Accounts/liut2/Desktop/SDC-Merged/instruction.hh
+iostream
+-
+
