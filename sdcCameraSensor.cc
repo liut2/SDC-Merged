@@ -510,7 +510,9 @@ void sdcCameraSensor::OnUpdate() {
 	//printf("The speed of the car is %f\n", sdcCar::getSpeed());
 	// Display results to GUI
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
-	imshow("Camera View", imageROI);
+	if (this->cameraId == 6236) {
+		imshow("Camera View", imageROI);
+	}
 	waitKey(4);
 }
 

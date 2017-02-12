@@ -281,6 +281,8 @@ namespace gazebo {
 
         void SetAccelRate(double rate = 1.0);
         void SetBrakeRate(double rate = 1.0);
+
+        void combinedDriving2017();
     };
 }
 #endif

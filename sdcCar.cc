@@ -100,6 +100,9 @@ int straightRoadModifier = 2000000;
 bool isOvertaking = false;
 bool ourCarOnRight = true;
 
+bool otherCarsStart = false;
+//double ourCarPosition = 0;
+
 
 ////////////////////////////////
 ////////////////////////////////
@@ -119,8 +122,7 @@ void sdcCar::Drive()
     switch(this->currentState)
     {
         case laneDriving:
-            this->laneDriving2017();
-            printf("In lane driving\n");
+          combinedDriving2017();
         break;
         // Final state, car is finished driving
         case stop:
@@ -1143,6 +1145,43 @@ void sdcCar::driveOnCurvedRoad(double degree) {
   Brake(2,1);
 }
 
+// Combine the lane driving and lane overtaking
+void sdcCar::combinedDriving2017() {
+  if(this->carId == 1){
+    //printf("car 1 x: %f y:%f\n", this->x, this->y);
+    if (this->x <= 257 && this->y >= -145) {
+      this->laneDriving2017();
+      if (this->x >= 215) {
+        otherCarsStart = true;
+      }
+      //printf("not yet\n");
+    } else if (this->x > 257 && this->x < 264) {
+      //this->cameraSensorData->UpdateSteeringMagnitude(-.87);
+      this->cameraSensorData->UpdateSteeringMagnitude(-.55);
+      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+      //printf("we pass the point and turn left\n");
+    } else if (this->x >= 264 && this->x < 300) {
+      this->cameraSensorData->UpdateSteeringMagnitude(0);
+      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+      //printf("we pass the point and turn right\n");
+    } else {
+      this->overtaking2017();
+      this->SetTargetSpeed(8);
+      printf("in overtaking mode\n");
+    }
+  }
+  else if(this->carId != 1){
+    //printf("otherCarsStart: %d\n", otherCarsStart);
+    if (otherCarsStart == false){
+      this->SetTargetSpeed(0);
+    }
+    else{
+      //printf("Other cars started\n");
+      this->SetTargetSpeed(6);
+      this->MatchTargetSpeed();
+    }
+  }
+}
 
 //This is the Lane Driving portion
 void sdcCar::laneDriving2017(){
@@ -1477,7 +1516,7 @@ void sdcCar::OnUpdate()
 
 
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 0; //in merged world use 0
+    int crudeSwitch = 1; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
     if(this->currentState != stop || !((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10))){
@@ -1485,7 +1524,7 @@ void sdcCar::OnUpdate()
             if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
                 this->currentState = waypoint;
             }else{
-                printf("in lanedriving crude switch\n");
+                //printf("in lanedriving crude switch\n");
                 this->currentState = laneDriving;
             }
         } else if (crudeSwitch == 1){
