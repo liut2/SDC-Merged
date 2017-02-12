@@ -33,7 +33,7 @@ void manager::registerCar(int carId, int turning, int direction) {
     carList.push_back(carId);
     printf("registered car Id is: %i\n", carId);
     fflush(stdout);
-    
+
 }
 void manager::laneStopRequest(int fromDir){
     switch (fromDir) {
@@ -60,7 +60,7 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
 //    printf("carAmt: %i\n", carAmt);
 //    printf("turning: %i\n", turning);
     fflush(stdout);
-    
+
     if (carAmt == 0) { //no car at intersection
         registerCar(carId, turning, direction);
         carNorthQueue.erase(std::remove(carNorthQueue.begin(), carNorthQueue.end(), carId), carNorthQueue.end());
@@ -94,8 +94,8 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
                 else{
                     return false;
                 }
-                
-            
+
+
             //car in intersection is going left
             case 1:
                 return false;
@@ -124,10 +124,10 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
                 }
             case 3:
                 return false;
-        
+
         }
     }
-    
+
     else { //more than 1 car
         return false;
     }
@@ -138,7 +138,7 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
  destdirection = 0
  if(!nextcar turn left && ! nextcar straight north):
  give reservation
- 
+
  straight case:
  destdirection = 0
  if(nextcar straight 2 || nextcar right east || nextcar right south
@@ -164,7 +164,7 @@ bool manager::stopSignQueue(int carId, int fromDir) {
             break;
     }
     return false;
-    
+
 }
 bool manager::shouldStop(int carId, int fromDir) {
     switch (fromDir) {
@@ -181,7 +181,7 @@ bool manager::shouldStop(int carId, int fromDir) {
             else{
                 return false;
             }
-            
+
             break;
         case 1:
             if(carEastQueue.size() > 1){
@@ -197,7 +197,7 @@ bool manager::shouldStop(int carId, int fromDir) {
             else{
                 return false;
             }
-            
+
             break;
         case 2:
             if(carSouthQueue.size() > 1){
@@ -212,7 +212,7 @@ bool manager::shouldStop(int carId, int fromDir) {
             else{
                 return false;
             }
-            
+
             break;
         case 3:
             if(carWestQueue.size() > 1){
@@ -227,12 +227,12 @@ bool manager::shouldStop(int carId, int fromDir) {
             else{
                 return false;
             }
-            
+
             break;
 
     }
     return false;
-    
+
 }
 void manager::stopSignCarLeft(int carId) {
     carList.erase(std::remove(carList.begin(), carList.end(), carId), carList.end());
@@ -242,31 +242,31 @@ void manager::stopSignCarLeft(int carId) {
 gazebo::sdcSensorData *manager::getSensorData(int cameraId) {
     //HOW TO FIX: USE A MAP OF sdcSensorDatas WHERE THE KEY IS THE cameraId
     // If its not in the map then make a new sensor data. Otherwise return it.
-    
+
     if (sensorManager.count(cameraId) > 0){
         return &sensorManager[cameraId];
     }
     else{
         sensorManager.insert(std::pair<int, gazebo::sdcSensorData>(cameraId, gazebo::sdcSensorData(cameraId)));
-        printf("map count: %i\n",sensorManager.count(cameraId));
-        printf("cameraId in manager: %i\n\n",cameraId);
+        printf("map count: %lu\n",sensorManager.count(cameraId));
+        //printf("cameraId in manager: %i\n\n",cameraId);
         return &sensorManager[cameraId];
     }
-    
-    
+
+
     /*
-    
+
    // printf("in manager\n");
     //printf("car id: %i\n", carId);
     fflush(stdout);
-    
+
     //printf("sensorList size is: %lu while car id is: %d\n",sensorDataList.size(), carId);
     if (sensorDataList.size() < cameraId) {
       //  printf("in manager and creating sensordata\n");
         gazebo::sdcSensorData temp = gazebo::sdcSensorData(cameraId);
         //temp.UpdateSteeringMagnitude(0);
         sensorDataList.push_back(temp);
-        
+
     }
     //printf("car Id: %i", carId);
     //printf("sensorId is: %d\n",sensorDataList.at(carId-1)->sensorId);

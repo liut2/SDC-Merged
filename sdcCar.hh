@@ -29,13 +29,14 @@
 #include "gazebo/common/Plugin.hh"
 #include <gazebo/common/common.hh>
 #include "gazebo/physics/physics.hh"
+#include "gazebo/physics/World.hh"
 #include "gazebo/transport/transport.hh"
 #include "gazebo/util/system.hh"
 #include "sdcSensorData.hh"
 #include "sdcAngle.hh"
 #include "sdcWaypoint.hh"
 #include "sdcIntersection.hh"
-
+#include <chrono>
 #include "sdcFrontLidarSensor.hh"
 #include "manager.hh"
 #include "sdcManager.hh"
@@ -64,9 +65,10 @@ namespace gazebo {
         // Holds the bound connection to Gazebo's update, necessary in order to properly
         // receive updates
         std::vector<event::ConnectionPtr> connections;
-
+        std::chrono::milliseconds msStartTime;
         // The Gazebo model representation of the car
         physics::ModelPtr model;
+        physics::WorldPtr world;
         // Contains the wheel joints that get operated on each tick for movement
         std::vector<physics::JointPtr> joints;
         // A link to the chassis of the car, mainly used for access to physics variables
@@ -76,6 +78,8 @@ namespace gazebo {
         physics::LinkPtr frontLidar;
         physics::LinkPtr leftSideLidar;
         physics::LinkPtr rightSideLidar;
+        common::Time  simStartTime;
+        bool setRate;
         int cameraId;
         int frontLidarId;
         int leftLidarId;
@@ -252,11 +256,11 @@ namespace gazebo {
         sdcAngle AngleToTarget(math::Vector2d target);
         bool ObjectDirectlyAhead();
         bool IsObjectDirectlyAhead(sdcVisibleObject obj);
-        bool ObjectOnCollisionCourse();
+        float ObjectOnCollisionCourse();
         bool IsObjectOnCollisionCourse(sdcVisibleObject obj);
         bool IsObjectTooFast(sdcVisibleObject obj);
         bool IsObjectTooFurious(sdcVisibleObject obj);
-
+        float IsGoingToHit(sdcVisibleObject obj);
         bool IsMovingForwards();
         double GetSpeed();
         sdcAngle GetDirection();

@@ -688,7 +688,7 @@
               <sensor name='camera' type='multicamera'>
                 <always_on>1</always_on>
                 <update_rate>24</update_rate>
-                <visualize>0</visualize>
+                <visualize>1</visualize>
                 <topic>comps_car_camera</topic>
 
                 <camera name="left">

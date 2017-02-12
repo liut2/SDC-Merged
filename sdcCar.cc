@@ -113,8 +113,10 @@ bool ourCarOnRight = true;
  */
 void sdcCar::Drive()
 {
-    if(this->currentState != intersection){
+
+    if((this->currentState != waypoint) && (this->currentState != stop)){
       // We should lane driving or overtaking functions here
+      //printf("wut\n");
       this->laneDriving2017();
       //printf("In lane driving\n");
       //this->overtaking2017();
@@ -128,7 +130,10 @@ void sdcCar::Drive()
         // Final state, car is finished driving
         case stop:
             //printf("in stop\n");
+            //printf("targetSpeed: %f\n",this->targetSpeed);
             this->Stop();
+            this->MatchTargetSpeed();
+            this->MatchTargetDirection();
         break;
 
         // Default state; drive straight to target location
@@ -138,8 +143,10 @@ void sdcCar::Drive()
 
 //          this->Accelerate();
         //  this->Stop();
-           // printf("inWaypoint\n");
+            //printf("inWaypoint\n");
             this->WaypointDriving();
+            this->MatchTargetSpeed();
+            this->MatchTargetDirection();
 
         break;
 
@@ -324,6 +331,7 @@ void sdcCar::MatchTargetSpeed(){
  */
 void sdcCar::WaypointDriving() {
     int progress = this->waypointProgress;
+    //printf("target speed: %f\n", this->targetSpeed);
     //printf("waypointvec size: %lu \n", WAYPOINT_VEC.size());
 
     if(progress < WAYPOINT_VEC.size()){
@@ -335,33 +343,61 @@ void sdcCar::WaypointDriving() {
         double distance = sqrt(pow(WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(WAYPOINT_VEC[progress].pos.second - this->y,2));
       //  printf("distance %f", distance);
 
-        // CODE FROM LAST GROUP THAT ASSUMES THAT THE CAR WILL TURN ONCE WE HAVE REACHED AN INTERSECTION
-        if (distance < (this->GetSpeed() * this->GetSpeed())/2.9) {
-            //printf("speed: %f \n",this->GetSpeed());
-            //fflush(stdout);
-            this->turning = true;
-        }
         //printf("progress: %i\n", progress);
         //printf("waypointType: %i\n", WAYPOINT_VEC[progress].waypointType);
         //printf("carId: %i, hasReservation: %i\n",carId, WAYPOINT_VEC[0].hasReservation);
-        if(WAYPOINT_VEC[progress].waypointType == 3 && (distance < (this->GetSpeed() * this->GetSpeed())/2.9)){
-            printf("stopping\n");
-            //this->waypointProgress++;
+
+
+        if(WAYPOINT_VEC[progress].waypointType == 3 && distance < (this->GetSpeed() * this->GetSpeed())/2.9) {
             this->currentState = stop;
             this->targetSpeed = 0;
+            //printf("carId: %i stopping\n",carId);
             return;
         }
-        if (WAYPOINT_VEC[0].hasReservation == false && (distance < 20 && progress == 0)){
-            //printf("carId making request: %i\n", carId);
-            auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-            this->targetSpeed = instruction.getSpeed();
-            if (instruction.getHasReservation() == 1){
-                //printf("carId: %i, got reservation, progress: %i\n", carId, progress);
-                WAYPOINT_VEC[0].hasReservation = true;
-                //printf("carId :%i, set to true: %i\n", carId, WAYPOINT_VEC[0].hasReservation);
+        if(progress == 2){
+            float objDist = this->ObjectOnCollisionCourse();
+            if(objDist < (this->GetSpeed() * this->GetSpeed())/2 + 5){
+                //printf("carId: %i is far dist = %f\n", this->carId, objDist);
+                //printf("carId: %i this->targetSpeed: %f\n",carId, this->targetSpeed);
+                this->targetSpeed = this->targetSpeed * .9;
+                return;
             }
             else{
-              //printf("carId:%i instructionSpeed: %f\n", carId, this->targetSpeed);
+                this->targetSpeed = fmax(this->targetSpeed * 1.01, this->maxSpeed);
+            }
+        }
+
+        if (WAYPOINT_VEC[0].hasReservation == false && progress == 0){
+            //printf("carId making request: %i\n", carId);
+            if (distance < 20){
+                auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
+                this->targetSpeed = instruction.getSpeed();
+                if (instruction.getHasReservation() == 1){
+                    //printf("carId: %i, got reservation, progress: %i\n", carId, progress);
+                    WAYPOINT_VEC[0].hasReservation = true;
+                    //printf("carId :%i, set to true: %i\n", carId, WAYPOINT_VEC[0].hasReservation);
+                }
+                else{
+                    float objDist = this->ObjectOnCollisionCourse();
+                    if(objDist < 7 && objDist < distance){
+                        //printf("carId: %i is close dist = %f\n", this->carId, objDist);
+                        this->targetSpeed = .2*this->targetSpeed;
+                    }
+                    else{
+                        this->targetSpeed = instruction.getSpeed();
+                    }
+                }
+            }
+            else {
+                //Far away from the intersection
+                float objDist = this->ObjectOnCollisionCourse();
+                if(objDist < 7){
+                    //printf("carId: %i is far dist = %f\n", this->carId, objDist);
+                    this->targetSpeed = .9*this->targetSpeed;
+                }
+                else{
+                    this->targetSpeed = this->maxSpeed;
+                }
             }
         }
         else if(WAYPOINT_VEC[progress].waypointType != 3){
@@ -373,7 +409,7 @@ void sdcCar::WaypointDriving() {
                 this->SetTurningLimit(this->GetSpeed()*6+10);
             } else if(WAYPOINT_VEC[progress].waypointType == 2) {
                 //RIGHT
-                this->SetTurningLimit(this->GetSpeed()*19);
+                this->SetTurningLimit(this->GetSpeed()*15+20);
             }
             GridTurning(WAYPOINT_VEC[progress].waypointType);
         }
@@ -427,6 +463,9 @@ void sdcCar::GridTurning(int turn){
         if(distance < 3 && WAYPOINT_VEC[0].hasReservation){
             if(progress < 2){
                 this->waypointProgress++;
+                if (this->waypointProgress == 2){
+                    this->targetSpeed = this->maxSpeed;
+                }
                 printf("carId: %i, progress: %i\n", carId, this->waypointProgress);
             }
             //printf("turn == 0\n");
@@ -477,6 +516,9 @@ void sdcCar::GridTurning(int turn){
 
                 if(progress < 2){
                     this->waypointProgress++;
+                    if (this->waypointProgress == 2){
+                        this->targetSpeed = this->maxSpeed;
+                    }
                     printf("progress: %i\n", this->waypointProgress);
                 }
             }
@@ -891,6 +933,7 @@ bool sdcCar::ObjectDirectlyAhead() {
     for (int i = 0; i < this->frontObjects.size(); i++) {
         if(this->IsObjectDirectlyAhead(this->frontObjects[i])){
             printf("object is ahead\n");
+            printf("carId: %i\n",this->carId);
             return true;
         }
     }
@@ -910,15 +953,23 @@ bool sdcCar::IsObjectDirectlyAhead(sdcVisibleObject obj){
 /*
  * Returns true if there is an object on a potential collision course with our car
  */
-bool sdcCar::ObjectOnCollisionCourse(){
-    if(this->frontObjects.size() == 0) return false;
-
+float sdcCar::ObjectOnCollisionCourse(){
+    float minDist = 99999;
+    if(this->frontObjects.size() == 0) return 99999;
     for (int i = 0; i < this->frontObjects.size(); i++) {
+        /*
         if(this->IsObjectOnCollisionCourse(this->frontObjects[i])){
             return true;
         }
+        */
+        float dist = this->IsGoingToHit(this->frontObjects[i]);
+        //printf("distance: %f\n", dist);
+        if(dist > 0.0){
+            minDist = fmin(dist, minDist);
+        }
     }
-    return false;
+
+    return minDist;
 }
 
 /*
@@ -938,6 +989,29 @@ bool sdcCar::IsObjectTooFast(sdcVisibleObject obj){
     bool inLineToCollide = (fabs(obj.lineIntercept) < 1.5 || (fabs(centerpoint.x) < 1.5 && fabs(obj.GetEstimatedXSpeed()) < fabs(0.1 * obj.GetEstimatedYSpeed())));
     bool willHitSoon = obj.dist / obj.GetEstimatedSpeed() < 20;
     return inLineToCollide && willHitSoon;
+}
+
+/*
+ * Returns true if the given object is projected to run into the car within a short time period from now
+ */
+float sdcCar::IsGoingToHit(sdcVisibleObject obj){
+    bool inLineToCollide = false;
+    math::Vector2d centerpoint = obj.GetCenterPoint();
+    double leftLateralDist = obj.GetLeft().GetLateralDist();
+    double rightLateralDist = obj.GetRight().GetLateralDist();
+    double midpoint = (leftLateralDist + rightLateralDist)*0.5;
+      //checks if the midpoint is close enough to the car to be in the same lane
+      //TO DO: we need another filter to check if it's left or right
+    if (std::abs(midpoint) < 2){
+          inLineToCollide = true;
+    }
+    if(inLineToCollide){
+        return obj.dist;
+    }
+    else{
+        printf("not in line to collide\n");
+        return -1.0;
+    }
 }
 
 /*
@@ -1056,422 +1130,6 @@ void sdcCar::SetTurningLimit(double limit){
     this->turningLimit = limit;
 }
 
-//////////////////////////////////////////////////////////////
-// GAZEBO METHODS - GAZEBO CALLS THESE AT APPROPRIATE TIMES //
-//////////////////////////////////////////////////////////////
-void sdcCar::OnUpdate()
-{
-    //printf("\nin onupdate\n");
-    //    if(this->getSensor){
-    //
-    //        this->getSensor = false;
-    //    }
-    //this->sensorData = sdcManager::getSensorData(carId);
-    // if(this->carId == 1){
-    //     printf("current target speed: %f\n", this->targetSpeed);
-    // }
-
-
-    //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 1; //in merged world use 0
-    //in lanedriving use 1
-    //in intersection world use 2
-
-    if (crudeSwitch == 0) {
-        if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
-            //printf("starting at %f,%f \n", this->x, this->y);
-            this->currentState = waypoint;
-        }else{
-
-            this->currentState = laneDriving;
-        }
-    } else if (crudeSwitch == 1){
-        if((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10)){
-            //printf("starting at %f,%f \n", this->x, this->y);
-            this->currentState = laneDriving;
-        }
-        this->currentState = laneDriving;
-    } else if (crudeSwitch == 2) {
-        //printf("Crude switch == 2 : for intersection worlds");
-    }
-
-    //    if(this->stopping){
-    //        printf("stopping\n");
-    //        printf("%f",this->velocity.y);
-    //    }
-    //    if(this->turning == true){
-    //        printf("speed: %f \n",this->GetSpeed());
-    //    }
-    //
-    //     Get the current velocity of the car
-
-    ///For stop sign algorithm queue to correctly stop
-//    if(this->currentState!=laneDriving){
-//        if(sdcManager::shouldStop(carId, fromDir)){
-//            if(!laneStopped){
-//                //printf("told to stop\n");
-//                this->currentState = stop;
-//                this->toldToStop = true;
-//            }
-//        }
-//        else{
-//            if(this->toldToStop){
-//                this->currentState = waypoint;
-//                this->toldToStop = false;
-//            }
-//        }
-//    }
-
-
-    if(this->inIntersection){
-        //if outside intersection
-        //printf("direction: %i\n", this->destDirection);
-        // fflush(stdout);
-        switch (this->destDirection) {
-                //0 = north, 1 = east, 2 = south, 3 = west
-            case 0:
-                if(this->y > 55){
-                    sdcManager::stopSignCarLeft(this->carId);
-                    this->inIntersection = false;
-                    // this->currentState == waypoint;
-                    printf("exited north\n");
-                }
-                break;
-            case 1:
-                if(this->x  > 55){
-                    sdcManager::stopSignCarLeft(this->carId);
-                    this->inIntersection = false;
-                    printf("exited east\n");
-                }
-                break;
-            case 2:
-                if(this->y < 45){
-                    sdcManager::stopSignCarLeft(this->carId);
-                    this->inIntersection = false;
-                    printf("exited south\n");
-                }
-                break;
-            case 3:
-                if(this->x < 45 ){
-                    sdcManager::stopSignCarLeft(this->carId);
-                    this->inIntersection = false;
-                    printf("exited west\n");
-                }
-                break;
-        }
-    }
-    this->velocity = this->chassis->GetWorldLinearVel();
-    // Get the cars current position
-    math::Pose pose = this->chassis->GetWorldPose();
-    this->yaw = sdcAngle(pose.rot.GetYaw());
-    this->x = pose.pos.x;
-    this->y = pose.pos.y;
-    // this->x = pose.x;
-    // this->y = pose.y;
-    //printf("x, y is : %f %f \n", this->x, this->y);
-    // Get the cars current rotation
-    // this->yaw = sdcSensorData::GetYaw();
-
-    // Check if the front lidars have been updated, and if they have update
-    // the car's list
-    // printf("\nin onupdate\n");
-    if(this->frontLidarLastUpdate != this->lidarSensorData->GetLidarLastUpdate(FRONT)){
-    //        printf("updating front objects\n");
-      std::vector<sdcVisibleObject> v = this->lidarSensorData->GetObjectsInFront();
-    //        //printf("visibleobjects size: %lu\n", v.size());
-      fflush(stdout);
-      this->UpdateFrontObjects(v);
-      this->frontLidarLastUpdate = this->lidarSensorData->GetLidarLastUpdate(FRONT);
-    }
-    //  printf("\nafter lidar\n");
-
-    // Call our Drive function, which is the brain for the car
-    //printf("going to drive\n");
-    ///std::cout << "on update the car model" << std::endl;
-    // Get the current velocity of the car
-    /*road-driving branch
-     this->velocity = this->chassis->GetWorldLinearVel();
-     // Get the cars current position
-     math::Vector2d pose = sdcSensorData::GetPosition();
-     this->x = pose.x;
-     this->y = pose.y;
-     // Get the cars current rotation
-     this->yaw = sdcSensorData::GetYaw();
-     */
-
-     //printf("Calling getobjectsonright\n");
-     std::vector<sdcVisibleObject> v = this->lidarSensorData->GetObjectsInFront();
-     rightObjects = this->rightLidarSensorData->GetObjectsOnRight();
-     //printf("here\n");
-     //if(v[0] != NULL){printf("objects in front: %f\n", v[0].GetEstimatedSpeed());}
-     //else{printf("no objects in front\n");}
-
-    /* if(v.size() > 0){
-       printf("object 0 left lateral: %f\n", v[0].GetLeft().GetLateralDist());
-       printf("object 0 left longitudinal: %f\n", v[0].GetLeft().GetLongitudinalDist());
-       printf("object 0 right lateral: %f\n", v[0].GetRight().GetLateralDist());
-       printf("object 0 right longitudinal: %f\n", v[0].GetRight().GetLongitudinalDist());
-       printf("object 0 dist: %f\n", v[0].GetDist());
-     } else {
-       //printf("no objects detected\n");
-     }*/
-     if(rightObjects.size() > 0){
-       //printf("object 0 left lateral: %f\n", rightObjects[0].GetLeft().GetLateralDist());
-       //printf("object 0 left longitudinal: %f\n", rightObjects[0].GetLeft().GetLongitudinalDist());
-       //printf("object 0 right lateral: %f\n", rightObjects[0].GetRight().GetLateralDist());
-       //printf("object 0 right longitudinal: %f\n", rightObjects[0].GetRight().GetLongitudinalDist());
-       //printf("object 0 dist: %f\n", rightObjects[0].GetDist());
-     } else {
-       //printf("no objects detected\n");
-     }
-    // Call our Drive function, which is the brain for the car
-    //if(this->carId == 1){
-        this->Drive();
-    //}
-    //else{
-        //this->Stop();
-    //}
-
-    //printf("after drive\n");
-
-    ////////////////////////////
-    // GAZEBO PHYSICS METHODS //
-    ////////////////////////////
-
-    // Compute the angle of the front wheels.
-    double wheelAngle = this->steeringAmount / this->steeringRatio;
-
-    // Compute the rotational velocity of the wheels
-    double jointVel = (this->gas-this->brake * this->maxSpeed) / this->wheelRadius;
-
-    // Set velocity and max force for each wheel
-    this->joints[0]->SetVelocityLimit(1, -jointVel);
-    this->joints[0]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->frontPower);
-
-    this->joints[1]->SetVelocityLimit(1, -jointVel);
-    this->joints[1]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->frontPower);
-
-    this->joints[2]->SetVelocityLimit(1, -jointVel);
-    this->joints[2]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->rearPower);
-
-    this->joints[3]->SetVelocityLimit(1, -jointVel);
-    this->joints[3]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->rearPower);
-
-    // Set the front-left wheel angle
-    this->joints[0]->SetLowStop(0, wheelAngle);
-    this->joints[0]->SetHighStop(0, wheelAngle);
-    this->joints[0]->SetLowStop(0, wheelAngle);
-    this->joints[0]->SetHighStop(0, wheelAngle);
-
-    // Set the front-right wheel angle
-    this->joints[1]->SetHighStop(0, wheelAngle);
-    this->joints[1]->SetLowStop(0, wheelAngle);
-    this->joints[1]->SetHighStop(0, wheelAngle);
-    this->joints[1]->SetLowStop(0, wheelAngle);
-
-    //  aerodynamics
-    this->chassis->AddForce(math::Vector3(0, 0, this->aeroLoad * this->velocity.GetSquaredLength()));
-
-    // Sway bars
-    math::Vector3 bodyPoint;
-    math::Vector3 hingePoint;
-    math::Vector3 axis;
-
-    // Physics calculations
-    for (int ix = 0; ix < 4; ++ix)
-    {
-        hingePoint = this->joints[ix]->GetAnchor(0);
-        bodyPoint = this->joints[ix]->GetAnchor(1);
-
-        axis = this->joints[ix]->GetGlobalAxis(0).Round();
-        double displacement = (bodyPoint - hingePoint).Dot(axis);
-
-        float amt = displacement * this->swayForce;
-        if (displacement > 0)
-        {
-            if (amt > 15)
-                amt = 15;
-
-            math::Pose p = this->joints[ix]->GetChild()->GetWorldPose();
-            this->joints[ix]->GetChild()->AddForce(axis * -amt);
-            this->chassis->AddForceAtWorldPosition(axis * amt, p.pos);
-
-            p = this->joints[ix^1]->GetChild()->GetWorldPose();
-            this->joints[ix^1]->GetChild()->AddForce(axis * amt);
-            this->chassis->AddForceAtWorldPosition(axis * -amt, p.pos);
-        }
-    }
-    //    printf("current state: %u\n",this->currentState);
-}
-
-
-/*
- * Called when initially loading the car model from the sdf. Links the car
- * to the OnUpdate methods so we can receive updates
- */
-
-
-void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
-{
-    // Store the model and chassis of the car for later access
-    this->model = _model;
-    this->chassis = this->model->GetLink(_sdf->Get<std::string>("chassis"));
-    this->camera = this->model->GetLink(_sdf->Get<std::string>("camera"));
-    this->frontLidar = this->model->GetLink(_sdf->Get<std::string>("frontLidar"));
-    this->frontLidarId = this->frontLidar->GetId() + 8;
-    printf("lidar Id: %i\n", this->frontLidarId);
-    this->cameraId = this->camera->GetId() + 2;
-    printf("camera ID: %i\n",this->cameraId);
-    this->leftSideLidar = this->model->GetLink(_sdf->Get<std::string>("leftSideLidar"));
-    this->leftLidarId = this->leftSideLidar->GetId() + 8;
-    printf("left id: %i\n", this->leftLidarId);
-
-    this->rightSideLidar = this->model->GetLink(_sdf->Get<std::string>("rightSideLidar"));
-    this->rightLidarId = this->rightSideLidar->GetId() + 8;
-    printf("right id: %i\n", this->rightLidarId);
-    // Get all the wheel joints
-    this->joints[0] = this->model->GetJoint(_sdf->Get<std::string>("front_left"));
-    this->joints[1] = this->model->GetJoint(_sdf->Get<std::string>("front_right"));
-    this->joints[2] = this->model->GetJoint(_sdf->Get<std::string>("back_left"));
-    this->joints[3] = this->model->GetJoint(_sdf->Get<std::string>("back_right"));
-
-    // Pull some parameters that are defined in the sdf
-    this->maxSpeed = _sdf->Get<double>("max_speed");
-    this->aeroLoad = _sdf->Get<double>("aero_load");
-    this->tireAngleRange = _sdf->Get<double>("tire_angle_range");
-    this->frontPower = _sdf->Get<double>("front_power");
-    this->rearPower = _sdf->Get<double>("rear_power");
-    this->wheelRadius = _sdf->Get<double>("wheel_radius");
-
-    //this->frontSensor = this->model->GetLink(_sdf->Get<std::string>("front_lidar"));
-
-    // Tell Gazebo to call OnUpdate whenever the car needs an update
-    this->connections.push_back(event::Events::ConnectWorldUpdateBegin(boost::bind(&sdcCar::OnUpdate, this)));
-}
-
-/*
- * Called when the car and world are being (re)initialized.
- */
-void sdcCar::Init()
-{
-    //printf("started init");
-//    destinations[0] = {48,10};
-//    destinations[1] = {90,48};
-   // printf("created destinations");
-    // Compute the angle ratio between the steering wheel and the tires
-    this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
-    this->laneStopped = false;
-    this->cameraSensorData = manager::getSensorData(cameraId);
-    this->lidarSensorData = manager::getSensorData(frontLidarId);
-    this->leftLidarSensorData = manager::getSensorData(this->leftLidarId);
-    this->rightLidarSensorData = manager::getSensorData(this->rightLidarId);
-    // During init, sensors aren't available so pull position and rotation information
-    // straight from the car
-    math::Pose pose = this->chassis->GetWorldPose();
-    this->yaw = sdcAngle(pose.rot.GetYaw());
-    this->x = pose.pos.x;
-    this->y = pose.pos.y;
-    //sdcSensorData::sdcSensorData();
-    this->toldToStop = false;
-
-    time_t seconds;
-    srand ((unsigned)time(&seconds));
-    //this->sensorData.InitLidar(LidarPos lidar, double minAngle, double angleResolution, double maxRange, int numRays);
-    //sdcFrontLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
-    GenerateWaypoints();
-
-}
-
-/*
- * Called whenever Gazebo needs an update for this model
- */
-/*
- * Constructor for the car. Sets several parameters to default values, some of
- * which will get overwritten in Load or Init and others that will be updated
- * when the car is updating
- */
-sdcCar::sdcCar(){
-    if (this->carIdCount == 0) {
-      sdcManager::sdcManager(0);
-    }
-    //sdcManager::registerCar(carId++);
-    this->carIdCount ++;
-    this->carId = this->carIdCount;
-    this->inIntersection = false;
-    this->destDirection = -1;
-    //printf("sdcCar Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
-    //printf("sdcCar sensorId: %i\n",this->sensorData->sensorId);
-    //this->frontSensor = sdcFrontLidarSensor();
-
-    this->joints.resize(4);
-
-    // Physics variables
-    this->aeroLoad = 0.1;
-    this->swayForce = 10;
-
-    this->maxSpeed = 6;
-    this->maxTurnLeft = 5;
-    this->maxTurnRight = 5;
-    this->frontPower = 50;
-    this->rearPower = 50;
-    this->wheelRadius = 0.3;
-    this->steeringRatio = 1.0;
-    this->tireAngleRange = 1.0;
-
-    // Movement parameters
-    this->gas = 0.0;
-    this->brake = 0.0;
-    this->accelRate = 1.0;
-    this->brakeRate = 1.0;
-
-    // Limits on the car's speed
-    this->maxCarSpeed = 10;
-    this->maxCarReverseSpeed = -10;
-
-    // Initialize state enums
-    this->DEFAULT_STATE = waypoint;
-    this->currentState = DEFAULT_STATE;
-
-    this->currentPerpendicularState = backPark;
-    this->currentParallelState = rightBack;
-    this->currentAvoidanceState = notAvoiding;
-
-    // Set starting speed parameters
-    this->targetSpeed = this->maxCarSpeed;
-
-    // Set starting turning parameters
-    this->steeringAmount = 0.0;
-    this->targetSteeringAmount = 0.0;
-    this->targetDirection = sdcAngle(0);
-    this->turningLimit = 20.0;
-
-    // Booleans for the car's actions
-    this->turning = false;
-    this->reversing = false;
-    this->stopping = false;
-
-    // Variables for parking
-    this->targetParkingAngle = sdcAngle(0.0);
-    this->parkingAngleSet = false;
-    this->isFixingParking = false;
-    this->parkingSpotSet = false;
-
-    // Variables for waypoint driving
-    this->waypointProgress = 0;
-
-    // Variables for intersections
-    this->stoppedAtSign = false;
-    this->ignoreStopSignsCounter = 0;
-    this->atIntersection = 0;
-
-    // Variables for following
-    this->isTrackingObject = false;
-    this->stationaryCount = 0;
-
-    // Variables for avoidance
-    this->trackingNavWaypoint = false;
-}
-
 /*Helper methods for sdc car, SDC-Merged*/
 
 // execute this logic when the car detects a straight road
@@ -1497,6 +1155,7 @@ void sdcCar::driveOnCurvedRoad(double degree) {
 
 //This is the Lane Driving portion
 void sdcCar::laneDriving2017(){
+
   if (turnCounter > 0) {
     turnCounter++;
   }
@@ -1782,4 +1441,455 @@ void sdcCar::overtaking2017() {
   //this->MatchTargetDirection();
   // Attempts to match the target speed
   this->MatchTargetSpeed();
+}
+
+//////////////////////////////////////////////////////////////
+// GAZEBO METHODS - GAZEBO CALLS THESE AT APPROPRIATE TIMES //
+//////////////////////////////////////////////////////////////
+void sdcCar::OnUpdate()
+{
+    //updates the rate in sdcManager incase the sim time is slower than real time
+
+    if(carId == 1){
+        //std::chrono::milliseconds currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+        //int diffTime = currentTime.count() - msStartTime.count();
+        //float tm = diffTime / float(1000);
+
+        if (!this->setRate){
+            common::Time curSimTime = this->world->GetSimTime();
+            common::Time curRealTime = this->world->GetRealTime();
+            float curSimTm = curSimTime.Float();
+            float curRealTm = curRealTime.Float();
+            //printf("curRealTm:%f\n", curRealTm);
+            //float startTm = this->simStartTime.Float();
+            //float simTm = curSimTm - startTm;
+            //float realTm = curRealTm - startTm;
+            //printf("diffTime: %f\n", diffSimTime);
+            float runRate = curSimTm / curRealTm;
+            //printf("runRate: %f\n", runRate);
+            if((runRate < .95) && (curRealTm > .5)){
+                sdcManager::setRate(runRate);
+                this->setRate = true;
+            }
+        }
+    }
+
+    //printf("\nin onupdate\n");
+    //    if(this->getSensor){
+    //
+    //        this->getSensor = false;
+    //    }
+    //this->sensorData = sdcManager::getSensorData(carId);
+    // if(this->carId == 1){
+    //     printf("current target speed: %f\n", this->targetSpeed);
+    // }
+
+
+    //REMEMBER TO CHANGE THIS
+    int crudeSwitch = 2; //in merged world use 0
+    //in lanedriving use 1
+    //in intersection world use 2
+    if(this->currentState != stop){
+        if (crudeSwitch == 0) {
+            if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
+                //printf("starting at %f,%f \n", this->x, this->y);
+                this->currentState = waypoint;
+            }else{
+
+                this->currentState = laneDriving;
+            }
+        } else if (crudeSwitch == 1){
+            if((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10)){
+                //printf("starting at %f,%f \n", this->x, this->y);
+                this->currentState = laneDriving;
+            }
+            this->currentState = laneDriving;
+        } else if (crudeSwitch == 2) {
+            this->currentState = waypoint;
+            //printf("Crude switch == 2 : for intersection worlds");
+        }
+    }
+
+
+    //    if(this->stopping){
+    //        printf("stopping\n");
+    //        printf("%f",this->velocity.y);
+    //    }
+    //    if(this->turning == true){
+    //        printf("speed: %f \n",this->GetSpeed());
+    //    }
+    //
+    //     Get the current velocity of the car
+
+    ///For stop sign algorithm queue to correctly stop
+//    if(this->currentState!=laneDriving){
+//        if(sdcManager::shouldStop(carId, fromDir)){
+//            if(!laneStopped){
+//                //printf("told to stop\n");
+//                this->currentState = stop;
+//                this->toldToStop = true;
+//            }
+//        }
+//        else{
+//            if(this->toldToStop){
+//                this->currentState = waypoint;
+//                this->toldToStop = false;
+//            }
+//        }
+//    }
+
+
+    if(this->inIntersection){
+        //if outside intersection
+        //printf("direction: %i\n", this->destDirection);
+        // fflush(stdout);
+        switch (this->destDirection) {
+                //0 = north, 1 = east, 2 = south, 3 = west
+            case 0:
+                if(this->y > 55){
+                    sdcManager::stopSignCarLeft(this->carId);
+                    this->inIntersection = false;
+                    // this->currentState == waypoint;
+                    printf("exited north\n");
+                }
+                break;
+            case 1:
+                if(this->x  > 55){
+                    sdcManager::stopSignCarLeft(this->carId);
+                    this->inIntersection = false;
+                    printf("exited east\n");
+                }
+                break;
+            case 2:
+                if(this->y < 45){
+                    sdcManager::stopSignCarLeft(this->carId);
+                    this->inIntersection = false;
+                    printf("exited south\n");
+                }
+                break;
+            case 3:
+                if(this->x < 45 ){
+                    sdcManager::stopSignCarLeft(this->carId);
+                    this->inIntersection = false;
+                    printf("exited west\n");
+                }
+                break;
+        }
+    }
+    this->velocity = this->chassis->GetWorldLinearVel();
+    // Get the cars current position
+    math::Pose pose = this->chassis->GetWorldPose();
+    this->yaw = sdcAngle(pose.rot.GetYaw());
+    this->x = pose.pos.x;
+    this->y = pose.pos.y;
+    // this->x = pose.x;
+    // this->y = pose.y;
+    //printf("x, y is : %f %f \n", this->x, this->y);
+    // Get the cars current rotation
+    // this->yaw = sdcSensorData::GetYaw();
+
+    // Check if the front lidars have been updated, and if they have update
+    // the car's list
+    // printf("\nin onupdate\n");
+    if(this->frontLidarLastUpdate != this->lidarSensorData->GetLidarLastUpdate(FRONT)){
+    //        printf("updating front objects\n");
+      std::vector<sdcVisibleObject> v = this->lidarSensorData->GetObjectsInFront();
+    //        //printf("visibleobjects size: %lu\n", v.size());
+      fflush(stdout);
+      this->UpdateFrontObjects(v);
+      this->frontLidarLastUpdate = this->lidarSensorData->GetLidarLastUpdate(FRONT);
+    }
+    //  printf("\nafter lidar\n");
+
+    // Call our Drive function, which is the brain for the car
+    //printf("going to drive\n");
+    ///std::cout << "on update the car model" << std::endl;
+    // Get the current velocity of the car
+    /*road-driving branch
+     this->velocity = this->chassis->GetWorldLinearVel();
+     // Get the cars current position
+     math::Vector2d pose = sdcSensorData::GetPosition();
+     this->x = pose.x;
+     this->y = pose.y;
+     // Get the cars current rotation
+     this->yaw = sdcSensorData::GetYaw();
+     */
+
+     //printf("Calling getobjectsonright\n");
+     std::vector<sdcVisibleObject> v = this->lidarSensorData->GetObjectsInFront();
+     rightObjects = this->rightLidarSensorData->GetObjectsOnRight();
+     //printf("here\n");
+     //if(v[0] != NULL){printf("objects in front: %f\n", v[0].GetEstimatedSpeed());}
+     //else{printf("no objects in front\n");}
+
+    /* if(v.size() > 0){
+       printf("object 0 left lateral: %f\n", v[0].GetLeft().GetLateralDist());
+       printf("object 0 left longitudinal: %f\n", v[0].GetLeft().GetLongitudinalDist());
+       printf("object 0 right lateral: %f\n", v[0].GetRight().GetLateralDist());
+       printf("object 0 right longitudinal: %f\n", v[0].GetRight().GetLongitudinalDist());
+       printf("object 0 dist: %f\n", v[0].GetDist());
+     } else {
+       //printf("no objects detected\n");
+     }*/
+     if(rightObjects.size() > 0){
+       //printf("object 0 left lateral: %f\n", rightObjects[0].GetLeft().GetLateralDist());
+       //printf("object 0 left longitudinal: %f\n", rightObjects[0].GetLeft().GetLongitudinalDist());
+       //printf("object 0 right lateral: %f\n", rightObjects[0].GetRight().GetLateralDist());
+       //printf("object 0 right longitudinal: %f\n", rightObjects[0].GetRight().GetLongitudinalDist());
+       //printf("object 0 dist: %f\n", rightObjects[0].GetDist());
+     } else {
+       //printf("no objects detected\n");
+     }
+    // Call our Drive function, which is the brain for the car
+    //if(this->carId == 1){
+        this->Drive();
+    //}
+    //else{
+        //this->Stop();
+    //}
+
+    //printf("after drive\n");
+
+    ////////////////////////////
+    // GAZEBO PHYSICS METHODS //
+    ////////////////////////////
+
+    // Compute the angle of the front wheels.
+    double wheelAngle = this->steeringAmount / this->steeringRatio;
+
+    // Compute the rotational velocity of the wheels
+    double jointVel = (this->gas-this->brake * this->maxSpeed) / this->wheelRadius;
+
+    // Set velocity and max force for each wheel
+    this->joints[0]->SetVelocityLimit(1, -jointVel);
+    this->joints[0]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->frontPower);
+
+    this->joints[1]->SetVelocityLimit(1, -jointVel);
+    this->joints[1]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->frontPower);
+
+    this->joints[2]->SetVelocityLimit(1, -jointVel);
+    this->joints[2]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->rearPower);
+
+    this->joints[3]->SetVelocityLimit(1, -jointVel);
+    this->joints[3]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->rearPower);
+
+    // Set the front-left wheel angle
+    this->joints[0]->SetLowStop(0, wheelAngle);
+    this->joints[0]->SetHighStop(0, wheelAngle);
+    this->joints[0]->SetLowStop(0, wheelAngle);
+    this->joints[0]->SetHighStop(0, wheelAngle);
+
+    // Set the front-right wheel angle
+    this->joints[1]->SetHighStop(0, wheelAngle);
+    this->joints[1]->SetLowStop(0, wheelAngle);
+    this->joints[1]->SetHighStop(0, wheelAngle);
+    this->joints[1]->SetLowStop(0, wheelAngle);
+
+    //  aerodynamics
+    this->chassis->AddForce(math::Vector3(0, 0, this->aeroLoad * this->velocity.GetSquaredLength()));
+
+    // Sway bars
+    math::Vector3 bodyPoint;
+    math::Vector3 hingePoint;
+    math::Vector3 axis;
+
+    // Physics calculations
+    for (int ix = 0; ix < 4; ++ix)
+    {
+        hingePoint = this->joints[ix]->GetAnchor(0);
+        bodyPoint = this->joints[ix]->GetAnchor(1);
+
+        axis = this->joints[ix]->GetGlobalAxis(0).Round();
+        double displacement = (bodyPoint - hingePoint).Dot(axis);
+
+        float amt = displacement * this->swayForce;
+        if (displacement > 0)
+        {
+            if (amt > 15)
+                amt = 15;
+
+            math::Pose p = this->joints[ix]->GetChild()->GetWorldPose();
+            this->joints[ix]->GetChild()->AddForce(axis * -amt);
+            this->chassis->AddForceAtWorldPosition(axis * amt, p.pos);
+
+            p = this->joints[ix^1]->GetChild()->GetWorldPose();
+            this->joints[ix^1]->GetChild()->AddForce(axis * amt);
+            this->chassis->AddForceAtWorldPosition(axis * -amt, p.pos);
+        }
+    }
+    //    printf("current state: %u\n",this->currentState);
+}
+
+
+/*
+ * Called when initially loading the car model from the sdf. Links the car
+ * to the OnUpdate methods so we can receive updates
+ */
+
+
+void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
+{
+    // Store the model and chassis of the car for later access
+    this->model = _model;
+    this->world = _model->GetWorld();
+    if(carId == 1){
+        //this->msStartTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+        this->simStartTime = this->world->GetStartTime();
+        this->setRate = false;
+    }
+    this->chassis = this->model->GetLink(_sdf->Get<std::string>("chassis"));
+    this->camera = this->model->GetLink(_sdf->Get<std::string>("camera"));
+    this->frontLidar = this->model->GetLink(_sdf->Get<std::string>("frontLidar"));
+    this->frontLidarId = this->frontLidar->GetId() + 8;
+    //printf("lidar Id: %i\n", this->frontLidarId);
+    this->cameraId = this->camera->GetId() + 2;
+    //printf("---camera ID: %i---\n",this->cameraId);
+    this->leftSideLidar = this->model->GetLink(_sdf->Get<std::string>("leftSideLidar"));
+    this->leftLidarId = this->leftSideLidar->GetId() + 8;
+    //printf("left id: %i\n", this->leftLidarId);
+
+    this->rightSideLidar = this->model->GetLink(_sdf->Get<std::string>("rightSideLidar"));
+    this->rightLidarId = this->rightSideLidar->GetId() + 8;
+    //printf("right id: %i\n", this->rightLidarId);
+    // Get all the wheel joints
+    this->joints[0] = this->model->GetJoint(_sdf->Get<std::string>("front_left"));
+    this->joints[1] = this->model->GetJoint(_sdf->Get<std::string>("front_right"));
+    this->joints[2] = this->model->GetJoint(_sdf->Get<std::string>("back_left"));
+    this->joints[3] = this->model->GetJoint(_sdf->Get<std::string>("back_right"));
+
+    // Pull some parameters that are defined in the sdf
+    this->maxSpeed = _sdf->Get<double>("max_speed");
+    this->aeroLoad = _sdf->Get<double>("aero_load");
+    this->tireAngleRange = _sdf->Get<double>("tire_angle_range");
+    this->frontPower = _sdf->Get<double>("front_power");
+    this->rearPower = _sdf->Get<double>("rear_power");
+    this->wheelRadius = _sdf->Get<double>("wheel_radius");
+
+    //this->frontSensor = this->model->GetLink(_sdf->Get<std::string>("front_lidar"));
+
+    // Tell Gazebo to call OnUpdate whenever the car needs an update
+    this->connections.push_back(event::Events::ConnectWorldUpdateBegin(boost::bind(&sdcCar::OnUpdate, this)));
+}
+
+/*
+ * Called when the car and world are being (re)initialized.
+ */
+void sdcCar::Init()
+{
+    //printf("started init");
+//    destinations[0] = {48,10};
+//    destinations[1] = {90,48};
+   // printf("created destinations");
+    // Compute the angle ratio between the steering wheel and the tires
+    this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
+    this->laneStopped = false;
+    this->cameraSensorData = manager::getSensorData(cameraId);
+    this->lidarSensorData = manager::getSensorData(frontLidarId);
+    this->leftLidarSensorData = manager::getSensorData(this->leftLidarId);
+    this->rightLidarSensorData = manager::getSensorData(this->rightLidarId);
+    // During init, sensors aren't available so pull position and rotation information
+    // straight from the car
+    math::Pose pose = this->chassis->GetWorldPose();
+    this->yaw = sdcAngle(pose.rot.GetYaw());
+    this->x = pose.pos.x;
+    this->y = pose.pos.y;
+    //sdcSensorData::sdcSensorData();
+    this->toldToStop = false;
+
+    time_t seconds;
+    srand ((unsigned)time(&seconds));
+    //this->sensorData.InitLidar(LidarPos lidar, double minAngle, double angleResolution, double maxRange, int numRays);
+    //sdcFrontLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
+    GenerateWaypoints();
+
+}
+
+/*
+ * Called whenever Gazebo needs an update for this model
+ */
+/*
+ * Constructor for the car. Sets several parameters to default values, some of
+ * which will get overwritten in Load or Init and others that will be updated
+ * when the car is updating
+ */
+sdcCar::sdcCar(){
+    if (this->carIdCount == 0) {
+      sdcManager::sdcManager(0);
+    }
+    //sdcManager::registerCar(carId++);
+    this->carIdCount ++;
+    this->carId = this->carIdCount;
+    this->inIntersection = false;
+    this->destDirection = -1;
+    //printf("sdcCar Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
+    //printf("sdcCar sensorId: %i\n",this->sensorData->sensorId);
+    //this->frontSensor = sdcFrontLidarSensor();
+
+    this->joints.resize(4);
+
+    // Physics variables
+    this->aeroLoad = 0.1;
+    this->swayForce = 10;
+
+    this->maxSpeed = 6;
+    this->maxTurnLeft = 5;
+    this->maxTurnRight = 5;
+    this->frontPower = 50;
+    this->rearPower = 50;
+    this->wheelRadius = 0.3;
+    this->steeringRatio = 1.0;
+    this->tireAngleRange = 1.0;
+
+    // Movement parameters
+    this->gas = 0.0;
+    this->brake = 0.0;
+    this->accelRate = 1.0;
+    this->brakeRate = 1.0;
+
+    // Limits on the car's speed
+    this->maxCarSpeed = 10;
+    this->maxCarReverseSpeed = -10;
+
+    // Initialize state enums
+    this->DEFAULT_STATE = waypoint;
+    this->currentState = DEFAULT_STATE;
+
+    this->currentPerpendicularState = backPark;
+    this->currentParallelState = rightBack;
+    this->currentAvoidanceState = notAvoiding;
+
+    // Set starting speed parameters
+    this->targetSpeed = this->maxCarSpeed;
+
+    // Set starting turning parameters
+    this->steeringAmount = 0.0;
+    this->targetSteeringAmount = 0.0;
+    this->targetDirection = sdcAngle(0);
+    this->turningLimit = 20.0;
+
+    // Booleans for the car's actions
+    this->turning = false;
+    this->reversing = false;
+    this->stopping = false;
+
+    // Variables for parking
+    this->targetParkingAngle = sdcAngle(0.0);
+    this->parkingAngleSet = false;
+    this->isFixingParking = false;
+    this->parkingSpotSet = false;
+
+    // Variables for waypoint driving
+    this->waypointProgress = 0;
+
+    // Variables for intersections
+    this->stoppedAtSign = false;
+    this->ignoreStopSignsCounter = 0;
+    this->atIntersection = 0;
+
+    // Variables for following
+    this->isTrackingObject = false;
+    this->stationaryCount = 0;
+
+    // Variables for avoidance
+    this->trackingNavWaypoint = false;
 }

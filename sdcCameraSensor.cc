@@ -176,11 +176,12 @@ int getIndexOfClosestLine(std::vector<Vec4i> lines, Point sectionMidPoint) {
 
 sdcCameraSensor::sdcCameraSensor(){
     this->cameraCnt ++;
-    this->cameraId = this->cameraCnt;
+    //this->cameraId = this->cameraCnt;
 }
 
 void sdcCameraSensor::Init(){
     this->cameraId = this->sensor->GetId();
+	printf("***camera sensorId: %i***\n", this->sensorId);
     //printf("this camerasId: %i \n", this->cameraId);
     this->sensorData = manager::getSensorData(cameraId);
 }

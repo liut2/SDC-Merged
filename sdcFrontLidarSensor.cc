@@ -23,7 +23,8 @@ void sdcFrontLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sd
     //this->lidarId = this->sensor->GetId();
     this->sensor = _sensor;
     //printf("lidar sensor id: %i\n",this->sensor->GetId());
-    int sensorId = this->sensor->GetId();
+    this->sensorId = this->sensor->GetId();
+    //printf("fLidar sensorId: %i\n", this->sensorId);
 
     //printf("this camerasId: %i \n", this->cameraId);
     this->sensorData = manager::getSensorData(sensorId);

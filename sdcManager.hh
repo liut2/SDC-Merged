@@ -34,6 +34,7 @@ public:
     static bool stopSignQueue(int carId, int fromDir);
     static bool shouldStop(int carId, int fromDir);
     static gazebo::sdcSensorData *getSensorData(int cameraId);
+    static void setRate(float rate);
 private:
     static instruction rightTurnRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
     static instruction leftTurnRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
@@ -44,6 +45,7 @@ private:
     static float maxTurnRight;
     static time_t startTime;
     static std::chrono::milliseconds msStartTime;
+    static float rate;
 
 
 

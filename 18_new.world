@@ -1162,7 +1162,7 @@
         <sensor name='camera' type='multicamera'>
           <always_on>1</always_on>
           <update_rate>24</update_rate>
-          <visualize>0</visualize>
+          <visualize>1</visualize>
           <topic>comps_car_camera</topic>
           <camera name='left'>
             <pose frame=''>0 0 0 0 -0 0</pose>
@@ -1184,7 +1184,7 @@
         <visual name='visual'>
           <geometry>
             <box>
-              <size>0.1 0.1 0.1</size>
+              <size>.1 .1 .1</size>
             </box>
           </geometry>
           <material>
