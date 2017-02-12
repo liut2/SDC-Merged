@@ -181,7 +181,7 @@ sdcCameraSensor::sdcCameraSensor(){
 
 void sdcCameraSensor::Init(){
     this->cameraId = this->sensor->GetId();
-	printf("***camera sensorId: %i***\n", this->sensorId);
+	//printf("***camera sensorId: %i***\n", this->sensorId);
     //printf("this camerasId: %i \n", this->cameraId);
     this->sensorData = manager::getSensorData(cameraId);
 }
@@ -501,7 +501,7 @@ void sdcCameraSensor::OnUpdate() {
 		double verticalDifference = getAngleDifference(twoMidlines.at(1), verticalLine);
 		//printf("The vertical difference is %f\n", verticalDifference);
 		this->sensorData->setVerticalDifference(verticalDifference);
-		printf("Calculated the midline\n");
+		//printf("Calculated the midline\n");
 	}
 
 	// assume we have the three midlines from section 2,3,4, we need to change the accelaration and direction based the angle

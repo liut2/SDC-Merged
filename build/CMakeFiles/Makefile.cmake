@@ -70,6 +70,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+  "CMakeFiles/sdcCameraSensor.dir/DependInfo.cmake"
   "CMakeFiles/sdcCar.dir/DependInfo.cmake"
   "CMakeFiles/sdcWaypoint.dir/DependInfo.cmake"
   "CMakeFiles/sdcSideLidarSensor.dir/DependInfo.cmake"

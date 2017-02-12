@@ -48,10 +48,10 @@ RM = /usr/local/Cellar/cmake/3.6.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Accounts/mawbye/Desktop/SDC-Merged
+CMAKE_SOURCE_DIR = /Accounts/trank/Desktop/SDC-Merged
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Accounts/mawbye/Desktop/SDC-Merged/build
+CMAKE_BINARY_DIR = /Accounts/trank/Desktop/SDC-Merged/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles /Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/trank/Desktop/SDC-Merged/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -109,6 +109,19 @@ preinstall/fast:
 depend:
 	$(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+#=============================================================================
+# Target rules for targets named sdcCameraSensor
+
+# Build rule for target.
+sdcCameraSensor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcCameraSensor
+.PHONY : sdcCameraSensor
+
+# fast build rule for target.
+sdcCameraSensor/fast:
+	$(MAKE) -f CMakeFiles/sdcCameraSensor.dir/build.make CMakeFiles/sdcCameraSensor.dir/build
+.PHONY : sdcCameraSensor/fast
 
 #=============================================================================
 # Target rules for targets named sdcCar
@@ -519,6 +532,33 @@ sdcBox.cpp.s:
 	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/sdcBox.cpp.s
 .PHONY : sdcBox.cpp.s
 
+sdcCameraSensor.o: sdcCameraSensor.cc.o
+
+.PHONY : sdcCameraSensor.o
+
+# target to build an object file
+sdcCameraSensor.cc.o:
+	$(MAKE) -f CMakeFiles/sdcCameraSensor.dir/build.make CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.o
+.PHONY : sdcCameraSensor.cc.o
+
+sdcCameraSensor.i: sdcCameraSensor.cc.i
+
+.PHONY : sdcCameraSensor.i
+
+# target to preprocess a source file
+sdcCameraSensor.cc.i:
+	$(MAKE) -f CMakeFiles/sdcCameraSensor.dir/build.make CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.i
+.PHONY : sdcCameraSensor.cc.i
+
+sdcCameraSensor.s: sdcCameraSensor.cc.s
+
+.PHONY : sdcCameraSensor.s
+
+# target to generate assembly for a file
+sdcCameraSensor.cc.s:
+	$(MAKE) -f CMakeFiles/sdcCameraSensor.dir/build.make CMakeFiles/sdcCameraSensor.dir/sdcCameraSensor.cc.s
+.PHONY : sdcCameraSensor.cc.s
+
 sdcCar.o: sdcCar.cc.o
 
 .PHONY : sdcCar.o
@@ -877,6 +917,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... sdcCameraSensor"
 	@echo "... sdcCar"
 	@echo "... sdcWaypoint"
 	@echo "... rebuild_cache"
@@ -915,6 +956,9 @@ help:
 	@echo "... sdcBox.o"
 	@echo "... sdcBox.i"
 	@echo "... sdcBox.s"
+	@echo "... sdcCameraSensor.o"
+	@echo "... sdcCameraSensor.i"
+	@echo "... sdcCameraSensor.s"
 	@echo "... sdcCar.o"
 	@echo "... sdcCar.i"
 	@echo "... sdcCar.s"

@@ -60,7 +60,7 @@ const sdcAngle WEST = sdcAngle(PI);
 //destLocations
 const std::vector<std::pair<double,double>> ends = {
     std::pair<double,double>(52.5, 90),
-    std::pair<double,double>(90, 48),
+    std::pair<double,double>(110, 48), //(90,48)
     std::pair<double,double>(48, 10),
     std::pair<double,double>(10,52.5)};
 
@@ -114,19 +114,14 @@ bool ourCarOnRight = true;
 void sdcCar::Drive()
 {
 
-    if((this->currentState != waypoint) && (this->currentState != stop)){
-      // We should lane driving or overtaking functions here
-      //printf("wut\n");
-      this->laneDriving2017();
-      //printf("In lane driving\n");
-      //this->overtaking2017();
-    } else {
-      // intersection functions
-    }
 
     // Possible states: stop, waypoint, intersection, follow, avoidance
     switch(this->currentState)
     {
+        case laneDriving:
+            this->laneDriving2017();
+            printf("In lane driving\n");
+        break;
         // Final state, car is finished driving
         case stop:
             //printf("in stop\n");
@@ -173,10 +168,6 @@ void sdcCar::Drive()
 //         Handle lane driving
         break;
 
-        // Smarter way to avoid objects; stopping, swerving, etc.
-        case laneDriving:
-            //printf("its driving in a lane\n");
-        break;
 
     }
 }
@@ -580,9 +571,9 @@ void sdcCar::initializeGraph() {
     exitIntersection.place = 1;
     sdcIntersection centerIntersection;
     centerIntersection.place = 2;
-    int turnType = 2;//genRand(2); //returns if the car goes straight (0) left (1) or right (2)
+    int turnType = 0;//genRand(2); //returns if the car goes straight (0) left (1) or right (2)
     if (carId == 4 || carId == 3){
-      turnType = 0;
+      turnType = 2;
     }
     //printf("turnType: %i carId: %i\n", turnType, this->carId);
     fflush(stdout);
@@ -1009,7 +1000,7 @@ float sdcCar::IsGoingToHit(sdcVisibleObject obj){
         return obj.dist;
     }
     else{
-        printf("not in line to collide\n");
+        //printf("not in line to collide\n");
         return -1.0;
     }
 }
@@ -1486,16 +1477,15 @@ void sdcCar::OnUpdate()
 
 
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 2; //in merged world use 0
+    int crudeSwitch = 0; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
-    if(this->currentState != stop){
+    if(this->currentState != stop || !((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10))){
         if (crudeSwitch == 0) {
             if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
-                //printf("starting at %f,%f \n", this->x, this->y);
                 this->currentState = waypoint;
             }else{
-
+                printf("in lanedriving crude switch\n");
                 this->currentState = laneDriving;
             }
         } else if (crudeSwitch == 1){

@@ -55,6 +55,10 @@ target_link_libraries(sdcWaypoint ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 add_library(sdcCar SHARED sdcCar.cc)
 target_link_libraries(sdcCar sdcManager manager sdcWaypoint sdcAngle  sdcSensorData sdcIntersection request instruction ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
+
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+
 add_library(sdcFrontLidarSensor SHARED sdcFrontLidarSensor.cc)
 target_link_libraries(sdcFrontLidarSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
@@ -70,7 +74,5 @@ target_link_libraries(sdcBackLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boo
 add_library(sdcGpsSensor SHARED sdcGpsSensor.cc)
 target_link_libraries(sdcGpsSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
-#add_library(sdcCameraSensor SHARED sdcCameraSensor.cc)
-#target_link_libraries(sdcCameraSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+add_library(sdcCameraSensor SHARED sdcCameraSensor.cc)
+target_link_libraries(sdcCameraSensor sdcSensorData manager ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
