@@ -60,7 +60,7 @@ const sdcAngle WEST = sdcAngle(PI);
 //destLocations
 const std::vector<std::pair<double,double>> ends = {
     std::pair<double,double>(52.5, 90),
-    std::pair<double,double>(110, 48), //(90,48)
+    std::pair<double,double>(90, 48), //(110,48)
     std::pair<double,double>(48, 10),
     std::pair<double,double>(10,52.5)};
 
@@ -397,7 +397,7 @@ void sdcCar::WaypointDriving() {
             //USE SPEED TO DETERMINE TURNING LIM
             if (WAYPOINT_VEC[progress].waypointType == 1) {
                 //LEFT
-                this->SetTurningLimit(this->GetSpeed()*6+10);
+                this->SetTurningLimit(this->GetSpeed()*5+20);
             } else if(WAYPOINT_VEC[progress].waypointType == 2) {
                 //RIGHT
                 this->SetTurningLimit(this->GetSpeed()*15+20);
@@ -573,7 +573,10 @@ void sdcCar::initializeGraph() {
     centerIntersection.place = 2;
     int turnType = 0;//genRand(2); //returns if the car goes straight (0) left (1) or right (2)
     if (carId == 4 || carId == 3){
-      turnType = 2;
+      turnType = 1;
+    }
+    if (carId == 2){
+        turnType = 2;
     }
     //printf("turnType: %i carId: %i\n", turnType, this->carId);
     fflush(stdout);
@@ -1477,10 +1480,10 @@ void sdcCar::OnUpdate()
 
 
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 0; //in merged world use 0
+    int crudeSwitch = 2; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
-    if(this->currentState != stop || !((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10))){
+    if(this->currentState != stop){
         if (crudeSwitch == 0) {
             if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
                 this->currentState = waypoint;
@@ -1498,6 +1501,9 @@ void sdcCar::OnUpdate()
             this->currentState = waypoint;
             //printf("Crude switch == 2 : for intersection worlds");
         }
+    }
+    if (crudeSwitch == 0 && !((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10))) {
+        this->currentState = laneDriving;
     }
 
 
