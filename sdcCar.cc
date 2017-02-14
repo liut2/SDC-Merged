@@ -28,6 +28,7 @@
 #include "gazebo/physics/physics.hh"
 #include "gazebo/transport/transport.hh"
 #include "sdcCar.hh"
+#include <limits>
 
 using namespace gazebo;
 GZ_REGISTER_MODEL_PLUGIN(sdcCar)
@@ -96,7 +97,7 @@ double maxAdjust = .2;
 //These are the variables for lane overtaking
 int changeTurnCounter = 0;
 std::vector<sdcVisibleObject> rightObjects;
-int straightRoadModifier = 2000000;
+int straightRoadModifier = std::numeric_limits<int>::max();
 bool isOvertaking = false;
 bool ourCarOnRight = true;
 
@@ -1156,18 +1157,20 @@ void sdcCar::combinedDriving2017() {
       }
       //printf("not yet\n");
     } else if (this->x > 257 && this->x < 264) {
-      //this->cameraSensorData->UpdateSteeringMagnitude(-.87);
-      this->cameraSensorData->UpdateSteeringMagnitude(-.55);
+      //this->cameraSensorData->UpdateSteeringMagnitude(-.85);
+      this->cameraSensorData->UpdateSteeringMagnitude(-.90);
       this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
       //printf("we pass the point and turn left\n");
     } else if (this->x >= 264 && this->x < 300) {
-      this->cameraSensorData->UpdateSteeringMagnitude(0);
-      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+      this->laneDriving2017();
+      //this->cameraSensorData->UpdateSteeringMagnitude(0);
+      //this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
       //printf("we pass the point and turn right\n");
     } else {
       this->overtaking2017();
-      this->SetTargetSpeed(8);
-      printf("in overtaking mode\n");
+      //this->SetTargetSpeed(7);
+      //this->MatchTargetSpeed();
+      //printf("in overtaking mode\n");
     }
   }
   else if(this->carId != 1){
@@ -1177,7 +1180,7 @@ void sdcCar::combinedDriving2017() {
     }
     else{
       //printf("Other cars started\n");
-      this->SetTargetSpeed(6);
+      this->SetTargetSpeed(5);
       this->MatchTargetSpeed();
     }
   }
@@ -1208,7 +1211,7 @@ void sdcCar::laneDriving2017(){
   if (isInCurveRoad && !isInStraightRoad){
     //printf("Case 1: In Curve\n");
     //printf("adjustment to steer mag: %f\n", degree/40);
-    this->cameraSensorData->UpdateSteeringMagnitude(degree/40);
+    this->cameraSensorData->UpdateSteeringMagnitude(degree/55);
     this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
   }
   else if (isInStraightRoad && !isInCurveRoad){
@@ -1328,7 +1331,7 @@ void sdcCar::laneDriving2017(){
         //printf("Actually braking\n");
         Brake(4,4.5);
         //printf("adjustment to steer mag: %f\n", degree/50);
-        this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
+        this->cameraSensorData->UpdateSteeringMagnitude(degree/62);
         this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
         brakeTimes++;
       }
@@ -1393,11 +1396,11 @@ void sdcCar::overtaking2017() {
       carInFront = true;
     }
     if(carInFront) {
-      //printf("car in front!\n");
+      printf("car in front!\n");
     }
     if(!leftLaneFree && !isOvertaking) {
-      //printf("Our car speed: %f\n", this->GetSpeed());
-      //printf("left lane blocked!\n");
+      printf("Our car speed: %f\n", this->GetSpeed());
+      printf("left lane blocked!\n");
     }
     if (leftLaneFree && carInFront) {
       double closestlongitude = 100;
@@ -1408,9 +1411,9 @@ void sdcCar::overtaking2017() {
       }
       if (closestlongitude < 5){
         isOvertaking = true;
-        //printf("is about to overtake\n");
+        printf("is about to overtake\n");
       }
-      //printf("yes, do the overtaking\n");
+      printf("yes, do the overtaking\n");
     }
 
     /* The logic for the car that does the Overtaking */
@@ -1419,17 +1422,17 @@ void sdcCar::overtaking2017() {
       if(changeTurnCounter < 400){
         this->steeringAmount = -2;
         this->SetTargetSpeed(this->GetSpeed() + 5);
-        //printf("turning left\n");
+        printf("turning left 1\n");
       }else if (400 <= changeTurnCounter && changeTurnCounter < 4400){
         this->steeringAmount = 0;
-        //printf("going straight\n");
+        printf("going straight 1\n");
       }else if (4400 <= changeTurnCounter && changeTurnCounter < 4800){
         this->steeringAmount = 2;
-        //printf("turning right\n");
+        printf("turning right 1\n");
       }
       else if (changeTurnCounter >= 4800 && changeTurnCounter <= straightRoadModifier){
         this->steeringAmount = 0;
-        //printf("going straight\n");
+        printf("going straight 2\n");
 
         // use side lidar to decide when we can move back to right lane
         double leftMostLateral = 0;
@@ -1444,19 +1447,19 @@ void sdcCar::overtaking2017() {
         if (leftMostLateral >= 0) {
           straightRoadModifier = changeTurnCounter - 1;
         }
-        //printf("The leftmost lateral is %f\n", leftMostLateral);
+        printf("The leftmost lateral is %f\n", leftMostLateral);
       } else if(changeTurnCounter > straightRoadModifier && changeTurnCounter <= straightRoadModifier + 400){
         this->steeringAmount = 2;
-        //printf("turning right\n");
+        printf("turning right 3\n");
       }else if (straightRoadModifier + 400 <= changeTurnCounter && changeTurnCounter < straightRoadModifier + 4400){
         this->steeringAmount = 0;
-        //printf("going straight\n");
+        printf("going straight 3\n");
       }else if (straightRoadModifier + 4400 <= changeTurnCounter && changeTurnCounter < straightRoadModifier + 4800){
         this->steeringAmount = -2;
-        //printf("turning left\n");
+        printf("turning left 3\n");
       }else if (changeTurnCounter >= straightRoadModifier + 4800 && changeTurnCounter < straightRoadModifier + 6000) {
         this->steeringAmount = 0;
-        //printf(" going straight\n");
+        printf(" going straight 4\n");
       } else if (changeTurnCounter >= straightRoadModifier + 6000 && changeTurnCounter <= straightRoadModifier + 6001) {
         isOvertaking = false;
         straightRoadModifier = 2000000;
