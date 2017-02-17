@@ -92,7 +92,7 @@ int brakeTimes = 0;
 int turnCounter = 0;
 double adjustAmount = 0.0;
 //double maxAdjust = 0.2;
-double maxAdjust = .2;
+double maxAdjust = .3;
 
 //These are the variables for lane overtaking
 int changeTurnCounter = 0;
@@ -100,9 +100,14 @@ std::vector<sdcVisibleObject> rightObjects;
 int straightRoadModifier = std::numeric_limits<int>::max();
 bool isOvertaking = false;
 bool ourCarOnRight = true;
+double minDistToPass = 9;
+bool changingLanes = false;
+bool hasMovedEnough = true;
 
 bool otherCarsStart = false;
 //double ourCarPosition = 0;
+
+double previousAngle = 0;
 
 
 ////////////////////////////////
@@ -1202,7 +1207,8 @@ void sdcCar::laneDriving2017(){
     //printf("in straight road!\n");
     isInStraightRoad = true;
   }
-  else if (std::abs(degree) >= 25) {
+  //else if (std::abs(degree) >= 25) {
+  else if (std::abs(degree) >= 35) {
     //printf("in curved road!\n");
     isInCurveRoad = true;
   }
@@ -1210,9 +1216,19 @@ void sdcCar::laneDriving2017(){
   //When its in the curve
   if (isInCurveRoad && !isInStraightRoad){
     //printf("Case 1: In Curve\n");
-    //printf("adjustment to steer mag: %f\n", degree/40);
-    this->cameraSensorData->UpdateSteeringMagnitude(degree/55);
+    //printf("adjustment to steer mag: %f\n", degree/55);
+    if(degree < 0){
+      this->cameraSensorData->UpdateSteeringMagnitude(-1*pow(degree/55,2));
+      printf("adjust amount: %f\n",-1*pow(degree/55,2));
+    }
+    else{
+      this->cameraSensorData->UpdateSteeringMagnitude(pow(degree/55,2));
+      printf("adjust amount: %f\n",pow(degree/55,2));
+    }
+    //this->cameraSensorData->UpdateSteeringMagnitude(degree/55);
     this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+    //extra
+    previousAngle = degree;
   }
   else if (isInStraightRoad && !isInCurveRoad){
     //printf("Case 2: In Straight\n");
@@ -1229,8 +1245,10 @@ void sdcCar::laneDriving2017(){
     // say >= 15 degree
     double verticalDifference = this->cameraSensorData->getVerticalDifference();
     double latestAdjustAmount;
+    //printf("1\n");
 
     if (std::abs(verticalDifference) > 5 && turnCounter <= 1200) {
+      //printf("2\n");
       //shrink abs(vertical) by 15
       double compressedVertical;
       if (verticalDifference > 0) {
@@ -1257,6 +1275,7 @@ void sdcCar::laneDriving2017(){
       //of counter cycle
       //limit absolute value to 0.1
       if (turnCounter == 0) {
+        //printf("3\n");
         //printf("updated adjustamount!\n");
         adjustAmount = -squared/10000;
         if (adjustAmount > maxAdjust) {
@@ -1272,13 +1291,14 @@ void sdcCar::laneDriving2017(){
       }
 
       if (turnCounter % 50 == 0) {
-        //printf("ADJUST: angle %f, update %f, adjust amount %f, counter %i\n", verticalDifference, latestAdjustAmount, adjustAmount, turnCounter);
+        printf("ADJUST: angle %f, update %f, adjust amount %f, counter %i\n", verticalDifference, latestAdjustAmount, adjustAmount, turnCounter);
       }
 
       this->cameraSensorData->UpdateSteeringMagnitude(latestAdjustAmount);
       this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
       //printf("turn counter: %i\n", turnCounter);
     } else if (turnCounter > 1200 && turnCounter < 1900) {
+      //printf("4\n");
       //reverses turning angle to put the car back on track
       if (adjustAmount > 0.85*maxAdjust) {
         adjustAmount = fmin(adjustAmount, 0.85*maxAdjust);
@@ -1293,6 +1313,7 @@ void sdcCar::laneDriving2017(){
       this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
       //turnCounter++;
     } else {
+      //printf("5\n");
       this->cameraSensorData->UpdateSteeringMagnitude(0);
       this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
       if(turnCounter>0) {
@@ -1316,7 +1337,7 @@ void sdcCar::laneDriving2017(){
       }
       double verticalDifference = this->cameraSensorData->getVerticalDifference();
       //printf("adjustment to steer mag: %f\n", degree/25);
-      this->cameraSensorData->UpdateSteeringMagnitude(degree/25);
+      /////this->cameraSensorData->UpdateSteeringMagnitude(degree/25);
       //this->cameraSensorData->UpdateSteeringMagnitude(0);
       //printf("the angle is %f\n", verticalDifference/200);
       this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
@@ -1332,6 +1353,7 @@ void sdcCar::laneDriving2017(){
         Brake(4,4.5);
         //printf("adjustment to steer mag: %f\n", degree/50);
         this->cameraSensorData->UpdateSteeringMagnitude(degree/62);
+        //this->cameraSensorData->UpdateSteeringMagnitude(0);
         this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
         brakeTimes++;
       }
@@ -1409,14 +1431,80 @@ void sdcCar::overtaking2017() {
           closestlongitude = rightLaneObjects[q].GetLeft().GetLongitudinalDist();
         }
       }
-      if (closestlongitude < 5){
+      //this was originall < 5
+      if (closestlongitude < minDistToPass){
         isOvertaking = true;
         printf("is about to overtake\n");
+      }
+      if(closestlongitude < 2){
+        printf("EMERGENCY BRAKE!\n");
+        this->Brake(4,4);
       }
       printf("yes, do the overtaking\n");
     }
 
+
+
+    //Use lida
+
+    if((this->GetSpeed() > this->targetSpeed - 0.1) && isOvertaking){
+      printf("inside overtaking\n");
+      if (changeTurnCounter >= 500) {
+        changingLanes = false;
+      } else if (changeTurnCounter > 0 && changeTurnCounter < 500){
+        changingLanes = true;
+      }
+      hasMovedEnough = true;
+
+      for(int i=0; i<filteredListOfFrontObjects.size(); i++){
+        if(filteredListOfFrontObjects[i].GetLeft().GetLateralDist() < 3){
+          //then we want to love to th left a bit
+          hasMovedEnough = false;
+          changingLanes = true;
+        }
+      }
+      if (changingLanes) {
+        if(changeTurnCounter > 0 && changeTurnCounter < 200){
+          this->steeringAmount = -0.8;
+          printf("going left\n");
+        }
+        else if(changeTurnCounter >= 200 && changeTurnCounter < 800){
+          this->steeringAmount = 0;
+          printf("going straight\n");
+        }
+        else if(changeTurnCounter >= 800 && changeTurnCounter < 1000){
+          this->steeringAmount = 0.8;
+          printf("going right\n");
+        }
+        changeTurnCounter++;
+      }
+      printf("change turn counter: %d\n", changeTurnCounter);
+
+      if(changeTurnCounter >= 1000 && !hasMovedEnough){
+        changeTurnCounter = 0;
+        changingLanes = true;
+      }
+      else{
+        // use side lidar to decide when we can move back to right lane
+        double leftMostLateral = 0;
+        //printf("The number of right objects is %lu\n", rightObjects.size());
+        for (int t = 0; t < rightObjects.size(); t++) {
+          double leftLateral = rightObjects[t].GetLeft().GetLateralDist();
+          if(leftLateral <= leftMostLateral) {
+              leftMostLateral = leftLateral;
+          }
+        }
+
+        if (leftMostLateral >= 0) {
+          printf("its passed\n");
+        }
+      }
+    }
+
+
+
     /* The logic for the car that does the Overtaking */
+    /*
     if((this->GetSpeed() > this->targetSpeed - 0.1) && isOvertaking){
       //printf("enter the overtaking part\n");
       if(changeTurnCounter < 400){
@@ -1464,9 +1552,11 @@ void sdcCar::overtaking2017() {
         isOvertaking = false;
         straightRoadModifier = 2000000;
         changeTurnCounter = -1;
+
       }
       changeTurnCounter++;
     }
+    */
 
 
   }
