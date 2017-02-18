@@ -441,7 +441,7 @@ void sdcCameraSensor::OnUpdate() {
 				segment[3] = segmentArr[3];
 
 				// check if the line is horizontal or near horizontal. if so, filter them out
-				if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.1) {
+				if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.03) {
 					mergedLines.push_back(segment);
 					//line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
 				}
