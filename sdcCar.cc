@@ -356,11 +356,16 @@ void sdcCar::WaypointDriving() {
             else{
                 this->targetSpeed = fmax(this->targetSpeed * 1.01, this->maxSpeed);
             }
+            //reset pose
+            if ((this->x <= 25 && this->x >= 75) && (this->y <= 25 && this->y >= 75)) {
+                //this->world.SetModelPose(this->model, );
+                //this->world.ResetModelPoses();
+            }
         }
 
         if (WAYPOINT_VEC[0].hasReservation == false && progress == 0){
             //printf("carId making request: %i\n", carId);
-            if (distance < 20){
+            if (distance < 20 && this->ObjectOnCollisionCourse() >7){
                 auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
                 this->targetSpeed = instruction.getSpeed();
                 if (instruction.getHasReservation() == 1){
@@ -1445,22 +1450,13 @@ void sdcCar::OnUpdate()
     //updates the rate in sdcManager incase the sim time is slower than real time
 
     if(carId == 1){
-        //std::chrono::milliseconds currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-        //int diffTime = currentTime.count() - msStartTime.count();
-        //float tm = diffTime / float(1000);
 
         if (!this->setRate){
             common::Time curSimTime = this->world->GetSimTime();
             common::Time curRealTime = this->world->GetRealTime();
             float curSimTm = curSimTime.Float();
             float curRealTm = curRealTime.Float();
-            //printf("curRealTm:%f\n", curRealTm);
-            //float startTm = this->simStartTime.Float();
-            //float simTm = curSimTm - startTm;
-            //float realTm = curRealTm - startTm;
-            //printf("diffTime: %f\n", diffSimTime);
             float runRate = curSimTm / curRealTm;
-            //printf("runRate: %f\n", runRate);
             if((runRate < .95) && (curRealTm > .5)){
                 sdcManager::setRate(runRate);
                 this->setRate = true;
@@ -1468,15 +1464,6 @@ void sdcCar::OnUpdate()
         }
     }
 
-    //printf("\nin onupdate\n");
-    //    if(this->getSensor){
-    //
-    //        this->getSensor = false;
-    //    }
-    //this->sensorData = sdcManager::getSensorData(carId);
-    // if(this->carId == 1){
-    //     printf("current target speed: %f\n", this->targetSpeed);
-    // }
 
 
     //REMEMBER TO CHANGE THIS
@@ -1506,87 +1493,14 @@ void sdcCar::OnUpdate()
         this->currentState = laneDriving;
     }
 
-
-    //    if(this->stopping){
-    //        printf("stopping\n");
-    //        printf("%f",this->velocity.y);
-    //    }
-    //    if(this->turning == true){
-    //        printf("speed: %f \n",this->GetSpeed());
-    //    }
-    //
-    //     Get the current velocity of the car
-
-    ///For stop sign algorithm queue to correctly stop
-//    if(this->currentState!=laneDriving){
-//        if(sdcManager::shouldStop(carId, fromDir)){
-//            if(!laneStopped){
-//                //printf("told to stop\n");
-//                this->currentState = stop;
-//                this->toldToStop = true;
-//            }
-//        }
-//        else{
-//            if(this->toldToStop){
-//                this->currentState = waypoint;
-//                this->toldToStop = false;
-//            }
-//        }
-//    }
-
-
-    if(this->inIntersection){
-        //if outside intersection
-        //printf("direction: %i\n", this->destDirection);
-        // fflush(stdout);
-        switch (this->destDirection) {
-                //0 = north, 1 = east, 2 = south, 3 = west
-            case 0:
-                if(this->y > 55){
-                    sdcManager::stopSignCarLeft(this->carId);
-                    this->inIntersection = false;
-                    // this->currentState == waypoint;
-                    printf("exited north\n");
-                }
-                break;
-            case 1:
-                if(this->x  > 55){
-                    sdcManager::stopSignCarLeft(this->carId);
-                    this->inIntersection = false;
-                    printf("exited east\n");
-                }
-                break;
-            case 2:
-                if(this->y < 45){
-                    sdcManager::stopSignCarLeft(this->carId);
-                    this->inIntersection = false;
-                    printf("exited south\n");
-                }
-                break;
-            case 3:
-                if(this->x < 45 ){
-                    sdcManager::stopSignCarLeft(this->carId);
-                    this->inIntersection = false;
-                    printf("exited west\n");
-                }
-                break;
-        }
-    }
+    this->inIntersection = false;
     this->velocity = this->chassis->GetWorldLinearVel();
     // Get the cars current position
     math::Pose pose = this->chassis->GetWorldPose();
     this->yaw = sdcAngle(pose.rot.GetYaw());
     this->x = pose.pos.x;
     this->y = pose.pos.y;
-    // this->x = pose.x;
-    // this->y = pose.y;
-    //printf("x, y is : %f %f \n", this->x, this->y);
-    // Get the cars current rotation
-    // this->yaw = sdcSensorData::GetYaw();
-
-    // Check if the front lidars have been updated, and if they have update
-    // the car's list
-    // printf("\nin onupdate\n");
+    
     if(this->frontLidarLastUpdate != this->lidarSensorData->GetLidarLastUpdate(FRONT)){
     //        printf("updating front objects\n");
       std::vector<sdcVisibleObject> v = this->lidarSensorData->GetObjectsInFront();

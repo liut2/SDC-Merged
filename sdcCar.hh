@@ -218,6 +218,7 @@ namespace gazebo {
         int fromDir;
         bool toldToStop;
         static int carIdCount;
+        
 
         double x;
         double y;
