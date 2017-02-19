@@ -431,7 +431,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                 }
             }
         }
-        if (speedIntent < 1.5){
+        if (speedIntent < 3){
             return instruction::instruction(carId, decrease*speed, 0);
         }
         //Pass through the check, can make reservation
@@ -581,7 +581,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                 }
             }
         }
-        if (speedIntent < 1.5){
+        if (speedIntent < 3){
             return instruction::instruction(carId, decrease*speed, 0);
         }
         //Pass through the check, can make reservation
@@ -731,7 +731,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                 }
             }
         }
-        if (speedIntent < 1.5){
+        if (speedIntent < 3){
             return instruction::instruction(carId, decrease*speed, 0);
         }
         //Pass through the check, can make reservation
@@ -881,7 +881,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                 }
             }
         }
-        if (speedIntent < 1.5){
+        if (speedIntent < 3){
             return instruction::instruction(carId, decrease*speed, 0);
         }
         //Pass through the check, can make reservation

@@ -1480,7 +1480,7 @@ void sdcCar::OnUpdate()
 
 
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 2; //in merged world use 0
+    int crudeSwitch = 0; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
     if(this->currentState != stop){
@@ -1502,7 +1502,7 @@ void sdcCar::OnUpdate()
             //printf("Crude switch == 2 : for intersection worlds");
         }
     }
-    if (crudeSwitch == 0 && !((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10))) {
+    if (crudeSwitch == 0 && !(this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)) {
         this->currentState = laneDriving;
     }
 
