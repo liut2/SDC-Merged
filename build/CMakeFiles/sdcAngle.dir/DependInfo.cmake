@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/Accounts/liut2/Desktop/SDC-Merged/sdcAngle.cc" "/Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles/sdcAngle.dir/sdcAngle.cc.o"
+  "/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcAngle.cc" "/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/build/CMakeFiles/sdcAngle.dir/sdcAngle.cc.o"
   )
 set(CMAKE_CXX_COMPILER_ID "Clang")
 
