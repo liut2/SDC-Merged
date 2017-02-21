@@ -129,6 +129,37 @@ void sdcCar::Drive()
             this->Stop();
             this->MatchTargetSpeed();
             this->MatchTargetDirection();
+            if(this->GetSpeed() < .001){
+                if (!this->hasReset){
+                    printf("resetting\n");
+                    this->resetPose = this->model->GetWorldPose();
+                    //N
+                    if (carId == 1){
+                        this->resetPose.Set(48,80,.001,0,0,-1.56);
+
+                    }
+                    //E
+                    else if (carId == 2){
+                        this->resetPose.Set(20,48,.001,0,0,0);
+
+                    }
+                    //S
+                    else if (carId == 3){
+                        this->resetPose.Set(52.5,20,.001,0,0,1.56);
+                    }
+                    //W
+                    else{
+                        this->resetPose.Set(80,52.5,.001,0,0,3.1415);
+                    }
+                    this->model->SetLinkWorldPose(this->resetPose,this->chassis);
+                    this->hasReset = true;
+                    printf("it reset\n");
+                }
+                else{
+                    this->Init();
+                }
+
+            }
         break;
 
         // Default state; drive straight to target location
@@ -340,28 +371,9 @@ void sdcCar::WaypointDriving() {
 
 
         if(WAYPOINT_VEC[progress].waypointType == 3 && distance < (this->GetSpeed() * this->GetSpeed())/2.9) {
-            // printf("resetting\n");
-            // math::Pose resetPose = this->model->GetWorldPose();
-            // if (carId == 1){
-            //     resetPose.Set(10,48,.01,0,0,0);
-            // }
-            // else if (carId == 2){
-            //     resetPose.Set(52.5,20,.01,0,0,1.56);
-            // }
-            // else{
-            //     resetPose.Set(48,75,.01,0,0,-3.14);
-            // }
-            //
-            // //resetPose.pos.x = 10;
-            // //resetPose.pos.y = 48;
-            // //resetPose.pos.z = 0;
-            // //resetPose.rot.roll
-            // this->model->SetLinkWorldPose(resetPose,this->chassis);
-            // this->waypointProgress = 0;
-            // printf("it reset\n");
             this->currentState = stop;
             this->targetSpeed = 0;
-            //printf("carId: %i stopping\n",carId);
+            printf("carId: %i stopping\n",carId);
             return;
         }
         if(progress == 2){
@@ -1472,7 +1484,6 @@ void sdcCar::overtaking2017() {
 void sdcCar::OnUpdate()
 {
     //updates the rate in sdcManager incase the sim time is slower than real time
-
     if(carId == 1){
 
         if (!this->setRate){
@@ -1491,7 +1502,7 @@ void sdcCar::OnUpdate()
 
 
     //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 0; //in merged world use 0
+    int crudeSwitch = 2; //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
     if(this->currentState != stop){
@@ -1729,7 +1740,14 @@ void sdcCar::Init()
     this->y = pose.pos.y;
     //sdcSensorData::sdcSensorData();
     this->toldToStop = false;
-
+    if(this->hasReset == true){
+        printf("was false\n");
+        this->hasReset = false;
+        this->currentState = waypoint;
+        WAYPOINT_VEC.clear();
+        this->waypointProgress = 0;
+        this->targetSpeed = this->maxCarSpeed;
+    }
     time_t seconds;
     srand ((unsigned)time(&seconds));
     //this->sensorData.InitLidar(LidarPos lidar, double minAngle, double angleResolution, double maxRange, int numRays);
@@ -1751,6 +1769,7 @@ sdcCar::sdcCar(){
       sdcManager::sdcManager(0);
     }
     //sdcManager::registerCar(carId++);
+    this->hasReset = false;
     this->carIdCount ++;
     this->carId = this->carIdCount;
     this->inIntersection = false;

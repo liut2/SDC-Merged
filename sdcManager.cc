@@ -1069,6 +1069,7 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
     float decrease = .95;
     bool reserved = true;
     float driveTime = 0;
+    float idealSpeed = 0;
     float buffer = fmax(4.25, 4.25 + speed);
     float timeWillReach = 0;
     float timeWillLeave = 0;
@@ -1107,13 +1108,16 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                   return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
-                  speedIntent = fmin(speedIntent, ((float)distance - buffer) / (sdcManager::getGrid(iX, iY) - tm));
-                  //printf("got reservation gridTime: %f\n", sdcManager::getGrid(iX, iY));
-                //  printf("tm: %ld\n", tm);
-                //  printf("carId intend: %d, %f\n", carId, speedIntent);
-                  if (speedIntent < 0){
-                    speedIntent = maxTurnRight;
-                  }
+                    idealSpeed = ((float)distance - buffer) / (sdcManager::getGrid(iX, iY) - tm);
+                    if (idealSpeed < 0){
+                        if(distance < 0){
+                            printf("negative speedIntent distance\n");
+                            return instruction::instruction(carId, decrease*speed, 0);
+                        }
+                    }
+                    else{
+                        speedIntent = fmin(speedIntent, idealSpeed);
+                    }
                 }
             }
         }
@@ -1175,13 +1179,16 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                   return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
-                  speedIntent = fmin(speedIntent, ((float)distance - buffer) / (sdcManager::getGrid(iX, iY) - tm));
-                  //printf("got reservation gridTime: %f\n", sdcManager::getGrid(iX, iY));
-                //  printf("tm: %ld\n", tm);
-                //  printf("carId intend: %d, %f\n", carId, speedIntent);
-                  if (speedIntent < 0){
-                    speedIntent = maxTurnRight;
-                  }
+                    idealSpeed = ((float)distance - buffer) / (sdcManager::getGrid(iX, iY) - tm);
+                    if (idealSpeed < 0){
+                        if(distance < 0){
+                            printf("negative speedIntent distance\n");
+                            return instruction::instruction(carId, decrease*speed, 0);
+                        }
+                    }
+                    else{
+                        speedIntent = fmin(speedIntent, idealSpeed);
+                    }
                 }
             }
         }
@@ -1244,13 +1251,16 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                   return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
-                  speedIntent = fmin(speedIntent, ((float)distance - buffer) / (sdcManager::getGrid(iX, iY) - tm));
-                  //printf("got reservation gridTime: %f\n", sdcManager::getGrid(iX, iY));
-                //  printf("tm: %ld\n", tm);
-                //  printf("carId intend: %d, %f\n", carId, speedIntent);
-                  if (speedIntent < 0){
-                    speedIntent = maxTurnRight;
-                  }
+                    idealSpeed = ((float)distance - buffer) / (sdcManager::getGrid(iX, iY) - tm);
+                    if (idealSpeed < 0){
+                        if(distance < 0){
+                            printf("negative speedIntent distance\n");
+                            return instruction::instruction(carId, decrease*speed, 0);
+                        }
+                    }
+                    else{
+                        speedIntent = fmin(speedIntent, idealSpeed);
+                    }
                 }
             }
         }
@@ -1313,13 +1323,16 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                   return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
-                  speedIntent = fmin(speedIntent, ((float)distance - buffer) / (sdcManager::getGrid(iX, iY) - tm));
-                  //printf("got reservation gridTime: %f\n", sdcManager::getGrid(iX, iY));
-                //  printf("tm: %ld\n", tm);
-                //  printf("carId intend: %d, %f\n", carId, speedIntent);
-                  if (speedIntent < 0){
-                    speedIntent = maxTurnRight;
-                  }
+                    idealSpeed = ((float)distance - buffer) / (sdcManager::getGrid(iX, iY) - tm);
+                    if (idealSpeed < 0){
+                        if(distance < 0){
+                            printf("negative speedIntent distance\n");
+                            return instruction::instruction(carId, decrease*speed, 0);
+                        }
+                    }
+                    else{
+                        speedIntent = fmin(speedIntent, idealSpeed);
+                    }
                 }
             }
         }

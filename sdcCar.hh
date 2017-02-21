@@ -153,7 +153,8 @@ namespace gazebo {
         PerpendicularParkingState currentPerpendicularState;
         ParallelParkingState currentParallelState;
         AvoidanceState currentAvoidanceState;
-
+        math::Pose resetPose;
+        bool hasReset;
         double gas; //variable that accelerates the car
         double brake; //variable that brakes the car
 
