@@ -171,8 +171,6 @@ void sdcCar::Drive()
 
                     //Check to see if a car was recently teleported to that location
                     //If not do not reset the car
-                    common::Time curSimTime = this->world->GetSimTime();
-                    float curSimTm = curSimTime.Float();
                     if (this->resetClear[randIndex] == 1){
                         this->model->SetLinkWorldPose(this->resetPose,this->chassis);
                         this->resetClear[randIndex] = 0;
