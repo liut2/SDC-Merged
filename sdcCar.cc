@@ -90,6 +90,8 @@ bool isInStraightRoad = 1;
 bool isInCurveRoad = 0;
 int brakeTimes = 0;
 int turnCounter = 0;
+int curvedTurnCounter = 0;
+double averageDegree = 0.0;
 double adjustAmount = 0.0;
 //double maxAdjust = 0.2;
 double maxAdjust = .3;
@@ -1170,10 +1172,11 @@ void sdcCar::combinedDriving2017() {
     } else if (this->x > 257 && this->x < 264) {
       //this->laneDriving2017();
       //this->cameraSensorData->UpdateSteeringMagnitude(-.85);
-      this->cameraSensorData->UpdateSteeringMagnitude(-.90);
-      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+      //this->cameraSensorData->UpdateSteeringMagnitude(-.90);
+      //this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
       //printf("we pass the point and turn left\n");
-    } else if (this->x >= 264) {
+    //} else if (this->x >= 264) {
+    } else if (this->x >= 257) {
       if (!isOvertaking) {
         this->laneDriving2017();
       } else {
@@ -1227,6 +1230,11 @@ void sdcCar::laneDriving2017(){
   if (turnCounter > 3000) {
     turnCounter = 0;
   }
+
+  if (curvedTurnCounter > 3000) {
+    curvedTurnCounter = 0;
+    averageDegree = 0;
+  }
   double degree = this->cameraSensorData->getMidlineAngle();
   //printf("The angle is %f\n", degree);
   if(std::abs(degree) < 20){
@@ -1234,7 +1242,7 @@ void sdcCar::laneDriving2017(){
     isInStraightRoad = true;
   }
   //else if (std::abs(degree) >= 25) {
-  else if (std::abs(degree) >= 35) {
+  else if (std::abs(degree) >= 30) {
     //printf("in curved road!\n");
     isInCurveRoad = true;
   }
@@ -1243,13 +1251,26 @@ void sdcCar::laneDriving2017(){
   if (isInCurveRoad && !isInStraightRoad){
     //printf("Case 1: In Curve\n");
     //printf("adjustment to steer mag: %f\n", degree/55);
-    if(degree < 0){
-      this->cameraSensorData->UpdateSteeringMagnitude(-1*pow(degree/50,2));
-      //printf("adjust amount: %f\n",-1*pow(degree/60,2));
+    curvedTurnCounter++;
+    averageDegree *= (curvedTurnCounter - 1);
+    averageDegree += degree/50;
+    averageDegree /= curvedTurnCounter;
+    printf("curvedTurnCounter is %i\n", curvedTurnCounter);
+    if (std::abs(averageDegree) > std::abs(degree/50)) {
+      this->cameraSensorData->UpdateSteeringMagnitude(1.2*averageDegree);
+      printf("adjust amount (averaged): %f, original is %f\n",1.2*averageDegree, degree/50);
+    }
+    else if(degree < 0){
+      //this->cameraSensorData->UpdateSteeringMagnitude(-1*pow(degree/50,2));
+
+      this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
+      //printf("adjust amount: %f\n",-1*pow(degree/50,2));
+      printf("adjust amount: %f, average is %f\n",degree/50, averageDegree);
     }
     else{
-      this->cameraSensorData->UpdateSteeringMagnitude(pow(degree/50,2));
-      //printf("adjust amount: %f\n",pow(degree/60,2));
+      this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
+      //printf("adjust amount: %f\n",pow(degree/50,2));
+      printf("adjust amount: %f, average is %f\n",degree/50, averageDegree);
     }
     //this->cameraSensorData->UpdateSteeringMagnitude(degree/55);
     this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();

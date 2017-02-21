@@ -441,10 +441,24 @@ void sdcCameraSensor::OnUpdate() {
 				segment[3] = segmentArr[3];
 
 				// check if the line is horizontal or near horizontal. if so, filter them out
-				if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.03) {
-					mergedLines.push_back(segment);
-					//line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				if(i == 1){
+					//if in top section
+					if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.02) {
+						mergedLines.push_back(segment);
+						//line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+					}
 				}
+				else{
+					//if in second-to-top section
+					if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.035) {
+						mergedLines.push_back(segment);
+						//line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+					}
+				}
+				//if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.03) {
+				//	mergedLines.push_back(segment);
+				//	//line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				//}
 			}
 			// find the two closest lines to the center of the section, selected as the left and right lane boundaries
 			std::vector<Vec4i> leftBoundaries;
@@ -491,6 +505,7 @@ void sdcCameraSensor::OnUpdate() {
 	if (twoMidlines.size() == 2) {
 		double degree = getAngleDifference(twoMidlines.at(0), twoMidlines.at(1));
 		this->sensorData->setMidlineAngle(degree);
+		//printf("degree: %f\n", degree);
 		// set the angle difference between the vertical line and bottomm midline
 		Vec4i verticalLine;
 		verticalLine[0] = col/2;
@@ -501,8 +516,41 @@ void sdcCameraSensor::OnUpdate() {
 		double verticalDifference = getAngleDifference(twoMidlines.at(1), verticalLine);
 		//printf("The vertical difference is %f\n", verticalDifference);
 		this->sensorData->setVerticalDifference(verticalDifference);
-		//printf("Calculated the midline\n");
+		//printf("verticalDifference: %f\n", verticalDifference);
 	}
+ /*
+	else if (twoMidlines.size() == 1){
+		printf("got here\n");
+		Vec4i verticalLine;
+		verticalLine[0] = col/2;
+		verticalLine[1] = 0;
+		verticalLine[2] = col/2;
+		verticalLine[3] = 10;
+		printf("got here 2\n");
+		double verticalDifference = getAngleDifference(twoMidlines.at(0), verticalLine);
+		printf("\nWe are missing one line And vertdiff is: %f\n", verticalDifference);
+		if(abs(verticalDifference) < 10){
+			this->sensorData->setMidlineAngle(pow(verticalDifference,.5));
+		}
+		else if(abs(verticalDifference) >= 10 && abs(verticalDifference) < 20){
+			this->sensorData->setMidlineAngle(5*pow(verticalDifference,.5));
+		}
+		else if(abs(verticalDifference) >= 20 && abs(verticalDifference) < 60){
+			this->sensorData->setMidlineAngle(3*verticalDifference);
+		}
+		else if(abs(verticalDifference) >= 60){
+			if(verticalDifference<0){
+				this->sensorData->setMidlineAngle(-60);
+			}
+			else{
+				this->sensorData->setMidlineAngle(60);
+			}
+			//this->sensorData->setMidlineAngle(50);
+		}
+		//this->sensorData->setMidlineAngle(3*verticalDifference);
+	}
+	*/
+
 
 	// assume we have the three midlines from section 2,3,4, we need to change the accelaration and direction based the angle
 	// here we will try to use the midlines from section 2 and 3 first
