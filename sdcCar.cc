@@ -57,6 +57,14 @@ const sdcAngle SOUTH = sdcAngle(3*PI/2);
 const sdcAngle EAST = sdcAngle(0);
 const sdcAngle WEST = sdcAngle(PI);
 
+//resetPoses
+const std::vector<math::Pose> resetPose_Vec = {
+    math::Pose(48,80,.001,0,0,-1.56), //N
+    math::Pose(80,52.5,.001,0,0,3.1415), //E
+    math::Pose(52.5,20,.001,0,0,1.56), //S
+    math::Pose(20,48,.001,0,0,0), //W
+    }; //W
+
 //destLocations
 const std::vector<std::pair<double,double>> ends = {
     std::pair<double,double>(52.5, 90),
@@ -82,6 +90,7 @@ const int size = 5;
 
 
 int sdcCar::carIdCount = 0;
+std::vector<int> sdcCar::resetClear(4,1);
 
 
 //The Variables that define what state we are in for lane driving
@@ -129,32 +138,54 @@ void sdcCar::Drive()
             this->Stop();
             this->MatchTargetSpeed();
             this->MatchTargetDirection();
+            // Teleporting for reservation cars. Once they reach their final destination and stop we reset them to a random
+            // starting location and they go through the intersection again.
             if(this->GetSpeed() < .001){
+                // reset the cars pose using model->SetLinkWorldPose
                 if (!this->hasReset){
+                    int randIndex = genRand(3); //get a random index from 0 to 3
                     printf("resetting\n");
-                    this->resetPose = this->model->GetWorldPose();
+                    this->resetPose = resetPose_Vec[randIndex];
+                    /*//this->resetPose = this->model->GetWorldPose();
                     //N
                     if (carId == 1){
-                        this->resetPose.Set(48,80,.001,0,0,-1.56);
-
+                        this->resetPose = resetPose_Vec[0];
+                        //.Set(48,80,.001,0,0,-1.56);
                     }
                     //E
                     else if (carId == 2){
-                        this->resetPose.Set(20,48,.001,0,0,0);
+                        this->resetPose = resetPose_Vec[1];
+                        //this->resetPose.Set(20,48,.001,0,0,0);
 
                     }
                     //S
                     else if (carId == 3){
-                        this->resetPose.Set(52.5,20,.001,0,0,1.56);
+                        this->resetPose = resetPose_Vec[2];
+                        //this->resetPose.Set(52.5,20,.001,0,0,1.56);
                     }
                     //W
                     else{
-                        this->resetPose.Set(80,52.5,.001,0,0,3.1415);
+                        this->resetPose = resetPose_Vec[3];
+                        //this->resetPose.Set(80,52.5,.001,0,0,3.1415);
+                    }*/
+
+                    //Check to see if a car was recently teleported to that location
+                    //If not do not reset the car
+                    common::Time curSimTime = this->world->GetSimTime();
+                    float curSimTm = curSimTime.Float();
+                    if (this->resetClear[randIndex] == 1){
+                        this->model->SetLinkWorldPose(this->resetPose,this->chassis);
+                        this->resetClear[randIndex] = 0;
+                        this->clearIndex = randIndex;
+                        this->hasReset = true;
+                        printf("it reset\n");
                     }
-                    this->model->SetLinkWorldPose(this->resetPose,this->chassis);
-                    this->hasReset = true;
-                    printf("it reset\n");
+                    else{
+                        printf("car was recently teleported\n");
+                    }
+
                 }
+                //Re initialize the car so that it gets new random waypoints.
                 else{
                     this->Init();
                 }
@@ -1485,7 +1516,6 @@ void sdcCar::OnUpdate()
 {
     //updates the rate in sdcManager incase the sim time is slower than real time
     if(carId == 1){
-
         if (!this->setRate){
             common::Time curSimTime = this->world->GetSimTime();
             common::Time curRealTime = this->world->GetRealTime();
@@ -1662,6 +1692,51 @@ void sdcCar::OnUpdate()
             this->chassis->AddForceAtWorldPosition(axis * -amt, p.pos);
         }
     }
+    //Checks to see if the car has moved out of its starting position so we can reset another car to that location
+    if (this->hasReset == 0){
+        switch (this->clearIndex) {
+            case 0: //North
+                if (this->y < 72){
+                    printf("cleared north. Y: %f\n", this->y);
+                    printf("x :%f, y: %f\n", this->x, this->y);
+                    printf("has reset: %i\n", this->hasReset);
+                    this->resetClear[this->clearIndex] = 1;
+                    this->clearIndex = -1;
+                }
+            break;
+
+            case 1: //East
+                if (this->x < 72){
+                    printf("cleared east. E: %f\n", this->x);
+                    printf("x :%f, y: %f\n", this->x, this->y);
+                    printf("has reset: %i\n", this->hasReset);
+                    this->resetClear[this->clearIndex] = 1;
+                    this->clearIndex = -1;
+                }
+            break;
+
+            case 2: //South
+                if (this->y > 28){
+                    printf("cleared south. S: %f\n", this->y);
+                    printf("x :%f, y: %f\n", this->x, this->y);
+                    printf("has reset: %i\n", this->hasReset);
+                    this->resetClear[this->clearIndex] = 1;
+                    this->clearIndex = -1;
+                }
+            break;
+
+            case 3: //West
+                if (this->x > 28){
+                    printf("cleared west. W: %f\n", this->x);
+                    printf("x :%f, y: %f\n", this->x, this->y);
+                    printf("has reset: %i\n", this->hasReset);
+                    this->resetClear[this->clearIndex] = 1;
+                    this->clearIndex = -1;
+                }
+            break;
+        }
+    }
+
     //    printf("current state: %u\n",this->currentState);
 }
 
@@ -1766,9 +1841,10 @@ void sdcCar::Init()
  */
 sdcCar::sdcCar(){
     if (this->carIdCount == 0) {
-      sdcManager::sdcManager(0);
+        sdcManager::sdcManager(0);
     }
     //sdcManager::registerCar(carId++);
+    this->clearIndex = -1;
     this->hasReset = false;
     this->carIdCount ++;
     this->carId = this->carIdCount;

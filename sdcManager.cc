@@ -146,7 +146,7 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
                     return instruction::instruction(carId, decrease*speed, 0);
                 }
                 else {
-                    idealSpeed = fmin(speedIntent, ((float)distance - buffer) / (sdcManager::getGrid(xIndex + xWidth, yIndex) - tm));
+                    idealSpeed = ((float)distance - buffer) / (sdcManager::getGrid(xIndex + xWidth, yIndex) - tm);
                     if (idealSpeed < 0){
                         if(distance < 0){
                             printf("negative speedIntent distance\n");
@@ -225,7 +225,7 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
                     return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
-                    idealSpeed = fmin(speedIntent, ((float)distance - buffer) / (sdcManager::getGrid(xIndex, yIndex + yWidth) - tm));
+                    idealSpeed = ((float)distance - buffer) / (sdcManager::getGrid(xIndex, yIndex + yWidth) - tm);
                     if(carId == 1){
                         //printf("idealSpeed: %f tm: %ld\n", idealSpeed, tm);
                     }
@@ -281,9 +281,9 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
           //   speed = 10;
           // }
          // printf("carId got reserved: %d, %f\n", carId, speedIntent);
-           printf ("speedIntent: %f",speedIntent);
-           printf("timeWillLeave: %f\n", timeWillLeave);
-           printf("tm: %f, driveTime: %f\n", tm, driveTime);
+          // printf ("speedIntent: %f",speedIntent);
+           //printf("timeWillLeave: %f\n", timeWillLeave);
+           //printf("tm: %f, driveTime: %f\n", tm, driveTime);
            return instruction::instruction(carId, speedIntent, 1);
         }
       }
@@ -510,9 +510,9 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            printf ("speedIntent: %f",speedIntent);
-            printf("timeWillLeave: %f\n", timeWillLeave);
-            printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            //printf ("speedIntent: %f",speedIntent);
+            //printf("timeWillLeave: %f\n", timeWillLeave);
+            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -682,9 +682,9 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            printf ("speedIntent: %f",speedIntent);
-            printf("timeWillLeave: %f\n", timeWillLeave);
-            printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            //printf ("speedIntent: %f",speedIntent);
+            //printf("timeWillLeave: %f\n", timeWillLeave);
+            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -859,9 +859,9 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            printf ("speedIntent: %f",speedIntent);
-            printf("timeWillLeave: %f\n", timeWillLeave);
-            printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            //printf ("speedIntent: %f",speedIntent);
+            //printf("timeWillLeave: %f\n", timeWillLeave);
+            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -891,7 +891,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                 timeWillReach = tm + driveTime + (angle*r)/speed;
                 if (timeWillReach < sdcManager::getGrid(iX, iY) || !reserved) { //compare it
                     reserved = false;
-                    printf("1 wc twr:%f\n", timeWillReach);
+                    //printf("1 wc twr:%f\n", timeWillReach);
                     return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
@@ -903,8 +903,8 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                         }
                     }
                     else{
-                        printf("numerator: %f\n", ((float)distance + (angle*r) - buffer));
-                        printf("denominator: %f\n", (sdcManager::getGrid(iX,iY) - tm));
+                        //printf("numerator: %f\n", ((float)distance + (angle*r) - buffer));
+                        //printf("denominator: %f\n", (sdcManager::getGrid(iX,iY) - tm));
                         speedIntent = fmin(speedIntent, idealSpeed);
                     }
                 }
@@ -926,7 +926,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                 timeWillReach = tm + driveTime + (angle*r)/speed;
                 if (timeWillReach < sdcManager::getGrid(iX, iY) || !reserved) { //compare it
                     reserved = false;
-                    printf("2 wc twr:%f\n", timeWillReach);
+                    //printf("2 wc twr:%f\n", timeWillReach);
                     return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
@@ -938,8 +938,8 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                         }
                     }
                     else{
-                        printf("idealSpeed: %f\n", idealSpeed);
-                        printf("speedIntent3: %f\n", speedIntent);
+                        //printf("idealSpeed: %f\n", idealSpeed);
+                        //printf("speedIntent3: %f\n", speedIntent);
                         speedIntent = fmin(speedIntent, idealSpeed);
                     }
                 }
@@ -961,7 +961,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                 timeWillReach = tm + driveTime + (angle*r)/speed;
                 if (timeWillReach < sdcManager::getGrid(iX, iY) || !reserved) { //compare it
                     reserved = false;
-                    printf("3 wc twr:%f\n", timeWillReach);
+                    //printf("3 wc twr:%f\n", timeWillReach);
                     return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
@@ -973,15 +973,15 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                         }
                     }
                     else{
-                        printf("idealSpeed: %f\n", idealSpeed);
-                        printf("speedIntent3: %f\n", speedIntent);
+                        //printf("idealSpeed: %f\n", idealSpeed);
+                        //printf("speedIntent3: %f\n", speedIntent);
                         speedIntent = fmin(speedIntent, idealSpeed);
                     }
                 }
             }
         }
         if (speedIntent < 3){
-            printf("wc speedIntent:%f\n", speedIntent);
+            //printf("wc speedIntent:%f\n", speedIntent);
             return instruction::instruction(carId, decrease*speed, 0);
         }
         //Pass through the check, can make reservation
@@ -1049,9 +1049,9 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            printf ("speedIntent: %f",speedIntent);
-            printf("timeWillLeave: %f\n", timeWillLeave);
-            printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            //printf ("speedIntent: %f",speedIntent);
+            //printf("timeWillLeave: %f\n", timeWillLeave);
+            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1143,9 +1143,9 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            printf ("speedIntent: %f",speedIntent);
-            printf("timeWillLeave: %f\n", timeWillLeave);
-            printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            //printf ("speedIntent: %f",speedIntent);
+            //printf("timeWillLeave: %f\n", timeWillLeave);
+            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1214,10 +1214,10 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            printf("carId: %i got reservation\n",carId);
-            printf ("speedIntent: %f",speedIntent);
-            printf("timeWillLeave: %f\n", timeWillLeave);
-            printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            //printf("carId: %i got reservation\n",carId);
+            //printf ("speedIntent: %f",speedIntent);
+            //printf("timeWillLeave: %f\n", timeWillLeave);
+            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1286,10 +1286,10 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            printf("carId: %i got reservation\n",carId);
-            printf ("speedIntent: %f",speedIntent);
-            printf("timeWillLeave: %f\n", timeWillLeave);
-            printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            //printf("carId: %i got reservation\n",carId);
+            //printf ("speedIntent: %f",speedIntent);
+            //printf("timeWillLeave: %f\n", timeWillLeave);
+            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1357,13 +1357,13 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                         //driveTime = (pow(speed,2) - (10*speed) + (2*(distance + buffer) + 36))/12;
                     }
                     timeWillLeave = tm + driveTime + (angle*r)/leaveSpeed;
-                    printf ("speedIntent: %f",speedIntent);
-                    printf("timeWillLeave: %f\n", timeWillLeave);
-                    printf("tm: %f, driveTime: %f\n", tm, driveTime);
+                    //printf ("speedIntent: %f",speedIntent);
+                    //printf("timeWillLeave: %f\n", timeWillLeave);
+                    //printf("tm: %f, driveTime: %f\n", tm, driveTime);
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            printf("carId: %i got reservation\n",carId);
+            //printf("carId: %i got reservation\n",carId);
             return instruction::instruction(carId, speedIntent, 1);
         }
     }

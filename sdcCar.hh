@@ -153,8 +153,14 @@ namespace gazebo {
         PerpendicularParkingState currentPerpendicularState;
         ParallelParkingState currentParallelState;
         AvoidanceState currentAvoidanceState;
+
+        //For reseting the car
         math::Pose resetPose;
         bool hasReset;
+        int clearIndex;
+        static std::vector<int> resetClear;
+
+
         double gas; //variable that accelerates the car
         double brake; //variable that brakes the car
 
