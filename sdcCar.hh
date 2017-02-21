@@ -22,7 +22,6 @@
 #include <vector>
 #include <exception>
 
-
 #include <stdlib.h>
 #include <time.h>
 #include <random>
@@ -218,7 +217,7 @@ namespace gazebo {
         int fromDir;
         bool toldToStop;
         static int carIdCount;
-        
+
 
         double x;
         double y;

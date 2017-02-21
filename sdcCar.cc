@@ -340,6 +340,25 @@ void sdcCar::WaypointDriving() {
 
 
         if(WAYPOINT_VEC[progress].waypointType == 3 && distance < (this->GetSpeed() * this->GetSpeed())/2.9) {
+            // printf("resetting\n");
+            // math::Pose resetPose = this->model->GetWorldPose();
+            // if (carId == 1){
+            //     resetPose.Set(10,48,.01,0,0,0);
+            // }
+            // else if (carId == 2){
+            //     resetPose.Set(52.5,20,.01,0,0,1.56);
+            // }
+            // else{
+            //     resetPose.Set(48,75,.01,0,0,-3.14);
+            // }
+            //
+            // //resetPose.pos.x = 10;
+            // //resetPose.pos.y = 48;
+            // //resetPose.pos.z = 0;
+            // //resetPose.rot.roll
+            // this->model->SetLinkWorldPose(resetPose,this->chassis);
+            // this->waypointProgress = 0;
+            // printf("it reset\n");
             this->currentState = stop;
             this->targetSpeed = 0;
             //printf("carId: %i stopping\n",carId);
@@ -357,19 +376,19 @@ void sdcCar::WaypointDriving() {
                 this->targetSpeed = fmax(this->targetSpeed * 1.01, this->maxSpeed);
             }
             //reset pose
-            if ((this->x <= 25 && this->x >= 75) && (this->y <= 25 && this->y >= 75)) {
-                //this->world.SetModelPose(this->model, );
-                //this->world.ResetModelPoses();
-            }
+            // if ((this->x <= 35 || this->x >= 65) || (this->y <= 35 || this->y >= 65)) {
+            //
+            //     //this->world->SetModelPose(this->model);
+            // }
         }
 
         if (WAYPOINT_VEC[0].hasReservation == false && progress == 0){
             //printf("carId making request: %i\n", carId);
             if (distance < 20 && this->ObjectOnCollisionCourse() >7){
                 auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-                this->targetSpeed = instruction.getSpeed();
                 if (instruction.getHasReservation() == 1){
                     //printf("carId: %i, got reservation, progress: %i\n", carId, progress);
+                    this->targetSpeed = instruction.getSpeed();
                     WAYPOINT_VEC[0].hasReservation = true;
                     //printf("carId :%i, set to true: %i\n", carId, WAYPOINT_VEC[0].hasReservation);
                 }
@@ -380,7 +399,12 @@ void sdcCar::WaypointDriving() {
                         this->targetSpeed = .2*this->targetSpeed;
                     }
                     else{
-                        this->targetSpeed = instruction.getSpeed();
+                        if (distance < 5){
+                            this->targetSpeed = instruction.getSpeed();
+                        }
+                        else{
+                            this->targetSpeed = fmax(instruction.getSpeed(),1);
+                        }
                     }
                 }
             }
@@ -576,13 +600,13 @@ void sdcCar::initializeGraph() {
     exitIntersection.place = 1;
     sdcIntersection centerIntersection;
     centerIntersection.place = 2;
-    int turnType = 0;//genRand(2); //returns if the car goes straight (0) left (1) or right (2)
-    if (carId == 4 || carId == 3){
+    int turnType = genRand(2); //returns if the car goes straight (0) left (1) or right (2)
+    /*if (carId == 4 || carId == 3){
       turnType = 1;
     }
     if (carId == 2){
-        turnType = 2;
-    }
+        turnType = 1;
+    }*/
     //printf("turnType: %i carId: %i\n", turnType, this->carId);
     fflush(stdout);
 
@@ -1500,7 +1524,7 @@ void sdcCar::OnUpdate()
     this->yaw = sdcAngle(pose.rot.GetYaw());
     this->x = pose.pos.x;
     this->y = pose.pos.y;
-    
+
     if(this->frontLidarLastUpdate != this->lidarSensorData->GetLidarLastUpdate(FRONT)){
     //        printf("updating front objects\n");
       std::vector<sdcVisibleObject> v = this->lidarSensorData->GetObjectsInFront();
