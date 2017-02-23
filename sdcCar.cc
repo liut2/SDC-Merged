@@ -361,23 +361,34 @@ void sdcCar::WaypointDriving() {
         if (WAYPOINT_VEC[0].hasReservation == false && progress == 0){
             //printf("carId making request: %i\n", carId);
             if (distance < 20){
-                auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-                this->targetSpeed = instruction.getSpeed();
-                if (instruction.getHasReservation() == 1){
-                    //printf("carId: %i, got reservation, progress: %i\n", carId, progress);
-                    WAYPOINT_VEC[0].hasReservation = true;
-                    //printf("carId :%i, set to true: %i\n", carId, WAYPOINT_VEC[0].hasReservation);
+              //printf("objOncollisionCourse: %f carId: %i \n", this->ObjectOnCollisionCourse(), carId);
+                if (this->ObjectOnCollisionCourse() > distance - 3) {
+                  auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
+                  if (instruction.getHasReservation() == 1){
+                      //printf("carId: %i, got reservation, progress: %i\n", carId, progress);
+                      this->targetSpeed = instruction.getSpeed();
+                      WAYPOINT_VEC[0].hasReservation = true;
+                      //printf("carId :%i, set to true: %i\n", carId, WAYPOINT_VEC[0].hasReservation);
+                  }
+                  else{
+                      float objDist = this->ObjectOnCollisionCourse();
+                      if(objDist < 7 && objDist < distance){
+                          //printf("carId: %i is close dist = %f\n", this->carId, objDist);
+                          this->targetSpeed = .2*this->targetSpeed;
+                      }
+                      else{
+                          if (distance < 5){
+                              this->targetSpeed = instruction.getSpeed();
+                          }
+                          else{
+                              this->targetSpeed = fmax(instruction.getSpeed(),1);
+                          }
+                      }
+                  }
+                } else {
+                  this->targetSpeed = .9*this->targetSpeed;
                 }
-                else{
-                    float objDist = this->ObjectOnCollisionCourse();
-                    if(objDist < 7 && objDist < distance){
-                        //printf("carId: %i is close dist = %f\n", this->carId, objDist);
-                        this->targetSpeed = .2*this->targetSpeed;
-                    }
-                    else{
-                        this->targetSpeed = instruction.getSpeed();
-                    }
-                }
+
             }
             else {
                 //Far away from the intersection
