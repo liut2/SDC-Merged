@@ -103,7 +103,7 @@ std::vector<sdcVisibleObject> rightObjects;
 int straightRoadModifier = std::numeric_limits<int>::max();
 bool isOvertaking = false;
 bool ourCarOnRight = true;
-double minDistToPass = 9;
+double minDistToPass = 15;
 bool changingLanes = false;
 bool hasMovedEnough = true;
 //bool switchToOvertake = false;
@@ -1469,16 +1469,21 @@ void sdcCar::overtaking2017(){
 
 
     if((this->GetSpeed() > this->targetSpeed - 0.1) && isOvertaking){
+      double estimatedRoadWidth = this->cameraSensorData->getRoadWidth();
+      printf("The road width is %f\n", estimatedRoadWidth);
       //printf("enter the overtaking part\n");
-      if((overTakeDistTravelled <= 9) && (!isSideClearOfCars)){
+      //if((overTakeDistTravelled <= 9) && (!isSideClearOfCars)){
+      if((overTakeDistTravelled <= 3*estimatedRoadWidth) && (!isSideClearOfCars)){
         this->steeringAmount = -2;
         //printf("new turn left\n");
       }
-      else if ((overTakeDistTravelled > 9) && (overTakeDistTravelled <= 18) && (!isSideClearOfCars)){
+      //else if ((overTakeDistTravelled > 9) && (overTakeDistTravelled <= 18) && (!isSideClearOfCars)){
+      else if ((overTakeDistTravelled > 3*estimatedRoadWidth) && (overTakeDistTravelled <= 6*estimatedRoadWidth) && (!isSideClearOfCars)){
         this->steeringAmount = 2;
         //printf("new turn back to straight\n");
       }
-      else if (overTakeDistTravelled > 18 && !isSideClearOfCars){
+      //else if (overTakeDistTravelled > 18 && !isSideClearOfCars){
+      else if (overTakeDistTravelled > 6*estimatedRoadWidth && !isSideClearOfCars){
         //printf("new going straight\n");
         this->steeringAmount = 0;
         // use side lidar to decide when we can move back to right lane
@@ -1502,11 +1507,13 @@ void sdcCar::overtaking2017(){
           this->steeringAmount = 2;
           //printf("new turn right\n");
         }
-        else if ((overTakeDistTravelled > 9) && (overTakeDistTravelled <= 18) && (isSideClearOfCars)){
+        //else if ((overTakeDistTravelled > 9) && (overTakeDistTravelled <= 18) && (isSideClearOfCars)){
+        else if ((overTakeDistTravelled > 3*estimatedRoadWidth) && (overTakeDistTravelled <= 6*estimatedRoadWidth) && (isSideClearOfCars)){
           this->steeringAmount = -2;
           //printf("new turn left back to straight\n");
         }
-        else if ((overTakeDistTravelled > 18) && (overTakeDistTravelled <= 27) && (isSideClearOfCars)){
+        //else if ((overTakeDistTravelled > 18) && (overTakeDistTravelled <= 27) && (isSideClearOfCars)){
+        else if ((overTakeDistTravelled > 6*estimatedRoadWidth) && (overTakeDistTravelled <= 9*estimatedRoadWidth) && (isSideClearOfCars)){
           this->steeringAmount = 0;
           //printf("new ending on straight\n");
         }
@@ -1886,16 +1893,25 @@ bool sdcCar::shouldWeOvertake(){
       //this was originall < 5
       double adjustVertDiff = this->cameraSensorData->getVerticalDifference();
       //printf("verticaldiff: %f\n", adjustVertDiff);
-      printf("closest longitude: %f", closestlongitude);
-      if ((closestlongitude < minDistToPass) && (std::abs(adjustVertDiff)<10)){
+      printf("closest longitude: %f\n", closestlongitude);
+      if ((closestlongitude < minDistToPass) && (closestlongitude > (2/3)*minDistToPass) && (std::abs(adjustVertDiff)<10)){
+        this->brake = 1.0;
         isOvertaking = true;
         printf("is about to overtake\n");
       }
-      if(closestlongitude < 5){
-        printf("EMERGENCY BRAKE!\n");
-        this->Brake(6,6);
+      else if (closestlongitude <= (2/3)*minDistToPass){
+        //this->gas = 1.0;
+        this->brake = 5.0;
+        printf("Extreme Break\n");
       }
-      printf("yes, do the overtaking\n");
+      else{
+        this->brake = 0;
+      }
+      //if(closestlongitude < 5){
+      //  printf("EMERGENCY BRAKE!\n");
+      //  this->Brake(6,6);
+      //}
+      //printf("yes, do the overtaking\n");
     }
     return isOvertaking;
   }

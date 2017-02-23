@@ -53,6 +53,9 @@ F<double> delG(const F<double>& x, const F<double>& y) {
 }
 
 std::vector<int> previousMidline;
+double estimatedRoadWidth = 0;
+double roadWidthSum = 0;
+double roadUpdateCounter = 0;
 
 
 /*Helper methods for Improved CHEVP algorithm*/
@@ -507,6 +510,25 @@ void sdcCameraSensor::OnUpdate() {
 				realMidline[3] = midPoint.y;
 
 				twoMidlines.push_back(realMidline);
+
+				// estimate the road distance based on pixel
+				double l1MidpointX = (l1[0] + l1[2])/2.0;
+				double l2MidpointX = (l2[0] + l2[2])/2.0;
+				double xDifference = std::abs(l1MidpointX - l2MidpointX);
+				Vec4i verticalLine;
+				verticalLine[0] = col/2;
+				verticalLine[1] = 0;
+				verticalLine[2] = col/2;
+				verticalLine[3] = 10;
+				double verticalDifference = std::abs(getAngleDifference(realMidline, verticalLine));
+
+				if (i == 2 && verticalDifference <= 10) {
+					roadWidthSum += xDifference;
+					roadUpdateCounter++;
+					double roadWidth = roadWidthSum/roadUpdateCounter;
+					this->sensorData->setRoadWidth(roadWidth/105);
+				}
+
 			}
 		}
 	}
@@ -521,7 +543,7 @@ void sdcCameraSensor::OnUpdate() {
 		previousMidlineInVector[3] = previousMidline.at(3);
 
 		double degreeBetweenSameMidlines = std::abs(getAngleDifference(twoMidlines.at(0), previousMidlineInVector));
-		printf("The angle between the same midline is %f\n", degreeBetweenSameMidlines);
+		//printf("The angle between the same midline is %f\n", degreeBetweenSameMidlines);
 		if (previousMidlineInVector[0] == infinityInt) {
 			previousMidline.clear();
 			previousMidline.push_back(twoMidlines.at(0)[0]);
@@ -536,7 +558,7 @@ void sdcCameraSensor::OnUpdate() {
 			previousMidline.push_back(twoMidlines.at(0)[2]);
 			previousMidline.push_back(twoMidlines.at(0)[3]);
 		} else {
-			printf("We don't update\n");
+			//printf("We don't update\n");
 		}
 
 		this->sensorData->setMidlineAngle(degree);
@@ -558,7 +580,7 @@ void sdcCameraSensor::OnUpdate() {
 	}
 
 	else if (twoMidlines.size() == 1 && previousMidline.at(0) != infinityInt){
-		printf("Enter the condition when we have 1111111111111111111111111111111111111 midline\n");
+		//printf("Enter the condition when we have 1111111111111111111111111111111111111 midline\n");
 		Vec4i previousMidlineInVector;
 		previousMidlineInVector[0] = previousMidline.at(0);
 		previousMidlineInVector[1] = previousMidline.at(1);
