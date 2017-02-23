@@ -91,10 +91,11 @@ bool isInCurveRoad = 0;
 int brakeTimes = 0;
 int turnCounter = 0;
 int curvedTurnCounter = 0;
+int nonCurvedTurnCounter = 0;
 double averageDegree = 0.0;
 double adjustAmount = 0.0;
 //double maxAdjust = 0.2;
-double maxAdjust = .3;
+double maxAdjust = .4;
 
 //These are the variables for lane overtaking
 int changeTurnCounter = 0;
@@ -1180,7 +1181,7 @@ void sdcCar::combinedDriving2017() {
       if (!isOvertaking) {
         this->laneDriving2017();
       } else {
-        printf("isOvertaking = %d\n", isOvertaking);
+        //printf("isOvertaking = %d\n", isOvertaking);
         this->overtaking2017();
       }
 
@@ -1227,11 +1228,18 @@ void sdcCar::laneDriving2017(){
     turnCounter++;
   }
 
+
+
+  if (nonCurvedTurnCounter > 5000) {
+    curvedTurnCounter = 0;
+    nonCurvedTurnCounter = 0;
+  }
+
   if (turnCounter > 3000) {
     turnCounter = 0;
   }
-
-  if (curvedTurnCounter > 3000) {
+  //printf("curvedturncounter: %d, nonCurvedTurnCounter: %d\n", curvedTurnCounter, nonCurvedTurnCounter);
+  if (curvedTurnCounter > 4000) {
     curvedTurnCounter = 0;
     averageDegree = 0;
   }
@@ -1245,32 +1253,43 @@ void sdcCar::laneDriving2017(){
   else if (std::abs(degree) >= 30) {
     //printf("in curved road!\n");
     isInCurveRoad = true;
+    nonCurvedTurnCounter = 0;
   }
 
+  if (!isInCurveRoad) {
+    nonCurvedTurnCounter++;
+  }
   //When its in the curve
   if (isInCurveRoad && !isInStraightRoad){
     //printf("Case 1: In Curve\n");
     //printf("adjustment to steer mag: %f\n", degree/55);
     curvedTurnCounter++;
     averageDegree *= (curvedTurnCounter - 1);
+    //if (degree < 0){
+    //  averageDegree += -1*pow(degree/50,2);
+    //}
+    //else{
+    //  averageDegree += pow(degree/50,2);
+    //}
     averageDegree += degree/50;
     averageDegree /= curvedTurnCounter;
-    printf("curvedTurnCounter is %i\n", curvedTurnCounter);
-    if (std::abs(averageDegree) > std::abs(degree/50)) {
-      this->cameraSensorData->UpdateSteeringMagnitude(1.2*averageDegree);
-      printf("adjust amount (averaged): %f, original is %f\n",1.2*averageDegree, degree/50);
-    }
-    else if(degree < 0){
+    //printf("curvedTurnCounter is %i\n", curvedTurnCounter);
+    //if (std::abs(averageDegree) > std::abs(degree/50)) {
+    /*if (std::abs(averageDegree) > std::abs(pow(degree/50,2))) {
+      this->cameraSensorData->UpdateSteeringMagnitude(1.45*averageDegree);
+      //printf("adjust amount (averaged): %f, original is %f\n",1.2*averageDegree, degree/50);
+    }*/
+    if(degree < 0){
       //this->cameraSensorData->UpdateSteeringMagnitude(-1*pow(degree/50,2));
-
       this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
       //printf("adjust amount: %f\n",-1*pow(degree/50,2));
-      printf("adjust amount: %f, average is %f\n",degree/50, averageDegree);
+      //printf("adjust amount: %f, average is %f\n",degree/50, averageDegree);
     }
     else{
       this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
+      //this->cameraSensorData->UpdateSteeringMagnitude(pow(degree/50,2));
       //printf("adjust amount: %f\n",pow(degree/50,2));
-      printf("adjust amount: %f, average is %f\n",degree/50, averageDegree);
+      //printf("adjust amount: %f, average is %f\n",degree/50, averageDegree);
     }
     //this->cameraSensorData->UpdateSteeringMagnitude(degree/55);
     this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
@@ -1312,7 +1331,7 @@ void sdcCar::laneDriving2017(){
 
       //latestAdjustAmount is the angle difference for this turn
       /////!!!latestAdjustAmount = -squared/10000;
-      latestAdjustAmount = -squared/5000;
+      latestAdjustAmount = -squared/4000;
       if (latestAdjustAmount > maxAdjust) {
         latestAdjustAmount = fmin(latestAdjustAmount, maxAdjust);
       } else {
@@ -1326,7 +1345,7 @@ void sdcCar::laneDriving2017(){
         //printf("3\n");
         //printf("updated adjustamount!\n");
         /////!!!adjustAmount = -squared/10000;
-        adjustAmount = -squared/5000;
+        adjustAmount = -squared/4000;
         if (adjustAmount > maxAdjust) {
           adjustAmount = fmin(adjustAmount, maxAdjust);
         } else {
@@ -1471,7 +1490,7 @@ void sdcCar::overtaking2017(){
               leftMostLateral = leftLateral;
           }
         }
-        printf("leftmostlateral: %f\n", leftMostLateral);
+        //printf("leftmostlateral: %f\n", leftMostLateral);
         if(leftMostLateral >= 0){
           isSideClearOfCars = true;
           overTakeDistTravelled = 0;
@@ -1863,12 +1882,16 @@ bool sdcCar::shouldWeOvertake(){
           closestlongitude = rightLaneObjects[q].GetLeft().GetLongitudinalDist();
         }
       }
+
       //this was originall < 5
-      if (closestlongitude < minDistToPass){
+      double adjustVertDiff = this->cameraSensorData->getVerticalDifference();
+      //printf("verticaldiff: %f\n", adjustVertDiff);
+      printf("closest longitude: %f", closestlongitude);
+      if ((closestlongitude < minDistToPass) && (std::abs(adjustVertDiff)<10)){
         isOvertaking = true;
         printf("is about to overtake\n");
       }
-      if(closestlongitude < 2){
+      if(closestlongitude < 5){
         printf("EMERGENCY BRAKE!\n");
         this->Brake(6,6);
       }
