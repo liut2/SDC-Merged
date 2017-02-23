@@ -407,7 +407,7 @@ void sdcCar::WaypointDriving() {
         }
         if(progress == 2){
             float objDist = this->ObjectOnCollisionCourse();
-            if(objDist < (this->GetSpeed() * this->GetSpeed())/2 + 5){
+            if(objDist < (this->GetSpeed() * this->GetSpeed())/2 + 2){
                 //printf("carId: %i is far dist = %f\n", this->carId, objDist);
                 //printf("carId: %i this->targetSpeed: %f\n",carId, this->targetSpeed);
                 this->targetSpeed = this->targetSpeed * .9;
@@ -425,29 +425,35 @@ void sdcCar::WaypointDriving() {
 
         if (WAYPOINT_VEC[0].hasReservation == false && progress == 0){
             //printf("carId making request: %i\n", carId);
-            if (distance < 20 && this->ObjectOnCollisionCourse() >7){
-                auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-                if (instruction.getHasReservation() == 1){
-                    //printf("carId: %i, got reservation, progress: %i\n", carId, progress);
-                    this->targetSpeed = instruction.getSpeed();
-                    WAYPOINT_VEC[0].hasReservation = true;
-                    //printf("carId :%i, set to true: %i\n", carId, WAYPOINT_VEC[0].hasReservation);
+            if (distance < 20){
+              //printf("objOncollisionCourse: %f carId: %i \n", this->ObjectOnCollisionCourse(), carId);
+                if (this->ObjectOnCollisionCourse() > distance - 3) {
+                  auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
+                  if (instruction.getHasReservation() == 1){
+                      //printf("carId: %i, got reservation, progress: %i\n", carId, progress);
+                      this->targetSpeed = instruction.getSpeed();
+                      WAYPOINT_VEC[0].hasReservation = true;
+                      //printf("carId :%i, set to true: %i\n", carId, WAYPOINT_VEC[0].hasReservation);
+                  }
+                  else{
+                      float objDist = this->ObjectOnCollisionCourse();
+                      if(objDist < 7 && objDist < distance){
+                          //printf("carId: %i is close dist = %f\n", this->carId, objDist);
+                          this->targetSpeed = .2*this->targetSpeed;
+                      }
+                      else{
+                          if (distance < 5){
+                              this->targetSpeed = instruction.getSpeed();
+                          }
+                          else{
+                              this->targetSpeed = fmax(instruction.getSpeed(),1);
+                          }
+                      }
+                  }
+                } else {
+                  this->targetSpeed = .9*this->targetSpeed;
                 }
-                else{
-                    float objDist = this->ObjectOnCollisionCourse();
-                    if(objDist < 7 && objDist < distance){
-                        //printf("carId: %i is close dist = %f\n", this->carId, objDist);
-                        this->targetSpeed = .2*this->targetSpeed;
-                    }
-                    else{
-                        if (distance < 5){
-                            this->targetSpeed = instruction.getSpeed();
-                        }
-                        else{
-                            this->targetSpeed = fmax(instruction.getSpeed(),1);
-                        }
-                    }
-                }
+
             }
             else {
                 //Far away from the intersection
@@ -641,13 +647,13 @@ void sdcCar::initializeGraph() {
     exitIntersection.place = 1;
     sdcIntersection centerIntersection;
     centerIntersection.place = 2;
-    int turnType = genRand(2); //returns if the car goes straight (0) left (1) or right (2)
-    /*if (carId == 4 || carId == 3){
-      turnType = 1;
+    int turnType = 1; //genRand(2); //returns if the car goes straight (0) left (1) or right (2)
+    if (carId == 4 || carId == 3){
+      turnType = 0;
     }
     if (carId == 2){
-        turnType = 1;
-    }*/
+        turnType = 2;
+    }
     //printf("turnType: %i carId: %i\n", turnType, this->carId);
     fflush(stdout);
 
