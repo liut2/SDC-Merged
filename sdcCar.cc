@@ -1470,7 +1470,7 @@ void sdcCar::overtaking2017(){
 
     if((this->GetSpeed() > this->targetSpeed - 0.1) && isOvertaking){
       double estimatedRoadWidth = this->cameraSensorData->getRoadWidth();
-      printf("The road width is %f\n", estimatedRoadWidth);
+      //printf("The road width is %f\n", estimatedRoadWidth);
       //printf("enter the overtaking part\n");
       //if((overTakeDistTravelled <= 9) && (!isSideClearOfCars)){
       if((overTakeDistTravelled <= 3*estimatedRoadWidth) && (!isSideClearOfCars)){
@@ -1487,23 +1487,40 @@ void sdcCar::overtaking2017(){
         //printf("new going straight\n");
         this->steeringAmount = 0;
         // use side lidar to decide when we can move back to right lane
-        double leftMostLateral = 0;
-        //printf("The number of right objects is %lu\n", rightObjects.size());
-        for (int t = 0; t < rightObjects.size(); t++) {
-          double leftLateral = rightObjects[t].GetLeft().GetLateralDist();
+        double leftMostLateral = 1e20;
+        // first pass to filter out unreasonably small side objects
+        std::vector<sdcVisibleObject> filteredSideObjects;
+        for(int t = 0; t < rightObjects.size(); t++){
+          double leftLateralDist = rightObjects[t].GetLeft().GetLateralDist();
+          double rightLateralDist = rightObjects[t].GetRight().GetLateralDist();
+          double lateralWidth = std::abs(leftLateralDist - rightLateralDist);
+          //printf("The width of side objects is %f\n", lateralWidth);
+          //checks whether width of object is greater than 0.2
+          if (!((lateralWidth == 0.000) && (leftLateralDist >= 0.36) && (leftLateralDist <= 0.38))){
+            filteredSideObjects.push_back(rightObjects[t]);
+          }
+        }
+        //printf("The number of right objects is %lu\n", filteredSideObjects.size());
+        for (int t = 0; t < filteredSideObjects.size(); t++) {
+          double leftLateral = filteredSideObjects[t].GetLeft().GetLateralDist();
           if(leftLateral <= leftMostLateral) {
               leftMostLateral = leftLateral;
           }
         }
-        //printf("leftmostlateral: %f\n", leftMostLateral);
-        if(leftMostLateral >= 0){
+
+        double verticalDifference = this->cameraSensorData->getVerticalDifference();
+        printf("leftmostlateral: %f, vertical difference: %f\n", leftMostLateral, verticalDifference);
+        if(leftMostLateral >= minDistToPass && std::abs(verticalDifference) < 15){
           isSideClearOfCars = true;
           overTakeDistTravelled = 0;
           initialSimTime = this->world->GetSimTime().Float();
+        } else {
+          overtakeLaneCentering();
+
         }
       }
       else if (isSideClearOfCars){
-        if(overTakeDistTravelled <= 9){
+        if(overTakeDistTravelled <= 3*estimatedRoadWidth){
           this->steeringAmount = 2;
           //printf("new turn right\n");
         }
@@ -1578,7 +1595,6 @@ void sdcCar::overtaking2017(){
   this->MatchTargetSpeed();
   }
 }
-
 
 /* New Code for Lane Overtaking */
 void sdcCar::overtaking2017_new() {
@@ -1875,46 +1891,152 @@ bool sdcCar::shouldWeOvertake(){
     if(rightLaneObjects.size() > 0) {
       carInFront = true;
     }
-    if(carInFront) {
-      printf("car in front!\n");
-    }
     if(!leftLaneFree && !isOvertaking) {
       printf("Our car speed: %f\n", this->GetSpeed());
       printf("left lane blocked!\n");
     }
-    if (leftLaneFree && carInFront) {
+
+    if (carInFront) {
+      printf("car in front!\n");
       double closestlongitude = 100;
       for(int q = 0; q < rightLaneObjects.size(); q++){
         if (rightLaneObjects[q].GetLeft().GetLongitudinalDist() < closestlongitude){
           closestlongitude = rightLaneObjects[q].GetLeft().GetLongitudinalDist();
         }
       }
-
       //this was originall < 5
-      double adjustVertDiff = this->cameraSensorData->getVerticalDifference();
+      double verticalDifference = this->cameraSensorData->getVerticalDifference();
       //printf("verticaldiff: %f\n", adjustVertDiff);
       printf("closest longitude: %f\n", closestlongitude);
-      if ((closestlongitude < minDistToPass) && (closestlongitude > (2/3)*minDistToPass) && (std::abs(adjustVertDiff)<10)){
+      if ((closestlongitude < minDistToPass) && (closestlongitude > (2/3)*minDistToPass)) {
+        if (std::abs(verticalDifference)<10 && leftLaneFree) {
+          isOvertaking = true;
+          printf("is about to overtake\n");
+        }
         this->brake = 1.0;
-        isOvertaking = true;
-        printf("is about to overtake\n");
+        printf("braking\n");
+      } else if (closestlongitude <= (2/3)*minDistToPass) {
+        this->brake = 3.0;
+        printf("Extreme Brake\n");
+      } else {
+        this->brake = 0.0;
       }
-      else if (closestlongitude <= (2/3)*minDistToPass){
-        //this->gas = 1.0;
-        this->brake = 5.0;
-        printf("Extreme Break\n");
-      }
-      else{
-        this->brake = 0;
-      }
-      //if(closestlongitude < 5){
-      //  printf("EMERGENCY BRAKE!\n");
-      //  this->Brake(6,6);
-      //}
-      //printf("yes, do the overtaking\n");
     }
     return isOvertaking;
   }
+}
+
+
+void sdcCar::overtakeLaneCentering(){
+
+  if (turnCounter > 0) {
+    turnCounter++;
+  }
+
+  if (turnCounter > 3000) {
+    turnCounter = 0;
+  }
+
+  double verticalDifference = this->cameraSensorData->getVerticalDifference();
+  double latestAdjustAmount;
+  //printf("1\n");
+
+  if (std::abs(verticalDifference) > 5 && turnCounter <= 1200) {
+    //printf("2\n");
+    //shrink abs(vertical) by 15
+    double compressedVertical;
+    if (verticalDifference > 0) {
+      compressedVertical = verticalDifference - 10;
+    } else {
+      compressedVertical = verticalDifference + 10;
+    }
+
+    //square compressedVertical to react more strongly to large angles
+    double squared = compressedVertical * compressedVertical;
+    if (compressedVertical < 0) {
+      squared = -squared;
+    }
+
+    //latestAdjustAmount is the angle difference for this turn
+    /////!!!latestAdjustAmount = -squared/10000;
+    latestAdjustAmount = -squared/4000;
+    if (latestAdjustAmount > maxAdjust) {
+      latestAdjustAmount = fmin(latestAdjustAmount, maxAdjust);
+    } else {
+      latestAdjustAmount = fmax(latestAdjustAmount, -maxAdjust);
+    }
+
+    //set adjustAmount, which is the average angle change at beginning
+    //of counter cycle
+    //limit absolute value to 0.1
+    if (turnCounter == 0) {
+      //printf("3\n");
+      //printf("updated adjustamount!\n");
+      /////!!!adjustAmount = -squared/10000;
+      adjustAmount = -squared/4000;
+      if (adjustAmount > maxAdjust) {
+        adjustAmount = fmin(adjustAmount, maxAdjust);
+      } else {
+        adjustAmount = fmax(adjustAmount, -maxAdjust);
+      }
+      turnCounter++;
+    } else {
+      adjustAmount *= turnCounter;
+      adjustAmount += latestAdjustAmount;
+      adjustAmount /= (turnCounter + 1);
+    }
+
+    if (turnCounter % 10 == 0) {
+      //printf("ADJUST: angle %f, update %f, adjust amount %f, counter %i\n", verticalDifference, latestAdjustAmount, adjustAmount, turnCounter);
+    }
+
+    this->cameraSensorData->UpdateSteeringMagnitude(latestAdjustAmount);
+    this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+    //printf("turn counter: %i\n", turnCounter);
+  } else if (turnCounter > 1200 && turnCounter < 1900) {
+    //printf("4\n");
+    //reverses turning angle to put the car back on track
+
+    /* TESTINGONE
+    if (adjustAmount > 0.85*maxAdjust) {
+      adjustAmount = fmin(adjustAmount, 0.85*maxAdjust);
+    } else if (adjustAmount < -0.85*maxAdjust){
+      adjustAmount = fmax(adjustAmount, -0.85*maxAdjust);
+    }
+    if(turnCounter % 50 == 0) {
+      //printf("BACKTRACKING: angle is %f, updated by %f, counter %i\n", verticalDifference, -1.1*adjustAmount, turnCounter);
+    }
+
+    this->cameraSensorData->UpdateSteeringMagnitude(-1.1*adjustAmount);
+    this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+    //turnCounter++;
+    */
+
+    if (adjustAmount > maxAdjust) {
+      adjustAmount = fmin(adjustAmount, maxAdjust);
+    } else if (adjustAmount < -1*maxAdjust){
+      adjustAmount = fmax(adjustAmount, -1*maxAdjust);
+    }
+    if(turnCounter % 10 == 0) {
+      //printf("BACKTRACKING: angle is %f, updated by %f, counter %i\n", verticalDifference, -1.1*adjustAmount, turnCounter);
+    }
+
+    //this->cameraSensorData->UpdateSteeringMagnitude(-1.1*adjustAmount);
+    this->cameraSensorData->UpdateSteeringMagnitude(-1*adjustAmount);
+    this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+    //turnCounter++;
+
+  } else {
+    //printf("5\n");
+    this->cameraSensorData->UpdateSteeringMagnitude(0);
+    this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+    if(turnCounter>0) {
+      //printf("step 3 - reset counter\n");
+    }
+    turnCounter = 0;
+    //printf("step 3 - reset counter\n");
+  }
+
 }
 
 //////////////////////////////////////////////////////////////

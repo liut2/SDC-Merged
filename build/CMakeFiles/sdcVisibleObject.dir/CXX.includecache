@@ -6,29 +6,29 @@
 
 #IncludeRegexTransform: 
 
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcAngle.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcAngle.hh
 math.h
 -
 iostream
 -
 
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcLidarRay.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcLidarRay.hh
 gazebo/common/common.hh
 -
 sdcAngle.hh
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcAngle.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcAngle.hh
 
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcVisibleObject.cc
+/Accounts/youj/Desktop/SDC-Merged/sdcVisibleObject.cc
 sdcVisibleObject.hh
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcVisibleObject.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcVisibleObject.hh
 
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcVisibleObject.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcVisibleObject.hh
 gazebo/common/common.hh
 -
 sdcAngle.hh
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcAngle.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcAngle.hh
 sdcLidarRay.hh
-/Accounts/brownb2/Desktop/sdcMerged/SDC-Merged/sdcLidarRay.hh
+/Accounts/youj/Desktop/SDC-Merged/sdcLidarRay.hh
 
 /usr/local/Cellar/gazebo6/6.6.0/include/gazebo-6.6/gazebo/common/Animation.hh
 string
