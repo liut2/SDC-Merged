@@ -64,8 +64,10 @@ const std::vector<math::Pose> resetPose_Vec = {
     math::Pose(80,52.5,.001,0,0,3.1415), //E
     math::Pose(52.5,20,.001,0,0,1.56), //S
     math::Pose(20,48,.001,0,0,0), //W
-    math::Pose(525, -102.5, .1, 0, 0, 0),// dummy car 1
-    math::Pose(535, -102.5, 0.1, 0, 0, 0)// dummy car 2
+    //math::Pose(525, -102.5, .1, 0, 0, 0),// dummy car 1
+    //math::Pose(437, -80.5, -.035, 0, 0, .005),// dummy car 1
+    //math::Pose(535, -102.5, 0.1, 0, 0, 0)// dummy car 2
+    //math::Pose(447, -80.5, -.035, 0, 0, .005),// dummy car 1
     }; //W
 
 //destLocations
@@ -1262,24 +1264,28 @@ void sdcCar::driveOnCurvedRoad(double degree) {
 
 // Combine the lane driving and lane overtaking
 void sdcCar::combinedDriving2017() {
-  printf("Starting the lane driving portion\n");
+  //printf("Starting the lane driving portion\n");
   if(this->carId == 1){
-    //printf("car 1 x: %f y:%f\n", this->x, this->y);
+    printf("car 1 x: %f y:%f\n", this->x, this->y);
     //printf("car_0 target speed: %f\n", this->targetSpeed);
-    if (this->x <= 257 && this->y >= -145) {
+    //if (this->x <= 257 && this->y >= -145) {
+    if (this->x < 436.65){
       this->laneDriving2017();
-      if (this->x >= 215) {
+      if (this->x >= 362.8) {
         otherCarsStart = true;
       }
+    }
       //printf("not yet\n");
-    } else if (this->x > 257 && this->x < 264) {
+    //} else if (this->x > 257 && this->x < 264) {
       //this->laneDriving2017();
       //this->cameraSensorData->UpdateSteeringMagnitude(-.85);
       //this->cameraSensorData->UpdateSteeringMagnitude(-.90);
       //this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
       //printf("we pass the point and turn left\n");
     //} else if (this->x >= 264) {
-    } else if (this->x >= 257) {
+    //}
+    //else if (this->x >= 257) {
+    else if (this->x >= 436.65) {
       if (!isOvertaking) {
         this->laneDriving2017();
       } else {
