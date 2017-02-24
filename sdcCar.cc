@@ -64,6 +64,8 @@ const std::vector<math::Pose> resetPose_Vec = {
     math::Pose(80,52.5,.001,0,0,3.1415), //E
     math::Pose(52.5,20,.001,0,0,1.56), //S
     math::Pose(20,48,.001,0,0,0), //W
+    math::Pose(525, -102.5, .1, 0, 0, 0),// dummy car 1
+    math::Pose(535, -102.5, 0.1, 0, 0, 0)// dummy car 2
     }; //W
 
 //destLocations
@@ -91,6 +93,7 @@ const int size = 5;
 
 
 int sdcCar::carIdCount = 0;
+bool sdcCar::teleport = false;
 std::vector<int> sdcCar::resetClear(4,1);
 
 
@@ -162,6 +165,14 @@ void sdcCar::Drive()
                 if (!this->hasReset){
                     int randIndex = genRand(3); //get a random index from 0 to 3
                     printf("resetting\n");
+                    if(this->teleport){
+                        if(carId == 2){
+                            randIndex = 4;
+                        }
+                        else if(carId == 3){
+                            randIndex = 5;
+                        }
+                    }
                     this->resetPose = resetPose_Vec[randIndex];
                     /*//this->resetPose = this->model->GetWorldPose();
                     //N
@@ -185,20 +196,25 @@ void sdcCar::Drive()
                         this->resetPose = resetPose_Vec[3];
                         //this->resetPose.Set(80,52.5,.001,0,0,3.1415);
                     }*/
-
-                    //Check to see if a car was recently teleported to that location
-                    //If not do not reset the car
-                    if (this->resetClear[randIndex] == 1){
+                    if(this->teleport && (carId == 2 || carId == 3)){
                         this->model->SetLinkWorldPose(this->resetPose,this->chassis);
-                        this->resetClear[randIndex] = 0;
-                        this->clearIndex = randIndex;
-                        this->hasReset = true;
-                        printf("it reset\n");
+                        this->currentState = laneDriving;
+                        this->targetSpeed = 0;
                     }
                     else{
-                        printf("car was recently teleported\n");
+                        //Check to see if a car was recently teleported to that location
+                        //If not do not reset the car
+                        if (this->resetClear[randIndex] == 1){
+                            this->model->SetLinkWorldPose(this->resetPose,this->chassis);
+                            this->resetClear[randIndex] = 0;
+                            this->clearIndex = randIndex;
+                            this->hasReset = true;
+                            printf("it reset\n");
+                        }
+                        else{
+                            printf("car was recently teleported\n");
+                        }
                     }
-
                 }
                 //Re initialize the car so that it gets new random waypoints.
                 else{
@@ -1247,7 +1263,7 @@ void sdcCar::driveOnCurvedRoad(double degree) {
 // Combine the lane driving and lane overtaking
 void sdcCar::combinedDriving2017() {
   if(this->carId == 1){
-    printf("car 1 x: %f y:%f\n", this->x, this->y);
+    //printf("car 1 x: %f y:%f\n", this->x, this->y);
     //printf("car_0 target speed: %f\n", this->targetSpeed);
     if (this->x <= 257 && this->y >= -145) {
       this->laneDriving2017();
@@ -2137,7 +2153,6 @@ void sdcCar::OnUpdate()
     }*/
 
 
-  if(carId == 1){
     if(carId == 1){
         if (!this->setRate){
             common::Time curSimTime = this->world->GetSimTime();
@@ -2156,6 +2171,7 @@ void sdcCar::OnUpdate()
                 this->crudeSwitch = 1;
                 this->SetTargetSpeed(5);
                 this->MatchTargetSpeed();
+                this->teleport = true;
             }
         }
     }
@@ -2363,7 +2379,6 @@ void sdcCar::OnUpdate()
             break;
         }
     }
-  }
 
 
     //    printf("current state: %u\n",this->currentState);
@@ -2475,6 +2490,7 @@ sdcCar::sdcCar(){
     if (this->carIdCount == 0) {
         sdcManager::sdcManager(0);
     }
+    this->teleport = false;
     //REMEMBER TO CHANGE THIS
     this->crudeSwitch = 0; //in merged world use 0
     //sdcManager::registerCar(carId++);

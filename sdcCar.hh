@@ -224,7 +224,7 @@ namespace gazebo {
         int fromDir;
         bool toldToStop;
         static int carIdCount;
-
+        static bool teleport;
 
         double x;
         double y;
