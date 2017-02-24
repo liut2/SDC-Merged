@@ -146,6 +146,7 @@ void sdcCar::Drive()
     {
         case laneDriving:
           combinedDriving2017();
+          //MatchTargetSpeed();
         break;
         // Final state, car is finished driving
         case stop:
@@ -663,12 +664,9 @@ void sdcCar::initializeGraph() {
     exitIntersection.place = 1;
     sdcIntersection centerIntersection;
     centerIntersection.place = 2;
-    int turnType = 1; //genRand(2); //returns if the car goes straight (0) left (1) or right (2)
-    if (carId == 4 || carId == 3){
+    int turnType = genRand(2); //returns if the car goes straight (0) left (1) or right (2)
+    if (carId == 1){
       turnType = 0;
-    }
-    if (carId == 2){
-        turnType = 2;
     }
     //printf("turnType: %i carId: %i\n", turnType, this->carId);
     fflush(stdout);
@@ -757,7 +755,12 @@ void sdcCar::initializeGraph() {
         this->fromDir = 3;
         switch(turnType){
             case 0:
-                destIntersection.waypoint = sdcWaypoint(0,ends[1]);
+                if(carId == 1){
+                    destIntersection.waypoint = sdcWaypoint(0,std::pair<double,double>(110, 48));
+                }
+                else{
+                    destIntersection.waypoint = sdcWaypoint(0,ends[1]);
+                }
                 exitIntersection.waypoint = sdcWaypoint(0,intExit[1]);
                 break;
             case 1:
@@ -780,6 +783,9 @@ void sdcCar::initializeGraph() {
     centerIntersection.waypoint.waypointType = turnType;
     exitIntersection.waypoint.waypointType = turnType;
     destIntersection.waypoint.waypointType = 3;
+    if (carId == 1){
+        destIntersection.waypoint.waypointType = 0;
+    }
     centerIntersection.waypoint.hasReservation = false;
     //make the distance to all intersections infinity
   //  printf("centerIntersection wp type: %i\n", centerIntersection.waypoint.waypointType);
@@ -1240,9 +1246,9 @@ void sdcCar::driveOnCurvedRoad(double degree) {
 
 // Combine the lane driving and lane overtaking
 void sdcCar::combinedDriving2017() {
-
   if(this->carId == 1){
-    //printf("car 1 x: %f y:%f\n", this->x, this->y);
+    printf("car 1 x: %f y:%f\n", this->x, this->y);
+    //printf("car_0 target speed: %f\n", this->targetSpeed);
     if (this->x <= 257 && this->y >= -145) {
       this->laneDriving2017();
       if (this->x >= 215) {
@@ -1537,7 +1543,7 @@ void sdcCar::laneDriving2017(){
 
 
 void sdcCar::overtaking2017(){
-
+  printf("We are in overtaking\n");
   //common::Time curSimTime = this->world->GetSimTime();
   //float curSimTm = curSimTime.Float();
   float curSimTime = this->world->GetSimTime().Float();
@@ -2130,6 +2136,8 @@ void sdcCar::OnUpdate()
         printf("waypoint vec size: %lu\n", WAYPOINT_VEC.size());
     }*/
 
+
+  if(carId == 1){
     if(carId == 1){
         if (!this->setRate){
             common::Time curSimTime = this->world->GetSimTime();
@@ -2142,35 +2150,38 @@ void sdcCar::OnUpdate()
                 this->setRate = true;
             }
         }
+        if(this->x > 97){
+            if(this->crudeSwitch != 1){
+                printf("SWITCHED\n");
+                this->crudeSwitch = 1;
+                this->SetTargetSpeed(5);
+                this->MatchTargetSpeed();
+            }
+        }
     }
-
-
-
-    //REMEMBER TO CHANGE THIS
-    int crudeSwitch = 0; //in merged world use 0
 
     //in lanedriving use 1
     //in intersection world use 2
     if(this->currentState != stop){
-        if (crudeSwitch == 0) {
+        if (this->crudeSwitch == 0) {
             if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
                 this->currentState = waypoint;
             }else{
                 //printf("in lanedriving crude switch\n");
                 this->currentState = laneDriving;
             }
-        } else if (crudeSwitch == 1){
-            if((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10)){
+        } else if (this->crudeSwitch == 1){
+            //if((this->x <= 10 && this->x >= -10) && (this->y <= 10 && this->y >= -10)){
                 //printf("starting at %f,%f \n", this->x, this->y);
-                this->currentState = laneDriving;
-            }
+
+            //}
             this->currentState = laneDriving;
-        } else if (crudeSwitch == 2) {
+        } else if (this->crudeSwitch == 2) {
             this->currentState = waypoint;
             //printf("Crude switch == 2 : for intersection worlds");
         }
     }
-    if (crudeSwitch == 0 && !(this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)) {
+    if (this->crudeSwitch == 0 && !(this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)) {
         this->currentState = laneDriving;
     }
 
@@ -2352,6 +2363,8 @@ void sdcCar::OnUpdate()
             break;
         }
     }
+  }
+
 
     //    printf("current state: %u\n",this->currentState);
 }
@@ -2379,7 +2392,9 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     this->frontLidarId = this->frontLidar->GetId() + 8;
     //printf("lidar Id: %i\n", this->frontLidarId);
     this->cameraId = this->camera->GetId() + 2;
-    //printf("---camera ID: %i---\n",this->cameraId);
+    /*if(carId == 1){
+        printf("---camera ID: %i---\n",this->cameraId);
+    }*/
     this->leftSideLidar = this->model->GetLink(_sdf->Get<std::string>("leftSideLidar"));
     this->leftLidarId = this->leftSideLidar->GetId() + 8;
     //printf("left id: %i\n", this->leftLidarId);
@@ -2419,8 +2434,9 @@ void sdcCar::Init()
     // Compute the angle ratio between the steering wheel and the tires
     this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
     this->laneStopped = false;
-    this->cameraSensorData = manager::getSensorData(cameraId);
-    this->lidarSensorData = manager::getSensorData(frontLidarId);
+
+    this->cameraSensorData = manager::getSensorData(this->cameraId);
+    this->lidarSensorData = manager::getSensorData(this->frontLidarId);
     this->leftLidarSensorData = manager::getSensorData(this->leftLidarId);
     this->rightLidarSensorData = manager::getSensorData(this->rightLidarId);
     // During init, sensors aren't available so pull position and rotation information
@@ -2459,6 +2475,8 @@ sdcCar::sdcCar(){
     if (this->carIdCount == 0) {
         sdcManager::sdcManager(0);
     }
+    //REMEMBER TO CHANGE THIS
+    this->crudeSwitch = 0; //in merged world use 0
     //sdcManager::registerCar(carId++);
     this->clearIndex = -1;
     this->hasReset = false;

@@ -60,7 +60,7 @@ namespace gazebo {
         // Bound to Gazebo's world update, gets called every tick of the simulation
         private: void OnUpdate();
 
-
+        int crudeSwitch;
         // Holds the bound connection to Gazebo's update, necessary in order to properly
         // receive updates
         std::vector<event::ConnectionPtr> connections;
