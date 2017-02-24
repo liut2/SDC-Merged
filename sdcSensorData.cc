@@ -154,6 +154,14 @@ double sdcSensorData::getVerticalDifference() {
   return this->verticalDifference;
 }
 
+void sdcSensorData::setRoadWidth(double estimatedRoadWidth) {
+  this->estimatedRoadWidth = estimatedRoadWidth;
+}
+
+double sdcSensorData::getRoadWidth() {
+  return this->estimatedRoadWidth;
+}
+
 void sdcSensorData::setVerticalDifference(double verticalDifference) {
   this->verticalDifference = verticalDifference;
 }

@@ -52,6 +52,12 @@ F<double> delG(const F<double>& x, const F<double>& y) {
 	return dG;
 }
 
+std::vector<int> previousMidline;
+double estimatedRoadWidth = 0;
+double roadWidthSum = 0;
+double roadUpdateCounter = 0;
+
+
 /*Helper methods for Improved CHEVP algorithm*/
 
 //get the slope of a line
@@ -181,6 +187,10 @@ sdcCameraSensor::sdcCameraSensor(){
 
 void sdcCameraSensor::Init(){
     this->cameraId = this->sensor->GetId();
+		previousMidline.push_back(infinityInt);
+		previousMidline.push_back(infinityInt);
+		previousMidline.push_back(infinityInt);
+		previousMidline.push_back(infinityInt);
 	//printf("***camera sensorId: %i***\n", this->sensorId);
     //printf("this camerasId: %i \n", this->cameraId);
     this->sensorData = manager::getSensorData(cameraId);
@@ -387,7 +397,7 @@ void sdcCameraSensor::OnUpdate() {
 		Point vanishPoint = getIntersectionPoint(leftLine, rightLine);
 		*/
 		// we should use section 2,3,4, which are indexed at 1,2,3
-		if (true) {
+		if (this->cameraId == 6236) {
 			//line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 			// update the turn angle
 			//double newAngle = getNewTurningAngle(createLine(vanishPoint.x, vanishPoint.y, midPoint.x, midPoint.y + offset[i]*row/15));
@@ -441,7 +451,23 @@ void sdcCameraSensor::OnUpdate() {
 				segment[3] = segmentArr[3];
 
 				// check if the line is horizontal or near horizontal. if so, filter them out
-				if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.1) {
+				/*
+				if(i == 1){
+					//if in top section
+					if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.03) {
+						mergedLines.push_back(segment);
+						//line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+					}
+				}
+				else{
+					//if in second-to-top section
+					if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.08) {
+						mergedLines.push_back(segment);
+						//line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+					}
+				}
+				*/
+				if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.03) {
 					mergedLines.push_back(segment);
 					//line(imageROI, Point(segment[0], segment[1] + offset[i]*row/15), Point(segment[2], segment[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
 				}
@@ -473,9 +499,9 @@ void sdcCameraSensor::OnUpdate() {
 				Point vanishPoint = getIntersectionPoint(l1, l2);
 				Point midPoint = Point((l1[2] + l2[2])/2, l1[3]);
 
-				line(imageROI, Point(vanishPoint.x, vanishPoint.y + offset[i]*row/15), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
-				line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
-				line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				//line(imageROI, Point(vanishPoint.x, vanishPoint.y + offset[i]*row/15), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
+				//line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				//line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
 				// find the midline we want
 				Vec4i realMidline;
 				realMidline[0] = vanishPoint.x;
@@ -484,13 +510,59 @@ void sdcCameraSensor::OnUpdate() {
 				realMidline[3] = midPoint.y;
 
 				twoMidlines.push_back(realMidline);
+
+				// estimate the road distance based on pixel
+				double l1MidpointX = (l1[0] + l1[2])/2.0;
+				double l2MidpointX = (l2[0] + l2[2])/2.0;
+				double xDifference = std::abs(l1MidpointX - l2MidpointX);
+				Vec4i verticalLine;
+				verticalLine[0] = col/2;
+				verticalLine[1] = 0;
+				verticalLine[2] = col/2;
+				verticalLine[3] = 10;
+				double verticalDifference = std::abs(getAngleDifference(realMidline, verticalLine));
+
+				if (i == 2 && verticalDifference <= 10) {
+					roadWidthSum += xDifference;
+					roadUpdateCounter++;
+					double roadWidth = roadWidthSum/roadUpdateCounter;
+					this->sensorData->setRoadWidth(roadWidth/105);
+				}
+
 			}
 		}
 	}
 
 	if (twoMidlines.size() == 2) {
 		double degree = getAngleDifference(twoMidlines.at(0), twoMidlines.at(1));
+		// if the angle between two frames' midlines are very large, we don't update the midline
+		Vec4i previousMidlineInVector;
+		previousMidlineInVector[0] = previousMidline.at(0);
+		previousMidlineInVector[1] = previousMidline.at(1);
+		previousMidlineInVector[2] = previousMidline.at(2);
+		previousMidlineInVector[3] = previousMidline.at(3);
+
+		double degreeBetweenSameMidlines = std::abs(getAngleDifference(twoMidlines.at(0), previousMidlineInVector));
+		//printf("The angle between the same midline is %f\n", degreeBetweenSameMidlines);
+		if (previousMidlineInVector[0] == infinityInt) {
+			previousMidline.clear();
+			previousMidline.push_back(twoMidlines.at(0)[0]);
+			previousMidline.push_back(twoMidlines.at(0)[1]);
+			previousMidline.push_back(twoMidlines.at(0)[2]);
+			previousMidline.push_back(twoMidlines.at(0)[3]);
+		}
+		else if (previousMidline[0] != infinityInt && degreeBetweenSameMidlines <= 45) {
+			previousMidline.clear();
+			previousMidline.push_back(twoMidlines.at(0)[0]);
+			previousMidline.push_back(twoMidlines.at(0)[1]);
+			previousMidline.push_back(twoMidlines.at(0)[2]);
+			previousMidline.push_back(twoMidlines.at(0)[3]);
+		} else {
+			//printf("We don't update\n");
+		}
+
 		this->sensorData->setMidlineAngle(degree);
+		//printf("degree: %f\n", degree);
 		// set the angle difference between the vertical line and bottomm midline
 		Vec4i verticalLine;
 		verticalLine[0] = col/2;
@@ -501,8 +573,68 @@ void sdcCameraSensor::OnUpdate() {
 		double verticalDifference = getAngleDifference(twoMidlines.at(1), verticalLine);
 		//printf("The vertical difference is %f\n", verticalDifference);
 		this->sensorData->setVerticalDifference(verticalDifference);
-		//printf("Calculated the midline\n");
+		//printf("verticalDifference: %f\n", verticalDifference);
+		// draw two midlines
+		line(imageROI, Point(twoMidlines.at(0)[0], twoMidlines.at(0)[1] + offset[1]*row/15), Point(twoMidlines.at(0)[2], twoMidlines.at(0)[3] + offset[1]*row/15), Scalar(colors[1][0],colors[1][1],colors[1][2]), 3, CV_AA);
+		line(imageROI, Point(twoMidlines.at(1)[0], twoMidlines.at(1)[1] + offset[2]*row/15), Point(twoMidlines.at(1)[2], twoMidlines.at(1)[3] + offset[2]*row/15), Scalar(colors[2][0],colors[2][1],colors[2][2]), 3, CV_AA);
 	}
+
+	else if (twoMidlines.size() == 1 && previousMidline.at(0) != infinityInt){
+		//printf("Enter the condition when we have 1111111111111111111111111111111111111 midline\n");
+		Vec4i previousMidlineInVector;
+		previousMidlineInVector[0] = previousMidline.at(0);
+		previousMidlineInVector[1] = previousMidline.at(1);
+		previousMidlineInVector[2] = previousMidline.at(2);
+		previousMidlineInVector[3] = previousMidline.at(3);
+
+		double degree = getAngleDifference(previousMidlineInVector, twoMidlines.at(0));
+		this->sensorData->setMidlineAngle(degree);
+
+		Vec4i verticalLine;
+		verticalLine[0] = col/2;
+		verticalLine[1] = 0;
+		verticalLine[2] = col/2;
+		verticalLine[3] = 10;
+
+		double verticalDifference = getAngleDifference(twoMidlines.at(0), verticalLine);
+		//printf("The vertical difference is %f\n", verticalDifference);
+		this->sensorData->setVerticalDifference(verticalDifference);
+		// draw midlines
+
+		line(imageROI, Point(previousMidlineInVector[0], previousMidlineInVector[1] + offset[1]*row/15), Point(previousMidlineInVector[2], previousMidlineInVector[3] + offset[1]*row/15), Scalar(colors[1][0],colors[1][1],colors[1][2]), 3, CV_AA);
+		line(imageROI, Point(twoMidlines.at(0)[0], twoMidlines.at(0)[1] + offset[2]*row/15), Point(twoMidlines.at(0)[2], twoMidlines.at(0)[3] + offset[2]*row/15), Scalar(colors[2][0],colors[2][1],colors[2][2]), 3, CV_AA);
+		/*
+		printf("got here\n");
+		Vec4i verticalLine;
+		verticalLine[0] = col/2;
+		verticalLine[1] = 0;
+		verticalLine[2] = col/2;
+		verticalLine[3] = 10;
+		printf("got here 2\n");
+		double verticalDifference = getAngleDifference(twoMidlines.at(0), verticalLine);
+		printf("\nWe are missing one line And vertdiff is: %f\n", verticalDifference);
+		if(abs(verticalDifference) < 10){
+			this->sensorData->setMidlineAngle(pow(verticalDifference,.5));
+		}
+		else if(abs(verticalDifference) >= 10 && abs(verticalDifference) < 20){
+			this->sensorData->setMidlineAngle(5*pow(verticalDifference,.5));
+		}
+		else if(abs(verticalDifference) >= 20 && abs(verticalDifference) < 60){
+			this->sensorData->setMidlineAngle(3*verticalDifference);
+		}
+		else if(abs(verticalDifference) >= 60){
+			if(verticalDifference<0){
+				this->sensorData->setMidlineAngle(-60);
+			}
+			else{
+				this->sensorData->setMidlineAngle(60);
+			}
+			//this->sensorData->setMidlineAngle(50);
+		}*/
+		//this->sensorData->setMidlineAngle(3*verticalDifference);
+	}
+
+
 
 	// assume we have the three midlines from section 2,3,4, we need to change the accelaration and direction based the angle
 	// here we will try to use the midlines from section 2 and 3 first
@@ -510,7 +642,9 @@ void sdcCameraSensor::OnUpdate() {
 	//printf("The speed of the car is %f\n", sdcCar::getSpeed());
 	// Display results to GUI
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
-	imshow("Camera View", imageROI);
+	if (this->cameraId == 6236) {
+		imshow("Camera View", imageROI);
+	}
 	waitKey(4);
 }
 

@@ -40,6 +40,9 @@ namespace gazebo
         void setVerticalDifference(double verticalDifference);
         double getVerticalDifference();
 
+        double getRoadWidth();
+        void setRoadWidth(double estimatedRoadWidth);
+
         std::vector<sdcLidarRay> GetBlockedFrontRays();
         std::vector<sdcLidarRay> GetBlockedBackRays();
         std::vector<sdcVisibleObject> GetObjectsInFront();
@@ -68,6 +71,7 @@ namespace gazebo
         double newSteerMagnitude;
         double midlineAngle;
         double verticalDifference;
+        double estimatedRoadWidth;
 
         // GPS variables and methods
         double gpsX;

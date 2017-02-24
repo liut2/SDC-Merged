@@ -22,7 +22,6 @@
 #include <vector>
 #include <exception>
 
-
 #include <stdlib.h>
 #include <time.h>
 #include <random>
@@ -155,6 +154,13 @@ namespace gazebo {
         ParallelParkingState currentParallelState;
         AvoidanceState currentAvoidanceState;
 
+        //For reseting the car
+        math::Pose resetPose;
+        bool hasReset;
+        int clearIndex;
+        static std::vector<int> resetClear;
+
+
         double gas; //variable that accelerates the car
         double brake; //variable that brakes the car
 
@@ -219,6 +225,7 @@ namespace gazebo {
         bool toldToStop;
         static int carIdCount;
 
+
         double x;
         double y;
 
@@ -281,6 +288,11 @@ namespace gazebo {
 
         void SetAccelRate(double rate = 1.0);
         void SetBrakeRate(double rate = 1.0);
+
+        void combinedDriving2017();
+        void overtaking2017_new();
+        bool shouldWeOvertake();
+        void overtakeLaneCentering();
     };
 }
 #endif
