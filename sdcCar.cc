@@ -1262,6 +1262,7 @@ void sdcCar::driveOnCurvedRoad(double degree) {
 
 // Combine the lane driving and lane overtaking
 void sdcCar::combinedDriving2017() {
+  printf("Starting the lane driving portion\n");
   if(this->carId == 1){
     //printf("car 1 x: %f y:%f\n", this->x, this->y);
     //printf("car_0 target speed: %f\n", this->targetSpeed);
