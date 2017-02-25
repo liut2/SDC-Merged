@@ -285,7 +285,7 @@ namespace gazebo {
         void combinedDriving2017();
         void overtaking2017_new();
         bool shouldWeOvertake();
-        void overtakeLaneCentering();
+        void laneCenter();
     };
 }
 #endif
