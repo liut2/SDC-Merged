@@ -61,6 +61,7 @@ namespace gazebo {
         private: void OnUpdate();
 
         int crudeSwitch;
+        bool combined;
         static int numCarPass;
         static float carsPerMinute;
         // Holds the bound connection to Gazebo's update, necessary in order to properly
@@ -183,10 +184,22 @@ namespace gazebo {
 
         bool inIntersection;
         int destDirection;
-
         bool stoppedAtSign;
         int ignoreStopSignsCounter;
         int atIntersection;
+
+
+        int turnType;
+        //vars for efficiency testing
+        static int carAmountRight;
+        static int carAmountLeft;
+        static int carAmountStraight;
+        static float totalRightTimeAmount;
+        static float totalLeftTimeAmount;
+        static float totalStraightTimeAmount;
+        float carStartTime;
+        static bool twoMinCheck;
+
 
         // Car limit variables
         int maxCarSpeed;
@@ -300,7 +313,7 @@ namespace gazebo {
         void combinedDriving2017();
         void overtaking2017_new();
         bool shouldWeOvertake();
-        void overtakeLaneCentering();
+        void laneCenter();
     };
 }
 #endif

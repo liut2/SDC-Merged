@@ -49,6 +49,10 @@ const double STEERING_RANGE = 5 * PI;
 const double CAR_WIDTH = 0.8;
 const double CAR_LENGTH = 2.0;
 
+// constants used for lane centering and passing
+const double MAX_ADJUST = .4;
+const double MIN_DIST_TO_PASS = 15;
+
 // The width of the channel in front of the car for which we count objects as
 // being directly in front of the car
 const double FRONT_OBJECT_COLLISION_WIDTH = CAR_WIDTH + 0.5;
@@ -65,9 +69,14 @@ const std::vector<math::Pose> resetPose_Vec = {
     math::Pose(52.5,20,.001,0,0,1.56), //S
     math::Pose(20,48,.001,0,0,0), //W
     //math::Pose(525, -102.5, .1, 0, 0, 0),// dummy car 1
-    //math::Pose(437, -80.5, -.035, 0, 0, .005),// dummy car 1
+    math::Pose(437, -80.5, .079, 0, 0, 0),// dummy car 1
     //math::Pose(535, -102.5, 0.1, 0, 0, 0)// dummy car 2
-    //math::Pose(447, -80.5, -.035, 0, 0, .005),// dummy car 1
+    math::Pose(447, -80.5, .079, 0, 0, 0),// dummy car 1
+    //combined world proposed
+    math::Pose(48,80,.031,0,0,-1.56), //N
+    math::Pose(80,52.5,.031,0,0,3.1415), //E
+    math::Pose(52.5,20,.031,0,0,1.56), //S
+    math::Pose(20,48,.031,0,0,0), //W
     }; //W
 
 //destLocations
@@ -89,17 +98,26 @@ const std::vector<std::pair<double,double>> intExit = {
 std::vector<int> unvisited;
 
 const int size = 5;
-//std::pair<double,double> destination = {50,50};
-
-//std::vector<std::pair<double,double>> destinations;
 
 
 int sdcCar::carIdCount = 0;
 int sdcCar::numCarPass = 0;
 float sdcCar::carsPerMinute = 0;
 bool sdcCar::teleport = false;
-std::vector<int> sdcCar::resetClear(4,1);
+std::vector<int> sdcCar::resetClear(10,1);
 
+
+
+int turnType = 0;
+//intersection testing vars
+int sdcCar::carAmountRight = 0;
+int sdcCar::carAmountLeft = 0;
+int sdcCar::carAmountStraight = 0;
+float sdcCar::totalRightTimeAmount = 0;
+float sdcCar::totalLeftTimeAmount = 0;
+float sdcCar::totalStraightTimeAmount = 0;
+bool sdcCar::twoMinCheck = false;
+float carStartTime = 0;
 
 //The Variables that define what state we are in for lane driving
 bool isInStraightRoad = 1;
@@ -109,29 +127,33 @@ int turnCounter = 0;
 int curvedTurnCounter = 0;
 int nonCurvedTurnCounter = 0;
 double averageDegree = 0.0;
+
 double adjustAmount = 0.0;
-//double maxAdjust = 0.2;
-double maxAdjust = .4;
+//double MAX_ADJUST = 0.2;
+
 
 //These are the variables for lane overtaking
 int changeTurnCounter = 0;
 std::vector<sdcVisibleObject> rightObjects;
 int straightRoadModifier = std::numeric_limits<int>::max();
+
+
 bool isOvertaking = false;
 bool ourCarOnRight = true;
-double minDistToPass = 15;
-bool changingLanes = false;
-bool hasMovedEnough = true;
+bool isSideClearOfCars = false;
 //bool switchToOvertake = false;
 float overtakeTimeElapsed = 0;
 double overTakeDistTravelled = 0;
 float initialSimTime = 0;
-bool isSideClearOfCars = false;
-
 bool otherCarsStart = false;
 //double ourCarPosition = 0;
 
 double previousAngle = 0;
+
+//not using these as of now - overtaking2017_new
+bool changingLanes = false;
+bool hasMovedEnough = true;
+
 
 
 ////////////////////////////////
@@ -146,7 +168,6 @@ double previousAngle = 0;
  */
 void sdcCar::Drive()
 {
-
 
     // Possible states: stop, waypoint, intersection, follow, avoidance
     switch(this->currentState)
@@ -173,7 +194,9 @@ void sdcCar::Drive()
                 // reset the cars pose using model->SetLinkWorldPose
                 if (!this->hasReset){
                     int randIndex = genRand(3); //get a random index from 0 to 3
-                    printf("resetting\n");
+                    if(this->combined){
+                        randIndex += 6; //Because the combined world road height is different
+                    }
                     if(this->teleport){
                         if(carId == 2){
                             randIndex = 4;
@@ -218,10 +241,6 @@ void sdcCar::Drive()
                             this->resetClear[randIndex] = 0;
                             this->clearIndex = randIndex;
                             this->hasReset = true;
-                            printf("it reset\n");
-                        }
-                        else{
-                            printf("car was recently teleported\n");
                         }
                     }
                 }
@@ -238,9 +257,6 @@ void sdcCar::Drive()
 
         // Handle lane driving
 
-//          this->Accelerate();
-        //  this->Stop();
-            //printf("inWaypoint\n");
             if(this->crudeSwitch == 3){
                 this->StopSignWaypointDriving();
             }
@@ -301,7 +317,25 @@ void sdcCar::MatchTargetDirection(){
         }
     }
     else if(this->currentState == laneDriving){
-        this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+        if(carId == 1){
+            this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
+        }
+        else{
+          this->steeringAmount = 0;
+          if(this->yaw < -.01){
+            printf("turning a bit");
+            //this->steeringAmount = this->steeringAmount + STEERING_ADJUSTMENT_RATE;
+              //this->steeringAmount = 0;
+              //this->steeringAmount = this->yaw / -1;
+          }
+         else  if(this->yaw > .01){
+            //this->steeringAmount = this->steeringAmount - STEERING_ADJUSTMENT_RATE;
+              //this->steeringAmount = 0;
+              //this->steeringAmount = this->yaw / -1;
+          }
+          //this->steeringAmount = 0;
+        }
+
         //printf("sensorData id in car: %i\n", sensorData->sensorId);
     }
 
@@ -524,7 +558,6 @@ void sdcCar::WaypointDriving() {
             // this->LanedDriving();
 
     } else {
-        printf("should stop!\n");
         this->currentState = stop;
     }
 
@@ -569,7 +602,6 @@ void sdcCar::GridTurning(int turn){
                 if (this->waypointProgress == 2){
                     this->targetSpeed = this->maxSpeed;
                 }
-                printf("carId: %i, progress: %i\n", carId, this->waypointProgress);
             }
             return;
         }
@@ -587,8 +619,6 @@ void sdcCar::GridTurning(int turn){
                 if (progress == 1){
                     //printf("distance: %f, x: %f, y: %f\n", distance, WAYPOINT_VEC[progress].pos.first, WAYPOINT_VEC[progress].pos.second);
                 }
-                printf("turning\n");
-
                 if(progress < 2){
                     this->waypointProgress++;
                     if (this->waypointProgress == 2){
@@ -664,13 +694,12 @@ void sdcCar::initializeGraph() {
     exitIntersection.place = 1;
     sdcIntersection centerIntersection;
     centerIntersection.place = 2;
-    int turnType = genRand(1); //returns if the car goes straight (0) left (1) or right (2)
+    turnType = genRand(2); //returns if the car goes straight (0) left (1) or right (2)
     if(this->crudeSwitch == 0){
         if (carId == 1){
           turnType = 0;
         }
     }
-
     //printf("turnType: %i carId: %i\n", turnType, this->carId);
     fflush(stdout);
 
@@ -717,7 +746,6 @@ void sdcCar::initializeGraph() {
         switch(turnType){
 
             case 0:
-                printf("from east carid: %i\n",carId);
                 destIntersection.waypoint = sdcWaypoint(0,ends[3]);
                 exitIntersection.waypoint = sdcWaypoint(0,intExit[3]);
                 break;
@@ -1261,12 +1289,24 @@ void sdcCar::driveOnCurvedRoad(double degree) {
 void sdcCar::combinedDriving2017() {
   //printf("Starting the lane driving portion\n");
   if(this->carId == 1){
+    this->SetTargetSpeed(7);
     //printf("car 1 x: %f y:%f\n", this->x, this->y);
     //printf("car_0 target speed: %f\n", this->targetSpeed);
+    float switchDistance = 0;
+    float startDistance = 0;
+    if (this->combined){
+        //printf("crudeSwitch is 0\n");
+        switchDistance = 436.65;
+        startDistance = 362.8;
+    }
+    else{
+        switchDistance = 257;
+        startDistance = 257-30;
+    }
     //if (this->x <= 257 && this->y >= -145) {
-    if (this->x < 436.65){
+    if (this->x < switchDistance){
       this->laneDriving2017();
-      if (this->x >= 362.8) {
+      if (this->x >= startDistance) {
         otherCarsStart = true;
       }
     }
@@ -1280,7 +1320,8 @@ void sdcCar::combinedDriving2017() {
     //} else if (this->x >= 264) {
     //}
     //else if (this->x >= 257) {
-    else if (this->x >= 436.65) {
+
+    else if (this->x >= switchDistance) {
       if (!isOvertaking) {
         this->laneDriving2017();
       } else {
@@ -1315,11 +1356,12 @@ void sdcCar::combinedDriving2017() {
       //this->SetTargetSpeed(5);
       this->SetTargetSpeed(0);
       this->MatchTargetSpeed();
+      //this->model->SetLinkWorldPose(this->resetPose,this->chassis);
     }
     else{
-      //printf("Other cars started\n");
       this->SetTargetSpeed(5);
       this->MatchTargetSpeed();
+      this->MatchTargetDirection();
     }
   }
 }
@@ -1327,20 +1369,12 @@ void sdcCar::combinedDriving2017() {
 //This is the Lane Driving portion
 void sdcCar::laneDriving2017(){
 
-  if (turnCounter > 0) {
-    turnCounter++;
-  }
-
-
-
   if (nonCurvedTurnCounter > 5000) {
     curvedTurnCounter = 0;
     nonCurvedTurnCounter = 0;
   }
 
-  if (turnCounter > 3000) {
-    turnCounter = 0;
-  }
+
   //printf("curvedturncounter: %d, nonCurvedTurnCounter: %d\n", curvedTurnCounter, nonCurvedTurnCounter);
   if (curvedTurnCounter > 4000) {
     curvedTurnCounter = 0;
@@ -1364,7 +1398,7 @@ void sdcCar::laneDriving2017(){
   }
   //When its in the curve
   if (isInCurveRoad && !isInStraightRoad){
-    //printf("Case 1: In Curve\n");
+    printf("Case 1: In Curve\n");
     //printf("adjustment to steer mag: %f\n", degree/55);
     curvedTurnCounter++;
     averageDegree *= (curvedTurnCounter - 1);
@@ -1400,7 +1434,7 @@ void sdcCar::laneDriving2017(){
     previousAngle = degree;
   }
   else if (isInStraightRoad && !isInCurveRoad){
-    //printf("Case 2: In Straight\n");
+    printf("Case 2: In Straight\n");
     if(this->GetSpeed() < this->targetSpeed){
       //printf("Subcase: Accelerating\n");
       //printf("Get speed: %f, targed speed: %f\n", this->GetSpeed(), this->targetSpeed);
@@ -1410,107 +1444,8 @@ void sdcCar::laneDriving2017(){
     else{
       this->gas = 0;
     }
-    // re-adjust angles if the difference between midline and vertical is too large
-    // say >= 15 degree
-    double verticalDifference = this->cameraSensorData->getVerticalDifference();
-    double latestAdjustAmount;
-    //printf("1\n");
+    laneCenter();
 
-    if (std::abs(verticalDifference) > 5 && turnCounter <= 1200) {
-      //printf("2\n");
-      //shrink abs(vertical) by 15
-      double compressedVertical;
-      if (verticalDifference > 0) {
-        compressedVertical = verticalDifference - 10;
-      } else {
-        compressedVertical = verticalDifference + 10;
-      }
-
-      //square compressedVertical to react more strongly to large angles
-      double squared = compressedVertical * compressedVertical;
-      if (compressedVertical < 0) {
-        squared = -squared;
-      }
-
-      //latestAdjustAmount is the angle difference for this turn
-      /////!!!latestAdjustAmount = -squared/10000;
-      latestAdjustAmount = -squared/4000;
-      if (latestAdjustAmount > maxAdjust) {
-        latestAdjustAmount = fmin(latestAdjustAmount, maxAdjust);
-      } else {
-        latestAdjustAmount = fmax(latestAdjustAmount, -maxAdjust);
-      }
-
-      //set adjustAmount, which is the average angle change at beginning
-      //of counter cycle
-      //limit absolute value to 0.1
-      if (turnCounter == 0) {
-        //printf("3\n");
-        //printf("updated adjustamount!\n");
-        /////!!!adjustAmount = -squared/10000;
-        adjustAmount = -squared/4000;
-        if (adjustAmount > maxAdjust) {
-          adjustAmount = fmin(adjustAmount, maxAdjust);
-        } else {
-          adjustAmount = fmax(adjustAmount, -maxAdjust);
-        }
-        turnCounter++;
-      } else {
-        adjustAmount *= turnCounter;
-        adjustAmount += latestAdjustAmount;
-        adjustAmount /= (turnCounter + 1);
-      }
-
-      if (turnCounter % 50 == 0) {
-        //printf("ADJUST: angle %f, update %f, adjust amount %f, counter %i\n", verticalDifference, latestAdjustAmount, adjustAmount, turnCounter);
-      }
-
-      this->cameraSensorData->UpdateSteeringMagnitude(latestAdjustAmount);
-      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-      //printf("turn counter: %i\n", turnCounter);
-    } else if (turnCounter > 1200 && turnCounter < 1900) {
-      //printf("4\n");
-      //reverses turning angle to put the car back on track
-
-      /* TESTINGONE
-      if (adjustAmount > 0.85*maxAdjust) {
-        adjustAmount = fmin(adjustAmount, 0.85*maxAdjust);
-      } else if (adjustAmount < -0.85*maxAdjust){
-        adjustAmount = fmax(adjustAmount, -0.85*maxAdjust);
-      }
-      if(turnCounter % 50 == 0) {
-        //printf("BACKTRACKING: angle is %f, updated by %f, counter %i\n", verticalDifference, -1.1*adjustAmount, turnCounter);
-      }
-
-      this->cameraSensorData->UpdateSteeringMagnitude(-1.1*adjustAmount);
-      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-      //turnCounter++;
-      */
-
-      if (adjustAmount > maxAdjust) {
-        adjustAmount = fmin(adjustAmount, maxAdjust);
-      } else if (adjustAmount < -1*maxAdjust){
-        adjustAmount = fmax(adjustAmount, -1*maxAdjust);
-      }
-      if(turnCounter % 50 == 0) {
-        //printf("BACKTRACKING: angle is %f, updated by %f, counter %i\n", verticalDifference, -1.1*adjustAmount, turnCounter);
-      }
-
-      //this->cameraSensorData->UpdateSteeringMagnitude(-1.1*adjustAmount);
-      this->cameraSensorData->UpdateSteeringMagnitude(-1*adjustAmount);
-      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-      //turnCounter++;
-
-    } else {
-      //printf("5\n");
-      this->cameraSensorData->UpdateSteeringMagnitude(0);
-      this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
-      if(turnCounter>0) {
-        //printf("step 3 - reset counter\n");
-      }
-      turnCounter = 0;
-      //printf("step 3 - reset counter\n");
-    }
   }
   else{
     //if its about to exit curve and get back on straight road
@@ -1557,6 +1492,8 @@ void sdcCar::laneDriving2017(){
       }
     }
   }
+  //printf("target speed %f, car id %d\n", this->targetSpeed, this->carId);
+  this->MatchTargetSpeed();
 }
 
 
@@ -1613,12 +1550,12 @@ void sdcCar::overtaking2017(){
 
         double verticalDifference = this->cameraSensorData->getVerticalDifference();
         printf("leftmostlateral: %f, vertical difference: %f\n", leftMostLateral, verticalDifference);
-        if(leftMostLateral >= minDistToPass && std::abs(verticalDifference) < 15){
+        if(leftMostLateral >= MIN_DIST_TO_PASS && std::abs(verticalDifference) < 15){
           isSideClearOfCars = true;
           overTakeDistTravelled = 0;
           initialSimTime = this->world->GetSimTime().Float();
         } else {
-          overtakeLaneCentering();
+          laneCenter();
 
         }
       }
@@ -1771,7 +1708,7 @@ void sdcCar::overtaking2017_new() {
         }
       }
       //this was originall < 5
-      if (closestlongitude < minDistToPass){
+      if (closestlongitude < MIN_DIST_TO_PASS){
         isOvertaking = true;
         printf("is about to overtake\n");
       }
@@ -2011,26 +1948,32 @@ bool sdcCar::shouldWeOvertake(){
       double verticalDifference = this->cameraSensorData->getVerticalDifference();
       //printf("verticaldiff: %f\n", adjustVertDiff);
       printf("closest longitude: %f\n", closestlongitude);
-      if ((closestlongitude < minDistToPass) && (closestlongitude > (2/3)*minDistToPass)) {
-        if (std::abs(verticalDifference)<10 && leftLaneFree) {
+      if ((closestlongitude < MIN_DIST_TO_PASS) && (closestlongitude > (2/3)*MIN_DIST_TO_PASS)) {
+        //if (std::abs(verticalDifference)< 10 && leftLaneFree) {
+        if (std::abs(verticalDifference)< 15 && leftLaneFree) {
+          turnCounter = 0;
           isOvertaking = true;
           printf("is about to overtake\n");
         }
-        this->brake = 1.0;
+        this->brake = -1.0;
+        //this->gas = 0.0;
         printf("braking\n");
-      } else if (closestlongitude <= (2/3)*minDistToPass) {
-        this->brake = 3.0;
+      } else if (closestlongitude <= (2/3)*MIN_DIST_TO_PASS) {
+        this->brake = -3.0;
+        this->gas = 0.0;
         printf("Extreme Brake\n");
       } else {
         this->brake = 0.0;
+        MatchTargetSpeed();
       }
     }
     return isOvertaking;
   }
+  return isOvertaking;
 }
 
 
-void sdcCar::overtakeLaneCentering(){
+void sdcCar::laneCenter(){
 
   if (turnCounter > 0) {
     turnCounter++;
@@ -2044,7 +1987,8 @@ void sdcCar::overtakeLaneCentering(){
   double latestAdjustAmount;
   //printf("1\n");
 
-  if (std::abs(verticalDifference) > 5 && turnCounter <= 1200) {
+  //if (std::abs(verticalDifference) > 5 && turnCounter <= 1200) {
+  if (std::abs(verticalDifference) > 3 && turnCounter <= 1200) {
     //printf("2\n");
     //shrink abs(vertical) by 15
     double compressedVertical;
@@ -2063,10 +2007,10 @@ void sdcCar::overtakeLaneCentering(){
     //latestAdjustAmount is the angle difference for this turn
     /////!!!latestAdjustAmount = -squared/10000;
     latestAdjustAmount = -squared/4000;
-    if (latestAdjustAmount > maxAdjust) {
-      latestAdjustAmount = fmin(latestAdjustAmount, maxAdjust);
+    if (latestAdjustAmount > MAX_ADJUST) {
+      latestAdjustAmount = fmin(latestAdjustAmount, MAX_ADJUST);
     } else {
-      latestAdjustAmount = fmax(latestAdjustAmount, -maxAdjust);
+      latestAdjustAmount = fmax(latestAdjustAmount, -MAX_ADJUST);
     }
 
     //set adjustAmount, which is the average angle change at beginning
@@ -2077,10 +2021,10 @@ void sdcCar::overtakeLaneCentering(){
       //printf("updated adjustamount!\n");
       /////!!!adjustAmount = -squared/10000;
       adjustAmount = -squared/4000;
-      if (adjustAmount > maxAdjust) {
-        adjustAmount = fmin(adjustAmount, maxAdjust);
+      if (adjustAmount > MAX_ADJUST) {
+        adjustAmount = fmin(adjustAmount, MAX_ADJUST);
       } else {
-        adjustAmount = fmax(adjustAmount, -maxAdjust);
+        adjustAmount = fmax(adjustAmount, -MAX_ADJUST);
       }
       turnCounter++;
     } else {
@@ -2101,10 +2045,10 @@ void sdcCar::overtakeLaneCentering(){
     //reverses turning angle to put the car back on track
 
     /* TESTINGONE
-    if (adjustAmount > 0.85*maxAdjust) {
-      adjustAmount = fmin(adjustAmount, 0.85*maxAdjust);
-    } else if (adjustAmount < -0.85*maxAdjust){
-      adjustAmount = fmax(adjustAmount, -0.85*maxAdjust);
+    if (adjustAmount > 0.85*MAX_ADJUST) {
+      adjustAmount = fmin(adjustAmount, 0.85*MAX_ADJUST);
+    } else if (adjustAmount < -0.85*MAX_ADJUST){
+      adjustAmount = fmax(adjustAmount, -0.85*MAX_ADJUST);
     }
     if(turnCounter % 50 == 0) {
       //printf("BACKTRACKING: angle is %f, updated by %f, counter %i\n", verticalDifference, -1.1*adjustAmount, turnCounter);
@@ -2115,10 +2059,10 @@ void sdcCar::overtakeLaneCentering(){
     //turnCounter++;
     */
 
-    if (adjustAmount > maxAdjust) {
-      adjustAmount = fmin(adjustAmount, maxAdjust);
-    } else if (adjustAmount < -1*maxAdjust){
-      adjustAmount = fmax(adjustAmount, -1*maxAdjust);
+    if (adjustAmount > MAX_ADJUST) {
+      adjustAmount = fmin(adjustAmount, MAX_ADJUST);
+    } else if (adjustAmount < -1*MAX_ADJUST){
+      adjustAmount = fmax(adjustAmount, -1*MAX_ADJUST);
     }
     if(turnCounter % 10 == 0) {
       //printf("BACKTRACKING: angle is %f, updated by %f, counter %i\n", verticalDifference, -1.1*adjustAmount, turnCounter);
@@ -2163,7 +2107,6 @@ void sdcCar::StopSignGridTurning(int turn){
         if(STOP_SIGN_WAYPOINT_VEC[progress].hasReservation){
             this->waypointProgress++;
             this->turning = false;
-            //printf("turn == 0\n");
             return;
 
         }
@@ -2172,14 +2115,10 @@ void sdcCar::StopSignGridTurning(int turn){
                 if(manager::stopSignHandleRequest(carId, STOP_SIGN_WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir)){
                     STOP_SIGN_WAYPOINT_VEC[progress].hasReservation = true;
                     this->inIntersection = true;
-                    printf("got reservation\n");
-                    //printf("destDirection: %i\n", this->destDirection);
                     fflush(stdout);
                 }
             }
             if(!laneStopped){
-                printf("lanestop request\n\n\n");
-                printf("fromDir: %i\n\n", this->fromDir);
                 manager::laneStopRequest(this->fromDir);
                 laneStopped = true;
             }
@@ -2196,9 +2135,6 @@ void sdcCar::StopSignGridTurning(int turn){
     else {
         if(STOP_SIGN_WAYPOINT_VEC[progress].hasReservation){
             math::Vector2d nextTarget = {STOP_SIGN_WAYPOINT_VEC[progress+1].pos.first,STOP_SIGN_WAYPOINT_VEC[progress+1].pos.second};
-//            printf("next target pos.first: %f\n",WAYPOINT_VEC[progress+1].pos.first);
-//            printf("next target pos.second: %f\n",WAYPOINT_VEC[progress+1].pos.second);
-            fflush(stdout);
             sdcAngle targetAngle = AngleToTarget(nextTarget);
             this->SetTargetDirection(targetAngle);
             sdcAngle margin = this->GetOrientation().FindMargin(targetAngle);
@@ -2212,13 +2148,11 @@ void sdcCar::StopSignGridTurning(int turn){
                 if(manager::stopSignHandleRequest(carId, STOP_SIGN_WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir)){
                     STOP_SIGN_WAYPOINT_VEC[progress].hasReservation = true;
                     this->inIntersection = true;
-                    printf("got reservation\n");
                     //printf("destDirection: %i\n", this->destDirection);
                     fflush(stdout);
                 }
             }
             if(!laneStopped){
-                printf("lanestop request\n\n\n");
                 manager::laneStopRequest(this->fromDir);
                 laneStopped = true;
             }
@@ -2234,12 +2168,11 @@ void sdcCar::StopSignInitializeGraph() {
     destIntersection.place = 0;
     sdcIntersection centerIntersection;
     centerIntersection.place = 1;
-    int turnType = genRand(2); //returns if the car goes straight (0) left (1) or right (2)
-    printf("turnType: %i carId: %i\n", turnType, this->carId);
+    turnType = genRand(2); //returns if the car goes straight (0) left (1) or right (2)
     fflush(stdout);
 
     if(this->x > 46 && this->x < 50){ //NORTH END
-        printf("idfirst:%i",carId);
+
         fflush(stdout);
         //right turns first dest is 3 past intersection
         //left turns first dest is 7 past intersection
@@ -2318,13 +2251,11 @@ void sdcCar::StopSignInitializeGraph() {
     destIntersection.waypoint.waypointType = 3;
     centerIntersection.waypoint.hasReservation = false;
     //make the distance to all intersections infinity
-    printf("centerWPtype: %i\n", centerIntersection.waypoint.waypointType);
     intersections = {destIntersection, centerIntersection};
     for (int i = 0; i < intersections.size(); ++i) {
         intersections[i].dist = std::numeric_limits<double>::infinity();
         intersections[i].place = i;
     }
-    printf("end of graph\n");
 }
 
 /*
@@ -2399,20 +2330,20 @@ void sdcCar::OnUpdate()
 
 
     if(carId == 1){
-        if (!this->setRate){
-            common::Time curSimTime = this->world->GetSimTime();
-            common::Time curRealTime = this->world->GetRealTime();
-            float curSimTm = curSimTime.Float();
-            float curRealTm = curRealTime.Float();
-            float runRate = curSimTm / curRealTm;
-            if((runRate < .95) && (curRealTm > .5)){
-                sdcManager::setRate(runRate);
-                this->setRate = true;
-            }
-        }
+        //if (!this->setRate){
+          common::Time curSimTime = this->world->GetSimTime();
+          common::Time curRealTime = this->world->GetRealTime();
+          float curSimTm = curSimTime.Float();
+          float curRealTm = curRealTime.Float();
+          float runRate = curSimTm / curRealTm;
+          if((runRate < .95) && (curRealTm > .5)){
+              sdcManager::setRate(runRate);
+              sdcManager::setTime(curSimTm);
+              //this->setRate = true;
+          }
+        //}
         if(this->x > 97){
             if(this->crudeSwitch == 0){
-                printf("SWITCHED\n");
                 this->crudeSwitch = 1;
                 this->SetTargetSpeed(5);
                 this->MatchTargetSpeed();
@@ -2473,28 +2404,24 @@ void sdcCar::OnUpdate()
                     if(this->y > 55){
                         manager::stopSignCarLeft(this->carId);
                         this->inIntersection = false;
-                        printf("exited north\n");
                     }
                     break;
                 case 1:
                     if(this->x  > 55){
                         manager::stopSignCarLeft(this->carId);
                         this->inIntersection = false;
-                        printf("exited east\n");
                     }
                     break;
                 case 2:
                     if(this->y < 45){
                         manager::stopSignCarLeft(this->carId);
                         this->inIntersection = false;
-                        printf("exited south\n");
                     }
                     break;
                 case 3:
                     if(this->x < 45 ){
                         manager::stopSignCarLeft(this->carId);
                         this->inIntersection = false;
-                        printf("exited west\n");
                     }
                     break;
             }
@@ -2641,9 +2568,6 @@ void sdcCar::OnUpdate()
         switch (this->clearIndex) {
             case 0: //North
                 if (this->y < 75){
-                    //printf("cleared north. Y: %f\n", this->y);
-                    //printf("x :%f, y: %f\n", this->x, this->y);
-                    //printf("has reset: %i\n", this->hasReset);
                     this->resetClear[this->clearIndex] = 1;
                     this->clearIndex = -1;
                 }
@@ -2651,9 +2575,6 @@ void sdcCar::OnUpdate()
 
             case 1: //East
                 if (this->x < 75){
-                    //printf("cleared east. E: %f\n", this->x);
-                    //printf("x :%f, y: %f\n", this->x, this->y);
-                    //printf("has reset: %i\n", this->hasReset);
                     this->resetClear[this->clearIndex] = 1;
                     this->clearIndex = -1;
                 }
@@ -2661,9 +2582,6 @@ void sdcCar::OnUpdate()
 
             case 2: //South
                 if (this->y > 25){
-                    //printf("cleared south. S: %f\n", this->y);
-                    //printf("x :%f, y: %f\n", this->x, this->y);
-                    //printf("has reset: %i\n", this->hasReset);
                     this->resetClear[this->clearIndex] = 1;
                     this->clearIndex = -1;
                 }
@@ -2671,9 +2589,6 @@ void sdcCar::OnUpdate()
 
             case 3: //West
                 if (this->x > 25){
-                    //printf("cleared west. W: %f\n", this->x);
-                    //printf("x :%f, y: %f\n", this->x, this->y);
-                    //printf("has reset: %i\n", this->hasReset);
                     this->resetClear[this->clearIndex] = 1;
                     this->clearIndex = -1;
                 }
@@ -2698,9 +2613,10 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     this->model = _model;
     this->world = _model->GetWorld();
     this->moduleSwitch = this->world->GetModel("car_wheel")->GetWorldPose().pos.x;
-    printf("moduleSwitch:%f\n",this->moduleSwitch);
+    this->combined = false;
     if((this->moduleSwitch < -5) && (this->moduleSwitch > -15)){
         this->crudeSwitch = 0; //For merged world
+        this->combined = true;
     }
     else if((this->moduleSwitch < -15) && (this->moduleSwitch > -25)){
         this->crudeSwitch = 1; //For Lane Driving
@@ -2714,7 +2630,6 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     else{
         this->crudeSwitch = 1;
     }
-    printf("crudeSwitch: %i\n", this->crudeSwitch);
 
     if(carId == 1){
         //this->msStartTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
@@ -2727,9 +2642,6 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     this->frontLidarId = this->frontLidar->GetId() + 8;
     //printf("lidar Id: %i\n", this->frontLidarId);
     this->cameraId = this->camera->GetId() + 2;
-    /*if(carId == 1){
-        printf("---camera ID: %i---\n",this->cameraId);
-    }*/
     this->leftSideLidar = this->model->GetLink(_sdf->Get<std::string>("leftSideLidar"));
     this->leftLidarId = this->leftSideLidar->GetId() + 8;
     //printf("left id: %i\n", this->leftLidarId);
@@ -2784,12 +2696,35 @@ void sdcCar::Init()
     this->toldToStop = false;
     this->turning = false;
     if(this->hasReset == true){
-        printf("was false\n");
         this->numCarPass ++;
         common::Time curSimTime = this->world->GetSimTime();
         float curSimTm = curSimTime.Float();
         this->carsPerMinute = 60 * this->numCarPass / curSimTm;
-        printf("carsPerMinute: %f\n", this->carsPerMinute);
+        printf("Cars Per Minute: %f\n", this->carsPerMinute);
+        if (this->turnType == 0) {
+            printf("Cars Time Spent: %f, going straight\n", curSimTm - this->carStartTime);
+            this->totalStraightTimeAmount += (curSimTm - this->carStartTime);
+            this->carAmountStraight ++;
+        } else if (this->turnType == 1){
+            printf("Cars Time Spent: %f, turning left\n", curSimTm - this->carStartTime);
+            this->totalLeftTimeAmount += (curSimTm - this->carStartTime);
+            this->carAmountLeft ++;
+        } else if (this->turnType == 2){
+            printf("Cars Time Spent: %f, turning right\n", curSimTm - this->carStartTime);
+            this->totalRightTimeAmount += (curSimTm - this->carStartTime);
+            this->carAmountRight ++;
+        } else {
+            printf("error: wrong dir\n");
+        }
+        if (curSimTm / 120 < 1.3 && curSimTm / 120 > .7 && !this->twoMinCheck) {
+            printf("---------- 2-MIN-CHECK!!! ----------\n");
+            printf("Cars Per Minute: %f\n", this->carsPerMinute);
+            printf("Average straight: %f \n", this->totalStraightTimeAmount / this->carAmountStraight);
+            printf("Average left: %f \n", this->totalLeftTimeAmount / this->carAmountLeft);
+            printf("Average right: %f \n", this->totalRightTimeAmount / this->carAmountRight);
+            printf("------------------------------------\n");
+            this->twoMinCheck = true;
+        }
         this->hasReset = false;
         this->currentState = waypoint;
         WAYPOINT_VEC.clear();
@@ -2797,6 +2732,7 @@ void sdcCar::Init()
         this->waypointProgress = 0;
         this->targetSpeed = this->maxCarSpeed;
     }
+    this->carStartTime = this->world->GetSimTime().Float();
     time_t seconds;
     srand ((unsigned)time(&seconds));
     //this->sensorData.InitLidar(LidarPos lidar, double minAngle, double angleResolution, double maxRange, int numRays);
@@ -2818,16 +2754,12 @@ sdcCar::sdcCar(){
         sdcManager::sdcManager(0);
     }
     this->teleport = false;
-    //sdcManager::registerCar(carId++);
     this->clearIndex = -1;
     this->hasReset = false;
     this->carIdCount ++;
     this->carId = this->carIdCount;
     this->inIntersection = false;
     this->destDirection = -1;
-    //printf("sdcCar Steer Mag: %f\n",this->sensorData.GetNewSteeringMagnitude());
-    //printf("sdcCar sensorId: %i\n",this->sensorData->sensorId);
-    //this->frontSensor = sdcFrontLidarSensor();
 
     this->joints.resize(4);
 

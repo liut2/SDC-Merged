@@ -62,7 +62,6 @@ sdcSensorData::sdcSensorData(int id) {
 }
 
 void sdcSensorData::InitLidar(LidarPos lidar, double minAngle, double angleResolution, double maxRange, int numRays){
-    printf("init lidar\n");
 
     switch (lidar) {
         case TOP:
@@ -81,7 +80,7 @@ void sdcSensorData::InitLidar(LidarPos lidar, double minAngle, double angleResol
  */
 void sdcSensorData::UpdateLidar(LidarPos lidar, std::vector<double>* newRays){
     lidarInfoMap[lidar].lastUpdate = (lidarInfoMap[lidar].lastUpdate + 1) % 100000000;
-    //printf("created new lidar rays\n");
+
     switch (lidar) {
         case FRONT:
 
@@ -167,19 +166,11 @@ void sdcSensorData::setVerticalDifference(double verticalDifference) {
 }
 
 void sdcSensorData::UpdateSteeringMagnitude(double steerMag) {
-  //  printf("newSteerMagnitude: %f\n", this->newSteerMagnitude);
-   // printf("steerMag: %f\n", steerMag);
-   // printf("Update mag sensorID: %i\n", this->sensorId);
     this->newSteerMagnitude = steerMag;
-    //printf("newSteerMagnitude: %f\n", this->newSteerMagnitude);
 }
 
 double sdcSensorData::GetNewSteeringMagnitude() {
-    //printf("sensorData steering mag: %f\n", this->newSteerMagnitude);
-    //printf("GET mag sensorID: %i\n", this->sensorId);
-    //printf("get new steering: %f \n", this->newSteerMagnitude);
     return this->newSteerMagnitude;
-    //printf("newSteerMagnitude: %f\n", this->newSteerMagnitude);
 }
 
 /*

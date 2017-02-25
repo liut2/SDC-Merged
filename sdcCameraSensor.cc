@@ -397,7 +397,7 @@ void sdcCameraSensor::OnUpdate() {
 		Point vanishPoint = getIntersectionPoint(leftLine, rightLine);
 		*/
 		// we should use section 2,3,4, which are indexed at 1,2,3
-		if (this->cameraId == 6266) {
+		if (this->cameraId == 6238 || this->cameraId == 6268) {
 			//line(imageROI, Point(vanishPoint.x, vanishPoint.y), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
 			// update the turn angle
 			//double newAngle = getNewTurningAngle(createLine(vanishPoint.x, vanishPoint.y, midPoint.x, midPoint.y + offset[i]*row/15));
@@ -551,7 +551,8 @@ void sdcCameraSensor::OnUpdate() {
 			previousMidline.push_back(twoMidlines.at(0)[2]);
 			previousMidline.push_back(twoMidlines.at(0)[3]);
 		}
-		else if (previousMidline[0] != infinityInt && degreeBetweenSameMidlines <= 45) {
+		//else if (previousMidline[0] != infinityInt && degreeBetweenSameMidlines <= 45) {
+		else if (previousMidline[0] != infinityInt && degreeBetweenSameMidlines <= 55) {
 			previousMidline.clear();
 			previousMidline.push_back(twoMidlines.at(0)[0]);
 			previousMidline.push_back(twoMidlines.at(0)[1]);
@@ -642,7 +643,7 @@ void sdcCameraSensor::OnUpdate() {
 	//printf("The speed of the car is %f\n", sdcCar::getSpeed());
 	// Display results to GUI
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
-	if (this->cameraId == 6266) {
+	if (this->cameraId == 6238 || this->cameraId == 6268) {
 		imshow("Camera View", imageROI);
 	}
 	waitKey(4);

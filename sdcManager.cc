@@ -11,6 +11,8 @@ int sdcManager::gridSize = 10;
 float sdcManager::maxTurnLeft = 6;
 float sdcManager::maxTurnRight = 4;
 float sdcManager::rate = 1;
+float sdcManager::simTime = 0;
+int sdcManager::prioritized = 0;
 std::chrono::milliseconds sdcManager::msStartTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 time_t sdcManager::startTime = time(0);
 std::vector<int> sdcManager::carList = std::vector<int>();
@@ -20,7 +22,7 @@ std::vector<int> sdcManager::carEastQueue = std::vector<int>();
 std::vector<int> sdcManager::carSouthQueue = std::vector<int>();
 std::vector<int> sdcManager::carWestQueue = std::vector<int>();
 std::vector<gazebo::sdcSensorData> sdcManager::sensorDataList = std::vector<gazebo::sdcSensorData>();
-std::map<int, gazebo::sdcSensorData> sdcManager::sensorManager = std::map<int, gazebo::sdcSensorData>();
+std::map<int, float> sdcManager::priorityList = std::map<int, float>();
 
 sdcManager::sdcManager(int id){
     //printf("created manager\n");
@@ -40,13 +42,17 @@ void sdcManager::setRate(float newRate){
     rate = newRate;
     //printf("------rate: %f------\n", rate);
 }
+void sdcManager::setTime(float curSimTime){
+    simTime = curSimTime;
+}
 
 void sdcManager::makeGrid(){
     //time_t tm = difftime(time(0), startTime);
-    std::chrono::milliseconds currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-    int diffTime = currentTime.count() - msStartTime.count();
-    float tm = diffTime * rate / float(1000);
-    printf("milliTime: %f\n", tm);
+    //std::chrono::milliseconds currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+    //int diffTime = currentTime.count() - msStartTime.count();
+    //float tm = diffTime * rate / float(1000);
+    float tm = simTime;
+    //printf("milliTime: %f\n", tm);
     std::vector<float> columns = std::vector<float>(gridSize, tm);
     grid = std::vector<std::vector<float>> (gridSize, columns);
     //    for(int x = 0; x < gridSize; x++) {
@@ -73,43 +79,54 @@ void sdcManager::registerCar(int carId, int turning, int direction) {
     carAmt++;
     currentDir = direction;
     currentTurn = turning;
-    //printf("registered, and now carAmt is: %i\n", carAmt);
     fflush(stdout);
     carList.push_back(carId);
-    //printf("registered car Id is: %i\n", carId);
     fflush(stdout);
 
 }
 void sdcManager::laneStopRequest(int fromDir){
     switch (fromDir) {
         case 0:
-            //printf("nstop\n");
             nStop = true;
             break;
         case 1:
-            //printf("estop\n");
             eStop = true;
             break;
         case 2:
-            //printf("sstop\n");
             sStop = true;
             break;
         case 3:
-            //printf("wstop\n");
             wStop = true;
             break;
     }
 }
 
 instruction sdcManager::reservationRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir){
-    std::chrono::milliseconds currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-    int diffTime = currentTime.count() - msStartTime.count();
-    float tm = diffTime * rate / float(1000);
+
+
+    //If a car is being prioritized return immediately
+    if((prioritized != 0) && (carId != prioritized)){
+        return instruction::instruction(carId, .95*speed, 0);
+    }
+    float tm = simTime;
+    if (priorityList.count(carId) > 0){
+        if(priorityList[carId] != 0){
+            //If a car has been waiting for more than 15 seconds
+            if(simTime - priorityList[carId] > 20){
+                prioritized = carId;
+            }
+        }
+        else{
+            priorityList[carId] = simTime;
+        }
+    }
+    else{
+        priorityList.insert(std::pair<int, float>(carId, simTime));
+    }
     // dont accept reservation before we update rate
-    if(diffTime/float(1000) < .5){
+    if(tm < .5){
         return instruction::instruction(carId, speed, 0);
     }
-    //printf("tm: %f\n", tm);
     // if speed is too low assume speed is 1 and give reservation based on this speed
     if (speed == 0){
         speed = 1;
@@ -117,22 +134,20 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
     float decrease = .95;
     float driveTime = 0;
     float buffer = fmax(4.25, 4.25 + speed);
-    //printf("buffer: %f\n", buffer);
     float speedIntent = 6; //max speed we give to cars with reservations
     float idealSpeed = 0;
     bool reserved = true;
+
     if(turning == 0){
       float timeWillReach = 0;
       float timeWillLeave = 0;
       float distance = 0;
       if (fromDir == 0 || fromDir == 2) { //travelling y bound
         int xIndex = static_cast<int>(x-46);
-        //printf("carId is y bound: %d\n", carId);
         for (int yIndex = 0; yIndex < gridSize; yIndex++) {
             distance = std::abs(yIndex + 45 - y);
             driveTime = sdcManager::quadraticRoot(1, 2*speed, -2*(distance - 2*buffer));
             // If it will accelerate too fast
-            //printf("carId: %i original reachdriveTime: %f\n", carId, driveTime);
             if (driveTime + speed > 6){
                 float t6 = 6 - speed;
                 float d6 = .5*(t6*t6) + speed*t6;
@@ -142,7 +157,6 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
             for (int xWidth = 0; xWidth < 3; xWidth ++) { //xWidth is width buffer
                 if (timeWillReach < sdcManager::getGrid(xIndex + xWidth, yIndex) || !reserved) {
                     reserved = false;
-                    //printf("car rejected: %d\n", carId);
                     return instruction::instruction(carId, decrease*speed, 0);
                 }
                 else {
@@ -164,31 +178,22 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
           return instruction::instruction(carId, decrease*speed, 0);
         }
         if (reserved) {
-            printf("speed: %f for car: carId: %i\n", speed, carId);
             for (int yIndex = 0; yIndex < gridSize; yIndex++) {
                 distance = std::abs(yIndex + 45 - y);
-                //timeWillReach = tm + (distance - (speed * 1.5)) / speed;
                 driveTime = sdcManager::quadraticRoot(1, 2*speed, -2*(distance + 2*buffer));
                 // If it will accelerate too fast
-                //printf("carId: %i original driveTime: %f\n", carId, driveTime);
                 if (driveTime + speed > 6){
                     float t6 = 6 - speed;
                     float d6 = .5*(t6*t6) + speed*t6;
                     driveTime = t6 + ((distance + buffer - d6)/6);
-
-                    //driveTime = (pow(speed,2) - (10*speed) + (2*(distance + buffer) + 36))/12;
-                    //printf("driveTime: %f\n", driveTime);
                 }
                 timeWillLeave = tm + driveTime;
                 for (int xWidth = 0; xWidth < 3; xWidth ++) { //xWidth is width buffer
                     sdcManager::setGrid(timeWillLeave, xIndex + xWidth, yIndex);
                 }
             }
-            printf("carId got reserved: %d\n", carId);
-            //printf("carId intend: %d, %f\n", carId, speedIntent);
-            printf ("speedIntent: %f",speedIntent);
-            printf("timeWillLeave: %f\n", timeWillLeave);
-            printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            prioritized = 0;
+            priorityList[carId] = 0.0;
             return instruction::instruction(carId, speedIntent, 1);
          }
 
@@ -199,53 +204,30 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
       */
 
      else if (fromDir == 1 || fromDir == 3) {
-      //  printf("carId is x bound: %d\n", carId);
         int yIndex = static_cast<int>(y-46);
         for (int xIndex = 0; xIndex < gridSize; xIndex++) {
             distance = std::abs(xIndex + 45 - x);
             driveTime = sdcManager::quadraticRoot(1, 2*speed, -2*(distance - 2*buffer));
             // If it will accelerate too fast
-            //printf("carId: %i original reachdriveTime: %f\n", carId, driveTime);
             if (driveTime + speed > 6){
                 float t6 = 6 - speed;
                 float d6 = .5*(t6*t6) + speed*t6;
                 driveTime = t6 + ((distance - buffer - d6)/6);
-
-                //driveTime = (pow(speed,2) - (10*speed) + (2*(distance + buffer) + 36))/12;
-            //    printf("reachdriveTime: %f\n", driveTime);
             }
             timeWillReach = tm + driveTime;
-          //timeWillLeave = tm + ((float)distance - buffer) / speed;
-
-          //printf("car old leave diff: %f, %f\n", sdcManager::getGrid(xIndex, yIndex), timeWillReach);
             for (int yWidth = 0; yWidth < 3; yWidth ++) { //xWidth is width buffer
                 if (timeWillReach < sdcManager::getGrid(xIndex, yIndex + yWidth) || !reserved) {
                     reserved = false;
-                    //printf("car rejected: %d\n", carId);
                     return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
                     idealSpeed = ((float)distance - buffer) / (sdcManager::getGrid(xIndex, yIndex + yWidth) - tm);
                     if(carId == 1){
-                        //printf("idealSpeed: %f tm: %ld\n", idealSpeed, tm);
                     }
                     if (idealSpeed < 0){
                         if(distance < 0){
-                            //printf("negative speedIntent distance\n");
                             return instruction::instruction(carId, decrease*speed, 0);
                         }
-                        else{
-                            if(carId == 1){
-                                //printf("carId: %i, tm: %ld, gridtime: %f\n",carId, tm, sdcManager::getGrid(xIndex, yWidth + yIndex));
-                            }
-                        }
-                    /*
-                    else{
-                        printf("tm: %ld, gridtime: %f\n", tm, sdcManager::getGrid(xIndex + xWidth, yIndex));
-                        speedIntent = fmin(speedIntent, 6);
-                        printf("speedIntent: %f\n", speedIntent);
-                    }
-                    */
                     }
                     else{
                         speedIntent = fmin(speedIntent, idealSpeed);
@@ -261,42 +243,29 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
         if (reserved) {
           for (int xIndex = 0; xIndex < gridSize; xIndex++) {
             distance = std::abs(xIndex + 45 - x);
-            //timeWillReach = tm + (distance - buffer) / speed;
             driveTime = sdcManager::quadraticRoot(1, 2*speed, -2*(distance + 2*buffer));
             // If it will accelerate too fast
-            //printf("carId: %i original driveTime: %f\n", carId, driveTime);
             if (driveTime + speed > 6){
                 float t6 = 6 - speed;
                 float d6 = .5*(t6*t6) + speed*t6;
                 driveTime = t6 + ((distance + buffer - d6)/6);
-                //float kietdriveTime = (pow(speed,2) - (10*speed) + (2*(distance + buffer) + 36))/12;
-                //printf("driveTime: %f\n", driveTime);
             }
             timeWillLeave = tm + driveTime;
             for (int yWidth = 0; yWidth < 3; yWidth ++) {
                 sdcManager::setGrid(timeWillLeave, xIndex, yIndex + yWidth);
             }
           }
-          // if(speed < 1){
-          //   speed = 10;
-          // }
-         // printf("carId got reserved: %d, %f\n", carId, speedIntent);
-          // printf ("speedIntent: %f",speedIntent);
-           //printf("timeWillLeave: %f\n", timeWillLeave);
-           //printf("tm: %f, driveTime: %f\n", tm, driveTime);
+           prioritized = 0;
+           priorityList[carId] = 0.0;
            return instruction::instruction(carId, speedIntent, 1);
         }
       }
       return instruction::instruction(carId, 0, 0);
     }
-    //left?
     else if (turning == 1){
-      //  printf("maxTurnLeft: %f\n", sdcManager::maxTurnLeft);
         return sdcManager::leftTurnRequest(carId, x, y, speed, turning, direction, fromDir);
     }
     else if (turning == 2){
-        //printf("turning right\n");
-
         return sdcManager::rightTurnRequest(carId, x, y, speed, turning, direction, fromDir);
     }
     else{
@@ -307,12 +276,15 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
 }
 
 instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir){
+
     if(speed < 1){
         speed = 1;
     }
-    std::chrono::milliseconds currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-    int diffTime = currentTime.count() - msStartTime.count();
-    float tm = diffTime *rate / float(1000);
+
+    float tm = simTime;
+    if(tm < .5){
+        return instruction::instruction(carId, speed, 0);
+    }
     float decrease = .95;
     bool reserved = true;
     float driveTime = 0;
@@ -446,8 +418,6 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
         //Pass through the check, can make reservation
         if (reserved) {
             //1. NR
-            printf("speed: %f for car: carId: %i\n", speed, carId);
-
             for (int iX = 0; iX < 5; iX++) {
                 for (int iY = 5; iY < 10; iY++) {
                     tanValue = (10-iY)/((float)(10 - iX));
@@ -510,9 +480,8 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            //printf ("speedIntent: %f",speedIntent);
-            //printf("timeWillLeave: %f\n", timeWillLeave);
-            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            prioritized = 0;
+            priorityList[carId] = 0.0;
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -682,9 +651,8 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            //printf ("speedIntent: %f",speedIntent);
-            //printf("timeWillLeave: %f\n", timeWillLeave);
-            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            prioritized = 0;
+            priorityList[carId] = 0.0;
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -859,9 +827,8 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            //printf ("speedIntent: %f",speedIntent);
-            //printf("timeWillLeave: %f\n", timeWillLeave);
-            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            prioritized = 0;
+            priorityList[carId] = 0.0;
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -891,7 +858,6 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                 timeWillReach = tm + driveTime + (angle*r)/speed;
                 if (timeWillReach < sdcManager::getGrid(iX, iY) || !reserved) { //compare it
                     reserved = false;
-                    //printf("1 wc twr:%f\n", timeWillReach);
                     return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
@@ -903,8 +869,6 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                         }
                     }
                     else{
-                        //printf("numerator: %f\n", ((float)distance + (angle*r) - buffer));
-                        //printf("denominator: %f\n", (sdcManager::getGrid(iX,iY) - tm));
                         speedIntent = fmin(speedIntent, idealSpeed);
                     }
                 }
@@ -926,7 +890,6 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                 timeWillReach = tm + driveTime + (angle*r)/speed;
                 if (timeWillReach < sdcManager::getGrid(iX, iY) || !reserved) { //compare it
                     reserved = false;
-                    //printf("2 wc twr:%f\n", timeWillReach);
                     return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
@@ -938,8 +901,6 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                         }
                     }
                     else{
-                        //printf("idealSpeed: %f\n", idealSpeed);
-                        //printf("speedIntent3: %f\n", speedIntent);
                         speedIntent = fmin(speedIntent, idealSpeed);
                     }
                 }
@@ -961,7 +922,6 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                 timeWillReach = tm + driveTime + (angle*r)/speed;
                 if (timeWillReach < sdcManager::getGrid(iX, iY) || !reserved) { //compare it
                     reserved = false;
-                    //printf("3 wc twr:%f\n", timeWillReach);
                     return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
@@ -973,15 +933,12 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                         }
                     }
                     else{
-                        //printf("idealSpeed: %f\n", idealSpeed);
-                        //printf("speedIntent3: %f\n", speedIntent);
                         speedIntent = fmin(speedIntent, idealSpeed);
                     }
                 }
             }
         }
         if (speedIntent < 3){
-            //printf("wc speedIntent:%f\n", speedIntent);
             return instruction::instruction(carId, decrease*speed, 0);
         }
         //Pass through the check, can make reservation
@@ -1049,9 +1006,8 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            //printf ("speedIntent: %f",speedIntent);
-            //printf("timeWillLeave: %f\n", timeWillLeave);
-            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            prioritized = 0;
+            priorityList[carId] = 0.0;
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1060,12 +1016,18 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
 }
 
 instruction sdcManager::rightTurnRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir){
+
     if(speed < 1){
         speed = 1;
     }
-    std::chrono::milliseconds currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-    int diffTime = currentTime.count() - msStartTime.count();
-    float tm = diffTime *rate / float(1000);
+
+    //std::chrono::milliseconds currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+    //int diffTime = currentTime.count() - msStartTime.count();
+    //float tm = diffTime *rate / float(1000);
+    float tm = simTime;
+    if(tm < .5){
+        return instruction::instruction(carId, speed, 0);
+    }
     float decrease = .95;
     bool reserved = true;
     float driveTime = 0;
@@ -1102,9 +1064,6 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                 timeWillReach = tm + driveTime + (angle*r)/speed;
                 if (timeWillReach < sdcManager::getGrid(iX, iY) || !reserved) { //compare it
                   reserved = false;
-                  //printf("car rejected: %i\n", carId);
-                 // printf("gridTime: %f\n", sdcManager::getGrid(iX, iY));
-                 // printf("time will reach: %f\n", timeWillReach);
                   return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
@@ -1143,9 +1102,8 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            //printf ("speedIntent: %f",speedIntent);
-            //printf("timeWillLeave: %f\n", timeWillLeave);
-            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            prioritized = 0;
+            priorityList[carId] = 0.0;
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1173,9 +1131,6 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                 timeWillReach = tm + driveTime + (angle*r)/speed;
                 if (timeWillReach < sdcManager::getGrid(iX, iY) || !reserved) { //compare it
                   reserved = false;
-                 // printf("car rejected: %i\n", carId);
-                  //printf("gridTime: %f\n", sdcManager::getGrid(iX, iY));
-                  //printf("time will reach: %f\n", timeWillReach);
                   return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
@@ -1214,10 +1169,8 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            //printf("carId: %i got reservation\n",carId);
-            //printf ("speedIntent: %f",speedIntent);
-            //printf("timeWillLeave: %f\n", timeWillLeave);
-            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            prioritized = 0;
+            priorityList[carId] = 0.0;
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1245,9 +1198,6 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                 timeWillReach = tm + driveTime + (angle*r)/speed;
                 if (timeWillReach < sdcManager::getGrid(iX, iY) || !reserved) { //compare it
                   reserved = false;
-                  //printf("car rejected: %i\n", carId);
-                 // printf("gridTime: %f\n", sdcManager::getGrid(iX, iY));
-                 // printf("time will reach: %f\n", timeWillReach);
                   return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
@@ -1286,10 +1236,8 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            //printf("carId: %i got reservation\n",carId);
-            //printf ("speedIntent: %f",speedIntent);
-            //printf("timeWillLeave: %f\n", timeWillLeave);
-            //printf("tm: %f, driveTime: %f\n", tm, driveTime);
+            prioritized = 0;
+            priorityList[carId] = 0.0;
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1317,9 +1265,6 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                 timeWillReach = tm + driveTime + (angle*r)/speed;
                 if (timeWillReach < sdcManager::getGrid(iX, iY) || !reserved) { //compare it
                   reserved = false;
-                 // printf("car rejected: %i\n", carId);
-                 // printf("gridTime: %f\n", sdcManager::getGrid(iX, iY));
-                 // printf("time will reach: %f\n", timeWillReach);
                   return instruction::instruction(carId, speed*decrease, 0);
                 }
                 else {
@@ -1346,7 +1291,6 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                     tanValue = iX/((float)iY);
                     angle = atan(tanValue);
                     r = sqrt(pow(iY, 2) + pow(iX,2));
-                    //printf(" arc length: %f \n", (angle*r));
                     float leaveSpeed = fmin(speed, maxTurnRight);
                     driveTime = sdcManager::quadraticRoot(1, 2*speed, -2*(distance + 2*buffer));
                     // If it will accelerate too fast
@@ -1354,16 +1298,13 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
                         float t6 = 6 - speed;
                         float d6 = .5*(t6*t6) + speed*t6;
                         driveTime = t6 + ((distance + buffer - d6)/6);
-                        //driveTime = (pow(speed,2) - (10*speed) + (2*(distance + buffer) + 36))/12;
                     }
                     timeWillLeave = tm + driveTime + (angle*r)/leaveSpeed;
-                    //printf ("speedIntent: %f",speedIntent);
-                    //printf("timeWillLeave: %f\n", timeWillLeave);
-                    //printf("tm: %f, driveTime: %f\n", tm, driveTime);
                     sdcManager::setGrid(timeWillLeave, iX, iY);
                 }
             }
-            //printf("carId: %i got reservation\n",carId);
+            prioritized = 0;
+            priorityList[carId] = 0.0;
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1371,8 +1312,6 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
 }
 
 bool sdcManager::stopSignHandleRequest(int carId, int turning, int direction, int fromDir) {
-    //    printf("carAmt: %i\n", carAmt);
-    //    printf("turning: %i\n", turning);
     fflush(stdout);
 
     if (carAmt == 0) { //no car at intersection
@@ -1450,8 +1389,6 @@ bool sdcManager::stopSignHandleRequest(int carId, int turning, int direction, in
 
 float sdcManager::quadraticRoot(float a, float b, float c){
     float D = sqrt((b*b) - (4*a*c));
-    //printf("a:%f b:%f c:%f\n",a,b,c);
-    //printf("d: %f\n", D);
     if (!a)// a==0 => 2*a==0
     {
         printf("divide by zero\n");
@@ -1472,19 +1409,15 @@ bool sdcManager::stopSignQueue(int carId, int fromDir) {
     printf("in stopsignqueue\n");
     switch (fromDir) {
         case 0:
-            // printf("north queue \n\n\n");
             carNorthQueue.push_back(carId);
             break;
         case 1:
-            // printf("east queue \n\n\n");
             carEastQueue.push_back(carId);
             break;
         case 2:
-            //  printf("south queue \n\n\n");
             carSouthQueue.push_back(carId);
             break;
         case 3:
-            //  printf("west queue \n\n\n");
             carWestQueue.push_back(carId);
             break;
     }
@@ -1495,7 +1428,6 @@ bool sdcManager::shouldStop(int carId, int fromDir) {
     switch (fromDir) {
         case 0:
             if(carNorthQueue.size() > 1){
-                //printf("north queue\n\n\n");
                 if(nStop){
                     return true;
                 }
@@ -1510,9 +1442,7 @@ bool sdcManager::shouldStop(int carId, int fromDir) {
             break;
         case 1:
             if(carEastQueue.size() > 1){
-                //printf("east queue\n\n\n");
                 if(eStop){
-                    //printf("eStop true\n\n");
                     return true;
                 }
                 else{
@@ -1526,7 +1456,6 @@ bool sdcManager::shouldStop(int carId, int fromDir) {
             break;
         case 2:
             if(carSouthQueue.size() > 1){
-                //printf("south queue\n\n\n");
                 if(sStop){
                     return true;
                 }
@@ -1541,7 +1470,6 @@ bool sdcManager::shouldStop(int carId, int fromDir) {
             break;
         case 3:
             if(carWestQueue.size() > 1){
-                // printf("west queue\n\n\n");
                 if(wStop){
                     return true;
                 }
@@ -1562,31 +1490,4 @@ bool sdcManager::shouldStop(int carId, int fromDir) {
 void sdcManager::stopSignCarLeft(int carId) {
     carList.erase(std::remove(carList.begin(), carList.end(), carId), carList.end());
     carAmt--;
-}
-
-gazebo::sdcSensorData *sdcManager::getSensorData(int cameraId) {
-    //HOW TO FIX: USE A MAP OF sdcSensorDatas WHERE THE KEY IS THE cameraId
-    // If its not in the map then make a new sensor data. Otherwise return it.
-
-    if (sensorManager.count(cameraId) > 0){
-        return &sensorManager[cameraId];
-    }
-    else{
-        sensorManager.insert(std::pair<int, gazebo::sdcSensorData>(cameraId, gazebo::sdcSensorData(cameraId)));
-        printf("map count: %lu\n",sensorManager.count(cameraId));
-        printf("cameraId in manager: %i\n\n",cameraId);
-        return &sensorManager[cameraId];
-    }
-
-
-    /*
-     // printf("in manager\n");
-     //printf("car id: %i\n", carId);
-     fflush(stdout);
-     //printf("sensorList size is: %lu while car id is: %d\n",sensorDataList.size(), carId);
-     if (sensorDataList.size() < cameraId) {
-     //  printf("in manager and creating sensordata\n");
-     gazebo::sdcSensorData temp = gazebo::sdcSensorData(cameraId);
-     //temp.UpdateSteeringMagnitude(0);
-     sensorDataList.push_back(temp);*/
 }

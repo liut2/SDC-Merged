@@ -23,7 +23,6 @@ sensors::RaySensorPtr parentSensor;
 void sdcSideLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
     // Get the parent sensor.
     this->sensor = _sensor;
-    printf("lidar sensor id: %i\n",this->sensor->GetId());
     int sensorId = this->sensor->GetId();
 
     //printf("this camerasId: %i \n", this->cameraId);

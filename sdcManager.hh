@@ -35,6 +35,7 @@ public:
     static bool shouldStop(int carId, int fromDir);
     static gazebo::sdcSensorData *getSensorData(int cameraId);
     static void setRate(float rate);
+    static void setTime(float curSimTime);
 private:
     static instruction rightTurnRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
     static instruction leftTurnRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
@@ -46,6 +47,7 @@ private:
     static time_t startTime;
     static std::chrono::milliseconds msStartTime;
     static float rate;
+    static float simTime;
 
 
 
@@ -57,6 +59,8 @@ private:
     static std::vector<int> carWestQueue;
     static std::vector<gazebo::sdcSensorData> sensorDataList;
     static std::map<int, gazebo::sdcSensorData> sensorManager;
+    static std::map<int, float> priorityList;
+    static int prioritized;
     static int currentDir; //0 north, 1 east, 2 south, 3 west
     static int currentTurn; // 0 straight, 1 left, 2 right
     static bool nStop;

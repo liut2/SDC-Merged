@@ -1652,7 +1652,7 @@
       <wall_time>1486938804 194256000</wall_time>
       <iterations>0</iterations>
       <model name='car'>
-        <pose frame=''>-12 -0.499691 -4e-05 -1.2e-05 5e-05 -0.006059</pose>
+        <pose frame=''>-12 -0.499691 -4e-05 0 0 0</pose>
         <link name='back_left_wheel'>
           <pose frame=''>-12.868 0.00405 0.299983 1.65983 1.57076 -3.05648</pose>
           <velocity>0.205062 0.771144 -0.009834 -0.00281 0.009943 -0.348296</velocity>
@@ -1727,7 +1727,7 @@
         </link>
       </model>
       <model name='car_clone'>
-        <pose frame=''>291.038 -147.434 -4.5e-05 -9e-06 2.6e-05 -0.06681</pose>
+        <pose frame=''>291.038 -147.434 -4.5e-05 0 0 0</pose>
         <link name='back_left_wheel'>
           <pose frame=''>290.203 -146.877 0.299976 1.63966 1.57076 -3.13955</pose>
           <velocity>0.000159 -2.6e-05 -0.009828 0.00067 0.009977 5e-06</velocity>
