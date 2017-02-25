@@ -683,9 +683,12 @@ void sdcCar::initializeGraph() {
     sdcIntersection centerIntersection;
     centerIntersection.place = 2;
     int turnType = genRand(2); //returns if the car goes straight (0) left (1) or right (2)
-    if (carId == 1){
-      turnType = 0;
+    if(this->crudeSwitch == 0){
+        if (carId == 1){
+          turnType = 0;
+        }
     }
+
     //printf("turnType: %i carId: %i\n", turnType, this->carId);
     fflush(stdout);
 
@@ -773,8 +776,13 @@ void sdcCar::initializeGraph() {
         this->fromDir = 3;
         switch(turnType){
             case 0:
-                if(carId == 1){
-                    destIntersection.waypoint = sdcWaypoint(0,std::pair<double,double>(110, 48));
+                if(this->crudeSwitch == 0){
+                    if(carId == 1){
+                        destIntersection.waypoint = sdcWaypoint(0,std::pair<double,double>(110, 48));
+                    }
+                    else{
+                        destIntersection.waypoint = sdcWaypoint(0,ends[1]);
+                    }
                 }
                 else{
                     destIntersection.waypoint = sdcWaypoint(0,ends[1]);
@@ -801,8 +809,10 @@ void sdcCar::initializeGraph() {
     centerIntersection.waypoint.waypointType = turnType;
     exitIntersection.waypoint.waypointType = turnType;
     destIntersection.waypoint.waypointType = 3;
-    if (carId == 1){
-        destIntersection.waypoint.waypointType = 0;
+    if(this->crudeSwitch == 0){
+        if (carId == 1){
+            destIntersection.waypoint.waypointType = 0;
+        }
     }
     centerIntersection.waypoint.hasReservation = false;
     //make the distance to all intersections infinity
@@ -1266,7 +1276,7 @@ void sdcCar::driveOnCurvedRoad(double degree) {
 void sdcCar::combinedDriving2017() {
   //printf("Starting the lane driving portion\n");
   if(this->carId == 1){
-    printf("car 1 x: %f y:%f\n", this->x, this->y);
+    //printf("car 1 x: %f y:%f\n", this->x, this->y);
     //printf("car_0 target speed: %f\n", this->targetSpeed);
     //if (this->x <= 257 && this->y >= -145) {
     if (this->x < 436.65){
@@ -2173,7 +2183,7 @@ void sdcCar::OnUpdate()
             }
         }
         if(this->x > 97){
-            if(this->crudeSwitch != 1){
+            if(this->crudeSwitch == 0){
                 printf("SWITCHED\n");
                 this->crudeSwitch = 1;
                 this->SetTargetSpeed(5);
@@ -2403,6 +2413,25 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     // Store the model and chassis of the car for later access
     this->model = _model;
     this->world = _model->GetWorld();
+    this->moduleSwitch = this->world->GetModel("car_wheel")->GetWorldPose().pos.x;
+    printf("moduleSwitch:%f\n",this->moduleSwitch);
+    if((this->moduleSwitch < -5) && (this->moduleSwitch > -15)){
+        this->crudeSwitch = 0; //For merged world
+    }
+    else if((this->moduleSwitch < -15) && (this->moduleSwitch > -25)){
+        this->crudeSwitch = 1; //For Lane Driving
+    }
+    else if((this->moduleSwitch < -25) && (this->moduleSwitch > -35)){
+        this->crudeSwitch = 2; //For reservations
+    }
+    else if((this->moduleSwitch < -35) && (this->moduleSwitch > -45)){
+        this->crudeSwitch = 3; //For stop sign
+    }
+    else{
+        this->crudeSwitch = 1;
+    }
+    printf("crudeSwitch: %i\n", this->crudeSwitch);
+
     if(carId == 1){
         //this->msStartTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
         this->simStartTime = this->world->GetStartTime();
@@ -2498,8 +2527,6 @@ sdcCar::sdcCar(){
         sdcManager::sdcManager(0);
     }
     this->teleport = false;
-    //REMEMBER TO CHANGE THIS
-    this->crudeSwitch = 0; //in merged world use 0
     //sdcManager::registerCar(carId++);
     this->clearIndex = -1;
     this->hasReset = false;

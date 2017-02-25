@@ -67,7 +67,9 @@ namespace gazebo {
         std::chrono::milliseconds msStartTime;
         // The Gazebo model representation of the car
         physics::ModelPtr model;
+        float moduleSwitch;
         physics::WorldPtr world;
+
         // Contains the wheel joints that get operated on each tick for movement
         std::vector<physics::JointPtr> joints;
         // A link to the chassis of the car, mainly used for access to physics variables
