@@ -1464,7 +1464,6 @@ float sdcManager::quadraticRoot(float a, float b, float c){
  destdirection = 0
  if(!nextcar turn left && ! nextcar straight north):
  give reservation
-
  straight case:
  destdirection = 0
  if(nextcar straight 2 || nextcar right east || nextcar right south
@@ -1581,23 +1580,13 @@ gazebo::sdcSensorData *sdcManager::getSensorData(int cameraId) {
 
 
     /*
-
      // printf("in manager\n");
      //printf("car id: %i\n", carId);
      fflush(stdout);
-
      //printf("sensorList size is: %lu while car id is: %d\n",sensorDataList.size(), carId);
      if (sensorDataList.size() < cameraId) {
      //  printf("in manager and creating sensordata\n");
      gazebo::sdcSensorData temp = gazebo::sdcSensorData(cameraId);
      //temp.UpdateSteeringMagnitude(0);
-     sensorDataList.push_back(temp);
-
-     }
-     //printf("car Id: %i", carId);
-     //printf("sensorId is: %d\n",sensorDataList.at(carId-1)->sensorId);
-     //   gazebo::sdcSensorData tempSensor = sensorDataList.at(carId-1);
-     //    sensorDataList.at(carId-1).UpdateSteeringMagnitude(0.0);
-     return &sensorDataList.at(cameraId-1);
-     */
+     sensorDataList.push_back(temp);*/
 }

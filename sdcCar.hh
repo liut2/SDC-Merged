@@ -61,6 +61,8 @@ namespace gazebo {
         private: void OnUpdate();
 
         int crudeSwitch;
+        static int numCarPass;
+        static float carsPerMinute;
         // Holds the bound connection to Gazebo's update, necessary in order to properly
         // receive updates
         std::vector<event::ConnectionPtr> connections;
@@ -91,6 +93,7 @@ namespace gazebo {
 
         //WAYPOINTS for intersection driving
         std::vector<sdcWaypoint> WAYPOINT_VEC;
+        std::vector<sdcWaypoint> STOP_SIGN_WAYPOINT_VEC;
         std::vector<sdcIntersection> intersections;
         //sensorData object
         sdcSensorData *cameraSensorData;
@@ -241,9 +244,10 @@ namespace gazebo {
         void MatchTargetSpeed();
         void DetectIntersection();
 
-        //Dijkstra Methods
+
         void GenerateWaypoints();
         void initializeGraph();
+        void StopSignInitializeGraph();
         void insertWaypointTypes(Direction startDir);
 
 
@@ -251,6 +255,8 @@ namespace gazebo {
         void LanedDriving();
         void GridTurning(int turn);
         void WaypointDriving();
+        void StopSignWaypointDriving();
+        void StopSignGridTurning(int turn);
         void Follow();
         void Avoidance();
         void PerpendicularPark();
