@@ -77,13 +77,14 @@
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>100 20</size>
+              <size>1 1</size>
             </plane>
           </geometry>
           <material>
             <script>
-              <uri>__default__</uri>
-              <name>__default__</name>
+              <uri>model://asphalt_plane/materials/scripts</uri>
+              <uri>model://asphalt_plane/materials/textures</uri>
+              <name>vrc/asphalt</name>
             </script>
           </material>
         </visual>
