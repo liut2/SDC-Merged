@@ -230,6 +230,7 @@ namespace gazebo {
         // Avodiance variables
         math::Vector2d navWaypoint;
         bool trackingNavWaypoint;
+        bool obstacleInFront;
 
         // Variables relating to tracking objects in front of the car
         std::vector<sdcVisibleObject> frontObjects;

@@ -106,6 +106,7 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
 
     //If a car is being prioritized return immediately
     if((prioritized != 0) && (carId != prioritized)){
+        //printf("prioritized: %i", prioritized);
         return instruction::instruction(carId, .95*speed, 0);
     }
     float tm = simTime;

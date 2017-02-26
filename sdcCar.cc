@@ -69,9 +69,9 @@ const std::vector<math::Pose> resetPose_Vec = {
     math::Pose(52.5,20,.001,0,0,1.56), //S
     math::Pose(20,48,.001,0,0,0), //W
     //math::Pose(525, -102.5, .1, 0, 0, 0),// dummy car 1
-    math::Pose(437, -80.5, .079, 0, 0, 0),// dummy car 1
+    math::Pose(437, -80.5, .0781, 0, 0, 0),// dummy car 1
     //math::Pose(535, -102.5, 0.1, 0, 0, 0)// dummy car 2
-    math::Pose(447, -80.5, .079, 0, 0, 0),// dummy car 1
+    math::Pose(447, -80.5, .0781, 0, 0, 0),// dummy car 1
     //combined world proposed
     math::Pose(48,80,.031,0,0,-1.56), //N
     math::Pose(80,52.5,.031,0,0,3.1415), //E
@@ -174,7 +174,8 @@ void sdcCar::Drive()
     {
         case laneDriving:
           combinedDriving2017();
-          //MatchTargetSpeed();
+
+
         break;
         // Final state, car is finished driving
         case stop:
@@ -1288,8 +1289,18 @@ void sdcCar::driveOnCurvedRoad(double degree) {
 // Combine the lane driving and lane overtaking
 void sdcCar::combinedDriving2017() {
   //printf("Starting the lane driving portion\n");
+
   if(this->carId == 1){
+
     this->SetTargetSpeed(7);
+    if (!this->obstacleInFront) {
+      //printf("no obstacle\n");
+      MatchTargetSpeed();
+    } else {
+      //printf("obstacle\n");
+      this->gas = 0.0;
+      this->brake = -1.0;
+    }
     //printf("car 1 x: %f y:%f\n", this->x, this->y);
     //printf("car_0 target speed: %f\n", this->targetSpeed);
     float switchDistance = 0;
@@ -1330,8 +1341,9 @@ void sdcCar::combinedDriving2017() {
       }
 
       if (!isOvertaking) {
+        this->obstacleInFront = false;
         isOvertaking = shouldWeOvertake();
-        if(isOvertaking == true){
+        if(isOvertaking){
           overtakeTimeElapsed = 0;
           overTakeDistTravelled = 0;
           initialSimTime = this->world->GetSimTime().Float();
@@ -1369,8 +1381,10 @@ void sdcCar::combinedDriving2017() {
 //This is the Lane Driving portion
 void sdcCar::laneDriving2017(){
 
-  if (nonCurvedTurnCounter > 5000) {
+  if (nonCurvedTurnCounter > 1000) {
+    printf("reset curvedTurnCounter\n");
     curvedTurnCounter = 0;
+    averageDegree = 0;
     nonCurvedTurnCounter = 0;
   }
 
@@ -1382,7 +1396,9 @@ void sdcCar::laneDriving2017(){
   }
   double degree = this->cameraSensorData->getMidlineAngle();
   //printf("The angle is %f\n", degree);
-  if(std::abs(degree) < 20){
+  isInStraightRoad = false;
+  isInCurveRoad = false;
+  if(std::abs(degree) < 30){
     //printf("in straight road!\n");
     isInStraightRoad = true;
   }
@@ -1398,7 +1414,7 @@ void sdcCar::laneDriving2017(){
   }
   //When its in the curve
   if (isInCurveRoad && !isInStraightRoad){
-    printf("Case 1: In Curve\n");
+    //printf("Case 1: In Curve\n");
     //printf("adjustment to steer mag: %f\n", degree/55);
     curvedTurnCounter++;
     averageDegree *= (curvedTurnCounter - 1);
@@ -1408,7 +1424,7 @@ void sdcCar::laneDriving2017(){
     //else{
     //  averageDegree += pow(degree/50,2);
     //}
-    averageDegree += degree/50;
+    averageDegree += degree/60;
     averageDegree /= curvedTurnCounter;
     //printf("curvedTurnCounter is %i\n", curvedTurnCounter);
     //if (std::abs(averageDegree) > std::abs(degree/50)) {
@@ -1418,12 +1434,12 @@ void sdcCar::laneDriving2017(){
     }*/
     if(degree < 0){
       //this->cameraSensorData->UpdateSteeringMagnitude(-1*pow(degree/50,2));
-      this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
+      this->cameraSensorData->UpdateSteeringMagnitude(degree/60);
       //printf("adjust amount: %f\n",-1*pow(degree/50,2));
       //printf("adjust amount: %f, average is %f\n",degree/50, averageDegree);
     }
     else{
-      this->cameraSensorData->UpdateSteeringMagnitude(degree/50);
+      this->cameraSensorData->UpdateSteeringMagnitude(degree/60);
       //this->cameraSensorData->UpdateSteeringMagnitude(pow(degree/50,2));
       //printf("adjust amount: %f\n",pow(degree/50,2));
       //printf("adjust amount: %f, average is %f\n",degree/50, averageDegree);
@@ -1434,7 +1450,7 @@ void sdcCar::laneDriving2017(){
     previousAngle = degree;
   }
   else if (isInStraightRoad && !isInCurveRoad){
-    printf("Case 2: In Straight\n");
+    //printf("Case 2: In Straight\n");
     if(this->GetSpeed() < this->targetSpeed){
       //printf("Subcase: Accelerating\n");
       //printf("Get speed: %f, targed speed: %f\n", this->GetSpeed(), this->targetSpeed);
@@ -1444,10 +1460,41 @@ void sdcCar::laneDriving2017(){
     else{
       this->gas = 0;
     }
-    laneCenter();
+    if (nonCurvedTurnCounter < 400) {
+      double adjustAmount = averageDegree*0.4;
+      if (adjustAmount < 0) {
+        adjustAmount = fmax(adjustAmount, -MAX_ADJUST);
+      } else {
+        adjustAmount = fmin(adjustAmount, MAX_ADJUST);
+      }
+      if (nonCurvedTurnCounter < 2) {
+        printf("starting follow through %f\n", adjustAmount);
+      }
+      //printf("exiting curve, adjusting %f\n", averageDegree*2/3);
 
-  }
-  else{
+      if (0.4*averageDegree)
+      this->cameraSensorData->UpdateSteeringMagnitude(adjustAmount);
+    } else {
+      if (nonCurvedTurnCounter == 400) {
+        printf("ending follow through %f\n", adjustAmount);
+      }
+      laneCenter();
+    }
+
+  } else{
+    if (this->carId == 1) {
+      printf("lol it never goes here right?\n");
+    }
+    if (isInStraightRoad) {
+      printf("in else, straight road true\n");
+    }
+    if (isInCurveRoad) {
+      printf("in else, curve road true\n");
+    }
+    if (!isInCurveRoad && !isInStraightRoad) {
+      printf("in else, in limbo\n");
+    }
+
     //if its about to exit curve and get back on straight road
     //lets try implementing an extra turn "counter" here so that we continue turning for a little bit long when we exit the curve
     if(std::abs(degree) <= 20){
@@ -1493,7 +1540,7 @@ void sdcCar::laneDriving2017(){
     }
   }
   //printf("target speed %f, car id %d\n", this->targetSpeed, this->carId);
-  this->MatchTargetSpeed();
+  //this->MatchTargetSpeed();
 }
 
 
@@ -1550,7 +1597,7 @@ void sdcCar::overtaking2017(){
 
         double verticalDifference = this->cameraSensorData->getVerticalDifference();
         printf("leftmostlateral: %f, vertical difference: %f\n", leftMostLateral, verticalDifference);
-        if(leftMostLateral >= MIN_DIST_TO_PASS && std::abs(verticalDifference) < 15){
+        if(leftMostLateral >= MIN_DIST_TO_PASS && std::abs(verticalDifference) < 20){
           isSideClearOfCars = true;
           overTakeDistTravelled = 0;
           initialSimTime = this->world->GetSimTime().Float();
@@ -1632,7 +1679,7 @@ void sdcCar::overtaking2017(){
   //printf("The car id is %i and the front lidar id is%i\n", this->carId, this->frontLidar->GetId() + 8);
   //this->MatchTargetDirection();
   // Attempts to match the target speed
-  this->MatchTargetSpeed();
+  //this->MatchTargetSpeed();
   }
 }
 
@@ -1948,23 +1995,26 @@ bool sdcCar::shouldWeOvertake(){
       double verticalDifference = this->cameraSensorData->getVerticalDifference();
       //printf("verticaldiff: %f\n", adjustVertDiff);
       printf("closest longitude: %f\n", closestlongitude);
-      if ((closestlongitude < MIN_DIST_TO_PASS) && (closestlongitude > (2/3)*MIN_DIST_TO_PASS)) {
+      if (closestlongitude < MIN_DIST_TO_PASS) {
         //if (std::abs(verticalDifference)< 10 && leftLaneFree) {
-        if (std::abs(verticalDifference)< 15 && leftLaneFree) {
+        if (std::abs(verticalDifference)< 20 && leftLaneFree) {
           turnCounter = 0;
           isOvertaking = true;
           printf("is about to overtake\n");
+        } else {
+          //don't crash if we can't pass
+          this->obstacleInFront = true;
         }
-        this->brake = -1.0;
-        //this->gas = 0.0;
+
+        //this->brake = -1.0;
+        //this->gas = 0.5;
         printf("braking\n");
-      } else if (closestlongitude <= (2/3)*MIN_DIST_TO_PASS) {
-        this->brake = -3.0;
-        this->gas = 0.0;
-        printf("Extreme Brake\n");
-      } else {
-        this->brake = 0.0;
-        MatchTargetSpeed();
+      } //else if (closestlongitude <= (2/3)*MIN_DIST_TO_PASS) {
+        //this->brake = -3.0;
+        //this->gas = 0.0;
+        //printf("Extreme Brake\n"); }
+      else {
+        this->obstacleInFront = false;
       }
     }
     return isOvertaking;
@@ -2085,6 +2135,10 @@ void sdcCar::laneCenter(){
   }
 
 }
+
+//void sdcCar::checkForObstacles() {}
+
+
 
 
 /////////////////////////
@@ -2828,4 +2882,5 @@ sdcCar::sdcCar(){
 
     // Variables for avoidance
     this->trackingNavWaypoint = false;
+    this->obstacleInFront = false;
 }
