@@ -20,6 +20,7 @@ public:
     sdcManager(int id);
     int id;
     void printid();
+    static void printGrid();
     static void registerCar(int carId, int turning, int direction);
     static void laneStopRequest(int fromDir);
 

@@ -38,6 +38,7 @@ void sdcManager:: printid(){
     printf("%d", id);
 }
 
+
 void sdcManager::setRate(float newRate){
     rate = newRate;
     //printf("------rate: %f------\n", rate);
@@ -67,12 +68,28 @@ void sdcManager::setGrid(float filled, int x, int y){
     //std::vector<int> temp = std::vector<int>();
     //temp.at(x) = filled;
     //grid.at(y) = temp;
+
+    //If we return NaN set a spot to simTime. If there are conflicts they should be detected by neighbors anyways.
+    if (filled != filled){
+        filled = simTime + 1;
+    }
     grid[x][y] = filled;
 }
 
 float sdcManager::getGrid(int x, int y){
     //printf("in get grid\n");
     return grid[x][y];
+}
+
+void sdcManager::printGrid(){
+    printf("*********************************\n");
+    for (int row = 0; row < gridSize; row++){
+        for (int col = 0; col < gridSize; col++){
+            printf("%.1f|",grid[row][col]);
+        }
+        printf("\n- - - - - - - - - - - - - - - - - - - - - - - -\n");
+    }
+    printf("*********************************\n");
 }
 
 void sdcManager::registerCar(int carId, int turning, int direction) {
@@ -195,6 +212,7 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
+            //sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
          }
 
@@ -258,6 +276,7 @@ instruction sdcManager::reservationRequest(int carId, float x, float y, float sp
           }
            prioritized = 0;
            priorityList[carId] = 0.0;
+           //sdcManager::printGrid();
            return instruction::instruction(carId, speedIntent, 1);
         }
       }
@@ -483,6 +502,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
+            //sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -654,6 +674,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
+            //sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -830,6 +851,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
+            //sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1009,6 +1031,7 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
+            //sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1105,6 +1128,7 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
+            //sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1172,6 +1196,7 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
+            //sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1239,6 +1264,7 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
+            //sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -1306,6 +1332,7 @@ instruction sdcManager::rightTurnRequest(int carId, float x, float y, float spee
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
+            //sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
