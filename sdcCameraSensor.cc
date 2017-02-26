@@ -500,8 +500,8 @@ void sdcCameraSensor::OnUpdate() {
 				Point midPoint = Point((l1[2] + l2[2])/2, l1[3]);
 
 				//line(imageROI, Point(vanishPoint.x, vanishPoint.y + offset[i]*row/15), Point(midPoint.x, midPoint.y + offset[i]*row/15), Scalar(colors[i][0],colors[i][1],colors[i][2]), 3, CV_AA);
-				//line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
-				//line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				line(imageROI, Point(l1[0], l1[1] + offset[i]*row/15), Point(l1[2], l1[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
+				line(imageROI, Point(l2[0], l2[1] + offset[i]*row/15), Point(l2[2], l2[3] + offset[i]*row/15), Scalar(colors[i-1][0],colors[i-1][1],colors[i-1][2]), 3, CV_AA);
 				// find the midline we want
 				Vec4i realMidline;
 				realMidline[0] = vanishPoint.x;
@@ -576,7 +576,7 @@ void sdcCameraSensor::OnUpdate() {
 		this->sensorData->setVerticalDifference(verticalDifference);
 		//printf("verticalDifference: %f\n", verticalDifference);
 		// draw two midlines
-		line(imageROI, Point(twoMidlines.at(0)[0], twoMidlines.at(0)[1] + offset[1]*row/15), Point(twoMidlines.at(0)[2], twoMidlines.at(0)[3] + offset[1]*row/15), Scalar(colors[1][0],colors[1][1],colors[1][2]), 3, CV_AA);
+		line(imageROI, Point(twoMidlines.at(0)[0], twoMidlines.at(0)[1] + offset[1]*row/15), Point(twoMidlines.at(0)[2], twoMidlines.at(0)[3] + offset[1]*row/15), Scalar(colors[4][0],colors[4][1],colors[4][2]), 3, CV_AA);
 		line(imageROI, Point(twoMidlines.at(1)[0], twoMidlines.at(1)[1] + offset[2]*row/15), Point(twoMidlines.at(1)[2], twoMidlines.at(1)[3] + offset[2]*row/15), Scalar(colors[2][0],colors[2][1],colors[2][2]), 3, CV_AA);
 	}
 
@@ -602,7 +602,7 @@ void sdcCameraSensor::OnUpdate() {
 		this->sensorData->setVerticalDifference(verticalDifference);
 		// draw midlines
 
-		line(imageROI, Point(previousMidlineInVector[0], previousMidlineInVector[1] + offset[1]*row/15), Point(previousMidlineInVector[2], previousMidlineInVector[3] + offset[1]*row/15), Scalar(colors[1][0],colors[1][1],colors[1][2]), 3, CV_AA);
+		line(imageROI, Point(previousMidlineInVector[0], previousMidlineInVector[1] + offset[1]*row/15), Point(previousMidlineInVector[2], previousMidlineInVector[3] + offset[1]*row/15), Scalar(colors[4][0],colors[4][1],colors[4][2]), 3, CV_AA);
 		line(imageROI, Point(twoMidlines.at(0)[0], twoMidlines.at(0)[1] + offset[2]*row/15), Point(twoMidlines.at(0)[2], twoMidlines.at(0)[3] + offset[2]*row/15), Scalar(colors[2][0],colors[2][1],colors[2][2]), 3, CV_AA);
 		/*
 		printf("got here\n");
