@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Free HTML5 Templates</title>
+  <title>Self Driving Car 2017 Comps</title>
   <meta name="description" content="website description" />
   <meta name="keywords" content="website keywords, website keywords" />
   <meta http-equiv="content-type" content="text/html; charset=windows-1252" />
@@ -36,71 +36,55 @@
 
     <div id="slideshow_container">
 	  <div class="slideshow">
-	    <ul class="slideshow">
-          <li class="show"><img width="940" height="250" src="images/home_1.jpg" alt="&quot;Enter your caption here&quot;" /></li>
-          <li><img width="940" height="250" src="images/home_2.jpg" alt="&quot;Enter your caption here&quot;" /></li>
-        </ul>
+      <h2>1. Video demo of the car driving on straight and curved roads</h2>
+	    <iframe width="560" height="315" src="https://www.youtube.com/embed/Mj8G8K4yHqY" frameborder="0" allowfullscreen></iframe>
 	  </div><!--close slideshow-->
 	</div><!--close slideshow_container-->
 
 	<div id="site_content">
+      <div id="content">
+          <div class="content_item">
+              <h2>2. Description of the algorithm</h2>
+              <h3>2.1 Image processing part</h3>
+              <p>The goal of the image processing is to detect lanes in real-time. And it consists of the following steps.</p>
 
-	  <div class="sidebar_container">
-		<div class="sidebar">
-          <div class="sidebar_item">
-            <h2>New Website</h2>
-            <p>Welcome to our new website. Please have a look around, any feedback is much appreciated.</p>
-          </div><!--close sidebar_item-->
-        </div><!--close sidebar-->
-		<div class="sidebar">
-          <div class="sidebar_item">
-            <h2>Latest Update</h2>
-            <h3>March 2013</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim.</p>
-		  </div><!--close sidebar_item-->
-        </div><!--close sidebar-->
-		<div class="sidebar">
-          <div class="sidebar_item">
-            <h3>February 2013</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim.</p>
-		  </div><!--close sidebar_item-->
-        </div><!--close sidebar-->
-        <div class="sidebar">
-          <div class="sidebar_item">
-            <h2>Contact</h2>
-            <p>Phone: +44 (0)1234 567891</p>
-            <p>Email: <a href="mailto:info@youremail.co.uk">info@youremail.co.uk</a></p>
-          </div><!--close sidebar_item-->
-        </div><!--close sidebar-->
-       </div><!--close sidebar_container-->
+              <p>Step 1: Find edges with Canny Edge Detection</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="160" src="images/OriginalImage-StraightRoad.png"/></div>
+                <div class="imageprocessing"><img width="320" height="160" src="images/EdgeImage-StraightRoad.png"/></div>
+              </div>
 
-	  <div id="content">
-        <div class="content_item">
-          <h2>Testimonials</h2>
-		    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elit sapien, tempus sit amet hendrerit volutpat, euismod vitae risus. Etiam consequat, sem et vulputate dapibus, diam enim tristique est, vitae porta eros mauris ut orci. Praesent sed velit odio. Ut massa arcu, suscipit viverra molestie at, aliquet a metus. Nullam sit amet tellus dui, ut tincidunt justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec iaculis egestas laoreet. Nunc non ipsum metus, non laoreet urna. Vestibulum quis risus quis diam mattis tempus. Vestibulum suscipit pretium tempor. </p>
-			<div class="content_container">
-			  <h3>Mr Joe Bloggs</h3>
-			  <p>&ldquo;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim. Aliquam facilisis neque non nunc posuere eget volutpat metus tincidunt.&rdquo;</p>
-			</div><!--close content_container-->
-            <div class="content_container">
-			  <h3>Mr Joe Bloggs</h3>
-			  <p>&ldquo;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim. Aliquam facilisis neque non nunc posuere eget volutpat metus tincidunt.&rdquo;</p>
-			</div><!--close content_container-->
-			<div class="content_container">
-			  <h3>Mr Joe Bloggs</h3>
-			  <p>&ldquo;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim. Aliquam facilisis neque non nunc posuere eget volutpat metus tincidunt.&rdquo;</p>
-			</div><!--close content_container-->
-            <div class="content_container">
-			  <h3>Mr Joe Bloggs</h3>
-			  <p>&ldquo;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim. Aliquam facilisis neque non nunc posuere eget volutpat metus tincidunt.&rdquo;</p>
-			</div><!--close content_container-->
-	    </div><!--close content_item-->
+              <p>Step 2: Divide the image into five sections</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="160" src="images/NEW_FiveSections_StraightRoad.png"/></div>
+              </div>
+              <p>By dividing the image into five sections, it enables us to distinguish between straight and curved roads. The dark blue and light blue represent lane boundaries from different sections. And the lane boundaries in each section intersect at certain point, a and b. In the image below on the left, a and b are almost the same. The reason is pretty obvious, on a straight road, the lane boundary segment all lie on the same line, so they always intersect at the same point. While in the image below on the right, since its a curved road, lane boundaries intersect at different points a and b because of the curvature. These different patterns tell us the road shape. Note that further image processing all takes place in each section independently. And we only care about the second and third section counting from the top, because change in road shapes in these two sections is enough for us to predict curves.</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="160" src="images/NEW_VanishingPoint_StraightRoad_Crop.jpg"/></div>
+                <div class="imageprocessing"><img width="320" height="160" src="images/VanishingPoint.jpg"/></div>
+              </div>
+
+              <p>Step 3: Find straight lines with Hough Transform</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="160" src="images/EdgeImage-StraightRoad.png"/></div>
+                <div class="imageprocessing"><img width="320" height="160" src="images/NEW_StraightLines_StraightRoad.png"/></div>
+              </div>
+
+              <p>Step 4: Identify lane boundaries out of straight lines</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="150" src="images/NEW_StraightLines_StraightRoad_Circle.jpg"/></div>
+                <div class="imageprocessing"><img width="320" height="150" src="images/LaneBoundaries-StraightRoad.png"/></div>
+              </div>
+
+
+              <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elit sapien, tempus sit amet hendrerit volutpat, euismod vitae risus. Etiam consequat, sem et vulputate dapibus, diam enim tristique est, vitae porta eros mauris ut orci. Praesent sed velit odio. Ut massa arcu, suscipit viverra molestie at, aliquet a metus. Nullam sit amet tellus dui, ut tincidunt justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec iaculis egestas laoreet. Nunc non ipsum metus, non laoreet urna. Vestibulum quis risus quis diam mattis tempus. Vestibulum suscipit pretium tempor. </p>-->
+	        </div><!--close content_item-->
       </div><!--close content-->
 	</div><!--close site_content-->
-    <footer>
+  <footer>
 	  <a href="index.html">Home</a> | <a href="ourwork.html">Our Work</a> | <a href="testimonials.html">Testimonials</a> | <a href="projects.html">Projects</a> | <a href="contact.html">Contact</a><br/><br/>
 	  <a href="http://fotogrph.com">Images</a> |  <a href="http://www.heartinternet.co.uk/vps/">Virtual Server</a>  | website template by <a href="http://www.freehtml5templates.co.uk">Free HTML5 Templates</a>
-    </footer>
+  </footer>
   </div><!--close main-->
 
   <!-- javascript at the bottom for fast page loading -->

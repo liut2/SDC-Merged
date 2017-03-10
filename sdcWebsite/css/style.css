@@ -158,7 +158,7 @@ ul#nav li.current a, ul#nav li:hover a
   text-shadow: none;}
 
 #slideshow_container
-{ height: 270px;
+{ height: 400px;
   background: #0043A8;
   padding-top: 20px;}
 
@@ -353,3 +353,7 @@ footer a:hover
   border-radius: 7px 7px 7px 7px;
   -moz-border-radius: 7px 7px 7px 7px;
   -webkit-border: 7px 7px 7px 7px;}
+
+.imageprocessing {
+  display:inline-block;
+}
