@@ -68,48 +68,41 @@ const std::vector<math::Pose> resetPose_Vec = {
     math::Pose(80,52.5,.001,0,0,3.1415), //E
     math::Pose(52.5,20,.001,0,0,1.56), //S
     math::Pose(20,48,.001,0,0,0), //W
-    //math::Pose(525, -102.5, .1, 0, 0, 0),// dummy car 1
-    math::Pose(437, -80.5, .0781, 0, 0, 0),// dummy car 1
-    //math::Pose(535, -102.5, 0.1, 0, 0, 0)// dummy car 2
-    math::Pose(447, -80.5, .0781, 0, 0, 0),// dummy car 1
-    //combined world proposed
+    math::Pose(437, -80.5, .0781, 0, 0, 0),// dummy car 1 for overtaking
+    math::Pose(447, -80.5, .0781, 0, 0, 0),// dummy car 2 for overtaking
+    //combined world poses
     math::Pose(48,80,.031,0,0,-1.56), //N
     math::Pose(80,52.5,.031,0,0,3.1415), //E
     math::Pose(52.5,20,.031,0,0,1.56), //S
     math::Pose(20,48,.031,0,0,0), //W
-    }; //W
+    };
 
-//destLocations
+//destLocations for intersection cars
 const std::vector<std::pair<double,double>> ends = {
     std::pair<double,double>(52.5, 90),
-    std::pair<double,double>(90, 48), //(110,48)
+    std::pair<double,double>(90, 48),
     std::pair<double,double>(48, 10),
     std::pair<double,double>(10,52.5)};
 
-
+//intersection exit location for intersection cars
 const std::vector<std::pair<double,double>> intExit = {
-    std::pair<double,double>(52.5, 55),
-    std::pair<double,double>(55, 48),
-    std::pair<double,double>(48,45),
-    std::pair<double,double>(45, 52.5)
+    std::pair<double,double>(52.5, 55), //N
+    std::pair<double,double>(55, 48), //E
+    std::pair<double,double>(48,45), //S
+    std::pair<double,double>(45, 52.5) //W
     };
-//n, e, s, w
-//dijkstra's stuff
-std::vector<int> unvisited;
-
-const int size = 5;
 
 
-int sdcCar::carIdCount = 0;
-int sdcCar::numCarPass = 0;
-float sdcCar::carsPerMinute = 0;
+int sdcCar::carIdCount = 0; //Used to give cars unique Id's
+int turnType = 0; // 0 = straight, 1 = left, 2 = right
+
+//Used to reset cars to go through the Intersection again
 bool sdcCar::teleport = false;
 std::vector<int> sdcCar::resetClear(10,1);
 
-
-
-int turnType = 0;
-//intersection testing vars
+// Used to get data on the performance of Intersection algorithms
+int sdcCar::numCarPass = 0;
+float sdcCar::carsPerMinute = 0;
 int sdcCar::carAmountRight = 0;
 int sdcCar::carAmountLeft = 0;
 int sdcCar::carAmountStraight = 0;
@@ -118,6 +111,7 @@ float sdcCar::totalLeftTimeAmount = 0;
 float sdcCar::totalStraightTimeAmount = 0;
 bool sdcCar::twoMinCheck = false;
 float carStartTime = 0;
+
 
 //The Variables that define what state we are in for lane driving
 bool isInStraightRoad = 1;
@@ -174,7 +168,7 @@ void sdcCar::Drive()
 
 
         break;
-        // Final state, car is finished driving
+        // Final state, car is finished driving. Slows down the car to a stop, and teleports the car
         case stop:
             this->Stop();
             this->MatchTargetSpeed();
@@ -193,7 +187,7 @@ void sdcCar::Drive()
                     if(this->combined){
                         randIndex += 6; //Because the combined world road height is different
                     }
-                    if(this->teleport){
+                    if(this->teleport){ //teleport is a boolean saying carId 1 has entered lane driving (only used in merged world)
                         if(carId == 2){
                             randIndex = 4;
                         }
@@ -228,10 +222,7 @@ void sdcCar::Drive()
 
         // Default state; drive straight to target location
         case waypoint:
-
-        // Handle lane driving
-
-            if(this->crudeSwitch == 3){
+            if(this->crudeSwitch == 3){ //If we are in stop sign mode follow the stop sign protocol.
                 this->StopSignWaypointDriving();
             }
             else{
@@ -241,18 +232,6 @@ void sdcCar::Drive()
             this->MatchTargetDirection();
 
         break;
-
-        // At a stop sign, performing a turn
-        case intersection:
-
-
-        break;
-
-        // Follows object that is going in same direction/towards same target
-        case follow:
-
-        break;
-
 
     }
 }
@@ -294,17 +273,14 @@ void sdcCar::MatchTargetDirection(){
           this->steeringAmount = 0;
         }
     }
-
-
-
 }
 
 /*
  * Attempts to match the current target speed
  */
 void sdcCar::MatchTargetSpeed(){
+    // Reversing code is from the 2016 group
     // Invert all the values if the car should be moving backwards
-
     int dirConst = this->reversing ? -1 : 1;
 
     // If the car is moving the wrong direction or slower than the target speed, press on the gas
@@ -334,13 +310,16 @@ void sdcCar::WaypointDriving() {
         // Pull the next waypoint and set the car to drive towards it
         // Check if the car is close enough to the target to move on
         double distance = sqrt(pow(WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(WAYPOINT_VEC[progress].pos.second - this->y,2));
+        //Stops the car if we should stop at the next waypoint and we are within the stop distance
         if(WAYPOINT_VEC[progress].waypointType == 3 && distance < (this->GetSpeed() * this->GetSpeed())/2.9) {
             this->currentState = stop;
             this->targetSpeed = 0;
             return;
         }
+        //If we are after the intersection
         if(progress == 2){
             float objDist = this->ObjectOnCollisionCourse();
+            //Use lidar to slow down if we are going to hit a car
             if(objDist < (this->GetSpeed() * this->GetSpeed())/2 + 2){
                 this->targetSpeed = this->targetSpeed * .9;
                 return;
@@ -349,23 +328,24 @@ void sdcCar::WaypointDriving() {
                 this->targetSpeed = fmax(this->targetSpeed * 1.01, this->maxSpeed);
             }
         }
-
+        //If we are before the intersection and do not have a reservation
         if (WAYPOINT_VEC[0].hasReservation == false && progress == 0){
-            if (distance < 20){
+            if (distance < 20){ //If we are close to the intersection make a reservation request
                 if (this->ObjectOnCollisionCourse() > distance - 3) {
                     auto instruction = sdcManager::reservationRequest(carId, this->x, this->y, GetSpeed(), WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir);
-                    if (instruction.getHasReservation() == 1){
+                    if (instruction.getHasReservation() == 1){ // If we received a reservation
                         this->targetSpeed = instruction.getSpeed();
                         WAYPOINT_VEC[0].hasReservation = true;
                     }
                     else{
+                       // If we didn't get a reservation make sure we don't hit any cars in front of us and slow down.
                         float objDist = this->ObjectOnCollisionCourse();
                         if(objDist < 7 && objDist < distance){
                             this->targetSpeed = .2*this->targetSpeed;
                         }
                         else{
-                            if (distance < 5){
-                                this->targetSpeed = instruction.getSpeed();
+                            if (distance < 5){ // If we aren't yet at the intersection creep towards it at speed 1
+                                this->targetSpeed = 0;
                             }
                             else{
                                 this->targetSpeed = fmax(instruction.getSpeed(),1);
@@ -379,7 +359,7 @@ void sdcCar::WaypointDriving() {
 
             }
             else {
-                //Far away from the intersection
+                //Far away from the intersection just don't hit any cars in front of us.
                 float objDist = this->ObjectOnCollisionCourse();
                 if(objDist < 7){
                     this->targetSpeed = .9*this->targetSpeed;
@@ -389,7 +369,7 @@ void sdcCar::WaypointDriving() {
                 }
             }
         }
-        else if(WAYPOINT_VEC[progress].waypointType != 3){
+        else if(WAYPOINT_VEC[progress].waypointType != 3){ //if not stop
             //USE SPEED TO DETERMINE TURNING LIM
             if (WAYPOINT_VEC[progress].waypointType == 1) {
                 //LEFT
@@ -409,21 +389,6 @@ void sdcCar::WaypointDriving() {
     }
 
 }
-
-/*
- * Uses camera data to detect lanes and sets targetDirection to stay as close
- * as possible to the midpoint.
- */
-void sdcCar::LanedDriving() {
-    int lanePos = this->cameraSensorData->LanePosition();
-    this->SetTurningLimit(this->cameraSensorData->GetNewSteeringMagnitude());
-
-    if (!(lanePos > 320 || lanePos < -320)) {
-        sdcAngle laneWeight = sdcAngle(tan(lanePos/(PI*66.19))/10);
-        this->SetTargetDirection(this->GetDirection() + laneWeight);
-    }
-}
-
 
 /*
  * Executes a turn at an intersection
@@ -457,15 +422,11 @@ void sdcCar::GridTurning(int turn){
                 math::Vector2d nextTarget = {WAYPOINT_VEC[progress+1].pos.first,WAYPOINT_VEC[progress+1].pos.second};
                 sdcAngle targetAngle = AngleToTarget(nextTarget);
                 this->SetTargetDirection(targetAngle);
-                if (progress == 1){
-                    //printf("distance: %f, x: %f, y: %f\n", distance, WAYPOINT_VEC[progress].pos.first, WAYPOINT_VEC[progress].pos.second);
-                }
                 if(progress < 2){
                     this->waypointProgress++;
                     if (this->waypointProgress == 2){
                         this->targetSpeed = this->maxSpeed;
                     }
-                    //printf("progress: %i\n", this->waypointProgress);
                 }
             }
         }
@@ -473,14 +434,28 @@ void sdcCar::GridTurning(int turn){
 
 }
 
-//////////////////////
-// DIJKSTRA METHODS //
-//////////////////////
+/*
+ * Uses camera data to detect lanes and sets targetDirection to stay as close
+ * as possible to the midpoint.
+ */
+void sdcCar::LanedDriving() {
+    int lanePos = this->cameraSensorData->LanePosition();
+    this->SetTurningLimit(this->cameraSensorData->GetNewSteeringMagnitude());
+
+    if (!(lanePos > 320 || lanePos < -320)) {
+        sdcAngle laneWeight = sdcAngle(tan(lanePos/(PI*66.19))/10);
+        this->SetTargetDirection(this->GetDirection() + laneWeight);
+    }
+}
+
+////////////////////////
+// Intersection Setup //
+////////////////////////
 
 //Generates a series of waypoints to get to the desired destination
 void sdcCar::GenerateWaypoints(){
     GetNSEW();
-    if (this->crudeSwitch == 3) {
+    if (this->crudeSwitch == 3) { //If we are using the stop sign code
         StopSignInitializeGraph();
         insertWaypointTypes(this->currentDir);
         STOP_SIGN_WAYPOINT_VEC.push_back(intersections[1].waypoint);
@@ -497,25 +472,23 @@ void sdcCar::GenerateWaypoints(){
 
 //nesw
 void sdcCar::initializeGraph() {
-    //make the sdcIntersections
+    //Each car will have 3 waypoints (entrance to intersection, exit of intersection, destination location)
+    // The waypoints are created using sdcIntersection objects which are relics of the 2016 group.
     sdcIntersection destIntersection;
     destIntersection.place = 0;
     sdcIntersection exitIntersection;
     exitIntersection.place = 1;
     sdcIntersection centerIntersection;
     centerIntersection.place = 2;
-    turnType = genRand(2); //returns if the car goes straight (0) left (1) or right (2)
-    if(this->crudeSwitch == 0){
+    turnType = genRand(2); //randomly returns if the car goes straight (0) left (1) or right (2)
+    if(this->crudeSwitch == 0){ //If in combined world we ensure that carId 1 will always go to the lane driving portion of the world
         if (carId == 1){
           turnType = 0;
         }
     }
-    fflush(stdout);
 
+    //Set the waypoints based on where we are coming from and which turn we are performing.
     if(this->x > 46 && this->x < 50){ //NORTH END
-        fflush(stdout);
-        //right turns first dest is 3 past intersection
-        //left turns first dest is 7 past intersection
         this->fromDir = 0;
         switch(turnType){
             case 0:
@@ -599,21 +572,16 @@ void sdcCar::initializeGraph() {
         }
         centerIntersection.waypoint = sdcWaypoint(0,std::pair<double,double>(45,48));
     }
-    else{
-        fflush(stdout);
-    }
-
-
     centerIntersection.waypoint.waypointType = turnType;
     exitIntersection.waypoint.waypointType = turnType;
-    destIntersection.waypoint.waypointType = 3;
-    if(this->crudeSwitch == 0){
+    destIntersection.waypoint.waypointType = 3; // 3 = stop
+    if(this->crudeSwitch == 0){ // If we are in the combined world the car is not stopping at its destination
         if (carId == 1){
             destIntersection.waypoint.waypointType = 0;
         }
     }
     centerIntersection.waypoint.hasReservation = false;
-    //make the distance to all intersections infinity
+    //make the distance to all intersections infinity (relic of previous year)
     intersections = {destIntersection, exitIntersection, centerIntersection};
     for (int i = 0; i < intersections.size(); ++i) {
         intersections[i].dist = std::numeric_limits<double>::infinity();
@@ -925,10 +893,8 @@ bool sdcCar::IsObjectTooFurious(sdcVisibleObject obj){
  * Default rate: 1.0
  */
 void sdcCar::Accelerate(double amt, double rate){
-
     this->SetTargetSpeed(this->GetSpeed() + amt);
     this->SetAccelRate(rate);
-    fflush(stdout);
 }
 
 /*
@@ -1415,7 +1381,7 @@ void sdcCar::laneCenter(){
 
 
 /////////////////////////
-////STOP SIGN STUFFS/////
+////STOP SIGN STUFF/////
 /////////////////////////
 void sdcCar::StopSignGridTurning(int turn){
     int progress = this->waypointProgress;
@@ -1436,24 +1402,22 @@ void sdcCar::StopSignGridTurning(int turn){
             return;
 
         }
-        else{
+        //car sends reservation request when velocity is below threshold
+        //manager sends back response and car sets hasReservation to true
+        //car needs to be able to send "out of intersection" message to manager
+        else{ //If it is at the intersection and going slow enough make a request
             if(GetSpeed() < .1){
                 if(manager::stopSignHandleRequest(carId, STOP_SIGN_WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir)){
                     STOP_SIGN_WAYPOINT_VEC[progress].hasReservation = true;
                     this->inIntersection = true;
-                    fflush(stdout);
                 }
             }
-            if(!laneStopped){
+            if(!laneStopped){ //Stop sign cars don't use lidar we simply have the manager tell all cars in its lane stop.
                 manager::laneStopRequest(this->fromDir);
                 laneStopped = true;
             }
 
             this->Stop();
-
-            //car sends reservation request when velocity is below threshold
-            //manager sends back response and car sets hasReservation to true
-            //car needs to be able to send "out of intersection" message to manager
             return;
         }
     }
@@ -1474,8 +1438,6 @@ void sdcCar::StopSignGridTurning(int turn){
                 if(manager::stopSignHandleRequest(carId, STOP_SIGN_WAYPOINT_VEC[progress].waypointType, this->destDirection, this->fromDir)){
                     STOP_SIGN_WAYPOINT_VEC[progress].hasReservation = true;
                     this->inIntersection = true;
-                    //printf("destDirection: %i\n", this->destDirection);
-                    fflush(stdout);
                 }
             }
             if(!laneStopped){
@@ -1487,7 +1449,8 @@ void sdcCar::StopSignGridTurning(int turn){
         }
     }
 }
-
+//We duplicated setup methods because they differed between stop sign and reservations.
+//We did not have time to update the old stop sign code to conform with reservation code
 void sdcCar::StopSignInitializeGraph() {
     //make the sdcIntersections
     sdcIntersection destIntersection;
@@ -1495,14 +1458,9 @@ void sdcCar::StopSignInitializeGraph() {
     sdcIntersection centerIntersection;
     centerIntersection.place = 1;
     turnType = genRand(2); //returns if the car goes straight (0) left (1) or right (2)
-    fflush(stdout);
 
     if(this->x > 46 && this->x < 50){ //NORTH END
-
-        fflush(stdout);
-        //right turns first dest is 3 past intersection
-        //left turns first dest is 7 past intersection
-        manager::stopSignQueue(carId, 0);
+        manager::stopSignQueue(carId, 0); //The queue is used to know what lane the cars are in and have them stop when appropriate
         this->fromDir = 0;
         switch(turnType){
             case 0:
@@ -1567,12 +1525,6 @@ void sdcCar::StopSignInitializeGraph() {
         }
         centerIntersection.waypoint = sdcWaypoint(0,std::pair<double,double>(45,48));
     }
-    else{
-        printf("woops");
-        fflush(stdout);
-    }
-
-
     centerIntersection.waypoint.waypointType = turnType;
     destIntersection.waypoint.waypointType = 3;
     centerIntersection.waypoint.hasReservation = false;
@@ -1589,21 +1541,15 @@ void sdcCar::StopSignInitializeGraph() {
  */
 void sdcCar::StopSignWaypointDriving() {
     int progress = this->waypointProgress;
-    //printf("waypointvec size: %lu \n", STOP_SIGN_WAYPOINT_VEC.size());
     if(progress < STOP_SIGN_WAYPOINT_VEC.size()){
         // Pull the next waypoint and set the car to drive towards it
-
-        //printf("waypointvec.size: %i", WAYPOINT_VEC.size());
         this->Accelerate();
 
         // Check if the car is close enough to the target to move on
         double distance = sqrt(pow(STOP_SIGN_WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(STOP_SIGN_WAYPOINT_VEC[progress].pos.second - this->y,2));
-        //printf("distance %f", distance);
 
         // CODE FROM LAST GROUP THAT ASSUMES THAT THE CAR WILL TURN ONCE WE HAVE REACHED AN INTERSECTION
         if (distance < (this->GetSpeed() * this->GetSpeed())/2.9) {
-            //printf("speed: %f \n",this->GetSpeed());
-            //fflush(stdout);
             this->turning = true;
         }
         if(this->turning == true){
@@ -1620,15 +1566,10 @@ void sdcCar::StopSignWaypointDriving() {
             StopSignGridTurning(STOP_SIGN_WAYPOINT_VEC[progress].waypointType);
         } else {
             math::Vector2d nextTarget = {STOP_SIGN_WAYPOINT_VEC[progress].pos.first,STOP_SIGN_WAYPOINT_VEC[progress].pos.second};
-            //printf("nextTarget.x: %f \n", WAYPOINT_VEC[1].pos.first);
-            fflush(stdout);
-            //printf("first: %f second: %f", WAYPOINT_VEC[progress].pos.first, WAYPOINT_VEC[progress].pos.second);
             sdcAngle targetAngle = AngleToTarget(nextTarget);
             this->SetTargetDirection(targetAngle);
-            // this->LanedDriving();
         }
     } else {
-
         this->currentState = stop;
     }
 }
@@ -1638,7 +1579,7 @@ void sdcCar::StopSignWaypointDriving() {
 // GAZEBO METHODS - GAZEBO CALLS THESE AT APPROPRIATE TIMES //
 //////////////////////////////////////////////////////////////
 void sdcCar::OnUpdate() {
-    if(carId == 1){
+    if(carId == 1){ // The first car updates the intersection manager's simTime
           common::Time curSimTime = this->world->GetSimTime();
           common::Time curRealTime = this->world->GetRealTime();
           float curSimTm = curSimTime.Float();
@@ -1648,7 +1589,7 @@ void sdcCar::OnUpdate() {
               sdcManager::setRate(runRate);
               sdcManager::setTime(curSimTm);
           }
-        if(this->x > 97){
+        if(this->x > 97){ //Used in the combined world to switch to lane driving once we leave the intersection area
             if(this->crudeSwitch == 0){
                 this->crudeSwitch = 1;
                 this->SetTargetSpeed(5);
@@ -1657,9 +1598,12 @@ void sdcCar::OnUpdate() {
             }
         }
     }
-
+    //crudeSwitch
+    //in merged world use 0
     //in lanedriving use 1
     //in intersection world use 2
+    //in stop sign use 3
+
     if(this->currentState != stop){
         if (this->crudeSwitch == 0) {
             if((this->x >= 0 && this->x <= 100) && (this->y >= 0 && this->y <= 100)){
@@ -1677,7 +1621,7 @@ void sdcCar::OnUpdate() {
         this->currentState = laneDriving;
     }
 
-    //Stop sign code
+    //Stop sign intersection code
     if(this->crudeSwitch == 3){
         if(manager::shouldStop(carId, fromDir)){
             if(!laneStopped){
@@ -1692,7 +1636,7 @@ void sdcCar::OnUpdate() {
             }
         }
 
-
+        //The cars tell the manager when they leave the intersection
         if(this->inIntersection){
             //if outside intersection
             switch (this->destDirection) {
@@ -1732,6 +1676,7 @@ void sdcCar::OnUpdate() {
     this->x = pose.pos.x;
     this->y = pose.pos.y;
 
+    //Update objects detected by lidar sensors
     if(this->frontLidarLastUpdate != this->lidarSensorData->GetLidarLastUpdate(FRONT)){
       std::vector<sdcVisibleObject> v = this->lidarSensorData->GetObjectsInFront();
       fflush(stdout);
@@ -1742,9 +1687,7 @@ void sdcCar::OnUpdate() {
      std::vector<sdcVisibleObject> v = this->lidarSensorData->GetObjectsInFront();
      rightObjects = this->rightLidarSensorData->GetObjectsOnRight();
 
-
     // Call our Drive function, which is the brain for the car
-
     this->Drive();
 
 
@@ -1815,7 +1758,7 @@ void sdcCar::OnUpdate() {
             this->chassis->AddForceAtWorldPosition(axis * -amt, p.pos);
         }
     }
-    //Checks to see if the car has moved out of its starting position so we can reset another car to that location
+    //Checks to see if the car has moved out of its starting position so we can reset another car to that location when teleporting
     if (this->hasReset == 0){
         switch (this->clearIndex) {
             case 0: //North
@@ -1859,8 +1802,9 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     // Store the model and chassis of the car for later access
     this->model = _model;
     this->world = _model->GetWorld();
-    this->moduleSwitch = this->world->GetModel("car_wheel")->GetWorldPose().pos.x;
-    this->combined = false;
+    this->moduleSwitch = this->world->GetModel("car_wheel")->GetWorldPose().pos.x; //Used to set crudeSwitch
+    this->combined = false; //boolean to know if we are in combined world
+    //Sets crudeSwitch based on the moduleSwitch position
     if((this->moduleSwitch < -5) && (this->moduleSwitch > -15)){
         this->crudeSwitch = 0; //For merged world
         this->combined = true;
@@ -1882,6 +1826,7 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
         this->simStartTime = this->world->GetStartTime();
         this->setRate = false;
     }
+    //Access the cars sensors using gazebo magic
     this->chassis = this->model->GetLink(_sdf->Get<std::string>("chassis"));
     this->camera = this->model->GetLink(_sdf->Get<std::string>("camera"));
     this->frontLidar = this->model->GetLink(_sdf->Get<std::string>("frontLidar"));
@@ -1920,7 +1865,7 @@ void sdcCar::Init()
     // Compute the angle ratio between the steering wheel and the tires
     this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
     this->laneStopped = false;
-
+    //Access the cars sensors using the info we got in Load. Use the manager to connect the sensors to the car
     this->cameraSensorData = manager::getSensorData(this->cameraId);
     this->lidarSensorData = manager::getSensorData(this->frontLidarId);
     this->leftLidarSensorData = manager::getSensorData(this->leftLidarId);
@@ -1931,7 +1876,7 @@ void sdcCar::Init()
     this->yaw = sdcAngle(pose.rot.GetYaw());
     this->x = pose.pos.x;
     this->y = pose.pos.y;
-
+    //Initialzation code for intersections (gets called after teleporting)
     this->toldToStop = false;
     this->turning = false;
     if(this->hasReset == true){
@@ -1939,6 +1884,11 @@ void sdcCar::Init()
         common::Time curSimTime = this->world->GetSimTime();
         float curSimTm = curSimTime.Float();
         this->carsPerMinute = 60 * this->numCarPass / curSimTm;
+
+        /***
+        UNCOMMENT THESE PRINTS FOR TIMING DATA INFO
+        ***/
+
         //printf("Cars Per Minute: %f\n", this->carsPerMinute);
         if (this->turnType == 0) {
             //printf("Cars Time Spent: %f, going straight\n", curSimTm - this->carStartTime);
@@ -1964,6 +1914,7 @@ void sdcCar::Init()
             //printf("------------------------------------\n");
             this->twoMinCheck = true;
         }
+        //Reset various attributes of the intersection code
         this->hasReset = false;
         this->currentState = waypoint;
         WAYPOINT_VEC.clear();
@@ -1974,15 +1925,8 @@ void sdcCar::Init()
     this->carStartTime = this->world->GetSimTime().Float();
     time_t seconds;
     srand ((unsigned)time(&seconds));
-    //this->sensorData.InitLidar(LidarPos lidar, double minAngle, double angleResolution, double maxRange, int numRays);
-    //sdcFrontLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
     GenerateWaypoints();
-
 }
-
-/*
- * Called whenever Gazebo needs an update for this model
- */
 /*
  * Constructor for the car. Sets several parameters to default values, some of
  * which will get overwritten in Load or Init and others that will be updated
@@ -2029,10 +1973,6 @@ sdcCar::sdcCar(){
     this->DEFAULT_STATE = waypoint;
     this->currentState = DEFAULT_STATE;
 
-    this->currentPerpendicularState = backPark;
-    this->currentParallelState = rightBack;
-    this->currentAvoidanceState = notAvoiding;
-
     // Set starting speed parameters
     this->targetSpeed = this->maxCarSpeed;
 
@@ -2047,25 +1987,9 @@ sdcCar::sdcCar(){
     this->reversing = false;
     this->stopping = false;
 
-    // Variables for parking
-    this->targetParkingAngle = sdcAngle(0.0);
-    this->parkingAngleSet = false;
-    this->isFixingParking = false;
-    this->parkingSpotSet = false;
-
     // Variables for waypoint driving
     this->waypointProgress = 0;
 
-    // Variables for intersections
-    this->stoppedAtSign = false;
-    this->ignoreStopSignsCounter = 0;
-    this->atIntersection = 0;
-
-    // Variables for following
-    this->isTrackingObject = false;
-    this->stationaryCount = 0;
-
     // Variables for avoidance
-    this->trackingNavWaypoint = false;
     this->obstacleInFront = false;
 }

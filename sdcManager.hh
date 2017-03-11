@@ -17,59 +17,35 @@
 
 class sdcManager{
 public:
+   // id in case you want to have more than 1 intersection in a world
     sdcManager(int id);
     int id;
-    void printid();
     static void printGrid();
-    static void registerCar(int carId, int turning, int direction);
-    static void laneStopRequest(int fromDir);
 
-    //reservation
-    void makeGrid();
-    static void setGrid(float filled, int x, int y);
-    static float getGrid(int x, int y);
-    static float quadraticRoot(float a, float b, float c);
-    static instruction reservationRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
-    static bool stopSignHandleRequest(int carId, int turning, int direction, int fromDir);
-    static void stopSignCarLeft(int carId);
-    static bool stopSignQueue(int carId, int fromDir);
-    static bool shouldStop(int carId, int fromDir);
-    static gazebo::sdcSensorData *getSensorData(int cameraId);
+    //set the simulation rate and simulation time
     static void setRate(float rate);
     static void setTime(float curSimTime);
+    //reservation
+    void makeGrid(); //initialize a 10x10 2d vector
+    static void setGrid(float newTime, int x, int y);
+    static float getGrid(int x, int y);
+    static int gridSize;
+
+    //handles reservation requests and tells the car what to do
+    static instruction reservationRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
+
+    static float quadraticRoot(float a, float b, float c); //performs the quadratic equation
 private:
     static instruction rightTurnRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
     static instruction leftTurnRequest(int carId, float x, float y, float speed, int turning, int direction, int fromDir);
-    static int carAmt;
-    static std::vector<int> carList;
+
     static std::vector<std::vector<float>> grid;
-    static float maxTurnLeft;
-    static float maxTurnRight;
-    static time_t startTime;
-    static std::chrono::milliseconds msStartTime;
-    static float rate;
-    static float simTime;
-
-
-
-
-
-    static std::vector<int> carNorthQueue;
-    static std::vector<int> carEastQueue;
-    static std::vector<int> carSouthQueue;
-    static std::vector<int> carWestQueue;
-    static std::vector<gazebo::sdcSensorData> sensorDataList;
-    static std::map<int, gazebo::sdcSensorData> sensorManager;
+    static float maxTurnLeft; //maximum turning speed
+    static float maxTurnRight; //maximum turning speed
+    static float rate; //simulation rate
+    static float simTime; //simulation time
+    //variables for prioritized cars
     static std::map<int, float> priorityList;
     static int prioritized;
-    static int currentDir; //0 north, 1 east, 2 south, 3 west
-    static int currentTurn; // 0 straight, 1 left, 2 right
-    static bool nStop;
-    static bool eStop;
-    static bool sStop;
-    static bool wStop;
-    static int gridSize;
-
-
 };
 #endif
