@@ -6,23 +6,23 @@
 
 #IncludeRegexTransform: 
 
-/Accounts/liut2/Desktop/SDC-Merged/sdcAngle.hh
+/Accounts/trank/Desktop/SDC-Merged/sdcAngle.hh
 math.h
 -
 iostream
 -
 
-/Accounts/liut2/Desktop/SDC-Merged/sdcLidarRay.cc
+/Accounts/trank/Desktop/SDC-Merged/sdcLidarRay.cc
 stdio.h
 -
 sdcLidarRay.hh
-/Accounts/liut2/Desktop/SDC-Merged/sdcLidarRay.hh
+/Accounts/trank/Desktop/SDC-Merged/sdcLidarRay.hh
 
-/Accounts/liut2/Desktop/SDC-Merged/sdcLidarRay.hh
+/Accounts/trank/Desktop/SDC-Merged/sdcLidarRay.hh
 gazebo/common/common.hh
 -
 sdcAngle.hh
-/Accounts/liut2/Desktop/SDC-Merged/sdcAngle.hh
+/Accounts/trank/Desktop/SDC-Merged/sdcAngle.hh
 
 /usr/local/Cellar/gazebo6/6.6.0/include/gazebo-6.6/gazebo/common/Animation.hh
 string

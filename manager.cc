@@ -55,6 +55,20 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
         carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
         carSouthQueue.erase(std::remove(carSouthQueue.begin(), carSouthQueue.end(), carId), carSouthQueue.end());
         carWestQueue.erase(std::remove(carWestQueue.begin(), carWestQueue.end(), carId), carWestQueue.end());
+        switch (fromDir) {
+            case 0:
+                nStop = false;
+                break;
+            case 1:
+                eStop = false;
+                break;
+            case 2:
+                sStop = false;
+                break;
+            case 3:
+                wStop = false;
+                break;
+        }
         return true;
     }else if(carAmt == 1) { //one car already in intersection
         switch(currentTurn){
@@ -68,6 +82,20 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
                     carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
                     carSouthQueue.erase(std::remove(carSouthQueue.begin(), carSouthQueue.end(), carId), carSouthQueue.end());
                     carWestQueue.erase(std::remove(carWestQueue.begin(), carWestQueue.end(), carId), carWestQueue.end());
+                    switch (fromDir) {
+                        case 0:
+                            nStop = false;
+                            break;
+                        case 1:
+                            eStop = false;
+                            break;
+                        case 2:
+                            sStop = false;
+                            break;
+                        case 3:
+                            wStop = false;
+                            break;
+                    }
                     return true;
                 }
                 else if (turning == 2 && ((direction + 2)%4 == currentDir || (direction + 3)%4 == currentDir)) {
@@ -76,6 +104,20 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
                     carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
                     carSouthQueue.erase(std::remove(carSouthQueue.begin(), carSouthQueue.end(), carId), carSouthQueue.end());
                     carWestQueue.erase(std::remove(carWestQueue.begin(), carWestQueue.end(), carId), carWestQueue.end());
+                    switch (fromDir) {
+                        case 0:
+                            nStop = false;
+                            break;
+                        case 1:
+                            eStop = false;
+                            break;
+                        case 2:
+                            sStop = false;
+                            break;
+                        case 3:
+                            wStop = false;
+                            break;
+                    }
                     return true;
                 }
                 else{
@@ -97,6 +139,20 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
                     carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
                     carSouthQueue.erase(std::remove(carSouthQueue.begin(), carSouthQueue.end(), carId), carSouthQueue.end());
                     carWestQueue.erase(std::remove(carWestQueue.begin(), carWestQueue.end(), carId), carWestQueue.end());
+                    switch (fromDir) {
+                        case 0:
+                            nStop = false;
+                            break;
+                        case 1:
+                            eStop = false;
+                            break;
+                        case 2:
+                            sStop = false;
+                            break;
+                        case 3:
+                            wStop = false;
+                            break;
+                    }
                     return true;
                 }else{
                     if (!(direction == currentDir)) {
@@ -105,6 +161,20 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
                         carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
                         carSouthQueue.erase(std::remove(carSouthQueue.begin(), carSouthQueue.end(), carId), carSouthQueue.end());
                         carWestQueue.erase(std::remove(carWestQueue.begin(), carWestQueue.end(), carId), carWestQueue.end());
+                        switch (fromDir) {
+                            case 0:
+                                nStop = true;
+                                break;
+                            case 1:
+                                eStop = true;
+                                break;
+                            case 2:
+                                sStop = true;
+                                break;
+                            case 3:
+                                wStop = true;
+                                break;
+                        }
                         return true;
                     }
                     return false;
