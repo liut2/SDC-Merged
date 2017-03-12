@@ -1,5 +1,18 @@
 #include "manager.hh"
 
+/*
+
+The class implements a "stop sign" protocol of intersection management. Cars that
+want to go through the intersection will pull up to the intersection and send a request
+to manager. If it is allowed into the intersection based on a stop-sign-like policy, the manager
+will return true, otherwise it will return false and the car will wait.
+
+A secondary function of this class is to connect gazebo sensors to their respective cars
+using sensordata objects. The sensors and their cars send in information and the manager
+gives them both the same sensorData object so that the car can access the data the sensor gathers.
+
+*/
+
 int manager::carAmt = 0;
 int manager::currentDir = 0;
 int manager::currentTurn = 0;

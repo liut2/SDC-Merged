@@ -1,0 +1,5313 @@
+<sdf version='1.5'>
+  <world name='default'>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>50 50 113 0 1.57 1.57</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose frame=''>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    <scene>
+      <sky>
+        <clouds>
+          <speed>5</speed>
+        </clouds>
+      </sky>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <model name='car_wheel'>
+      <pose frame=''>-30 0 0 0 -0 0</pose>
+      <link name='link'>
+        <pose frame=''>-30 0 0 0 0 0</pose>
+        <velocity>0 0 0 0 -0 0</velocity>
+        <acceleration>0 0 0 0 -0 0</acceleration>
+        <wrench>0 0 0 0 -0 0</wrench>
+      </link>
+    </model>
+    <model name='intersection_1_1'>
+      <pose frame=''>50 50 0 0 -0 0</pose>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>10 10 1e-06</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>10 10 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>models/intersection/materials/scripts</uri>
+              <uri>models/intersection/materials/textures</uri>
+              <name>intersection</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+    </model>
+    <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+      <gravity>0 0 -9.8</gravity>
+      <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    </physics>
+    <audio>
+      <device>default</device>
+    </audio>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <state world_name='default'>
+      <sim_time>0 0</sim_time>
+      <real_time>0 0</real_time>
+      <wall_time>1483929695 306636000</wall_time>
+      <iterations>0</iterations>
+      <model name='asphalt_plane'>
+        <pose frame=''>50 50 -.1 0 -0 0</pose>
+        <link name='link'>
+          <pose frame=''>50 50 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='car_0'>
+        <pose frame=''>10 48 0 0 -0 0</pose>
+        <link name='back_left_wheel'>
+          <pose frame=''>9.13562 48.5083 0.300085 1.60614 1.57067 -3.11795</pose>
+          <velocity>-0.549277 -2.01639 -0.009771 0.010509 0.009747 0.920035</velocity>
+          <acceleration>-549.277 -2016.39 -9.77068 1.0844 -0.322232 -0.451494</acceleration>
+          <wrench>-5492.77 -20163.9 -97.7068 0 -0 0</wrench>
+        </link>
+        <link name='back_lidar'>
+          <pose frame=''>8.79991 48.0041 0.400137 -0.000233 0.000154 -0.004371</pose>
+          <velocity>0.012695 -6.16638 -0.013126 -0.096257 0.015892 -1.86203</velocity>
+          <acceleration>12.6949 -6166.37 -13.1264 1.13247 -0.183909 0.938291</acceleration>
+          <wrench>12.6949 -6166.37 -13.1264 0 -0 0</wrench>
+        </link>
+        <link name='back_right_wheel'>
+          <pose frame=''>9.12525 47.5091 0.300118 -0.599517 1.57057 -2.17932</pose>
+          <velocity>1.00175 -1.66692 -0.009666 -0.070198 0.010142 2.20108</velocity>
+          <acceleration>1001.75 -1666.92 -9.66589 2.05856 -0.716768 -1.17535</acceleration>
+          <wrench>10017.5 -16669.2 -96.6589 0 -0 0</wrench>
+        </link>
+        <link name='camera::link'>
+          <pose frame=''>10.65 47.9997 0.849997 -7.1e-05 0.008025 -0.000625</pose>
+          <velocity>-0.012436 3.76775 0.02557 -0.018856 -0.045356 -0.070127</velocity>
+          <acceleration>-12.4363 3767.75 25.5695 -0.006411 -1.37407 -1.01202</acceleration>
+          <wrench>-12.4363 3767.75 25.5695 0 -0 0</wrench>
+        </link>
+        <link name='chassis'>
+          <pose frame=''>10 48 0.35 0 -0 0</pose>
+          <velocity>0.033192 -0.332875 -0.010061 0.015366 -0.057274 0.228309</velocity>
+          <acceleration>33.1923 -332.875 -10.0611 2.79955 -0.725173 2.1147</acceleration>
+          <wrench>3319.23 -33287.5 -1006.11 0 -0 0</wrench>
+        </link>
+        <link name='front_left_wheel'>
+          <pose frame=''>10.8001 48.4992 0.299893 1.39708 1.57067 2.75936</pose>
+          <velocity>-3.19183 4.46666 -0.009039 0.034486 0.01035 0.759215</velocity>
+          <acceleration>-3191.83 4466.65 -9.03885 -0.071764 -0.925562 2.09165</acceleration>
+          <wrench>-31918.3 44666.5 -90.3885 0 -0 0</wrench>
+        </link>
+        <link name='front_lidar'>
+          <pose frame=''>11 47.9947 0.399812 -0.000215 0.000227 -0.006159</pose>
+          <velocity>0.016254 3.62011 -0.042715 -0.087577 0.050945 -2.71711</velocity>
+          <acceleration>16.2536 3620.11 -42.7148 0.387649 0.679724 -2.7728</acceleration>
+          <wrench>16.2536 3620.11 -42.7148 0 -0 0</wrench>
+        </link>
+        <link name='front_right_wheel'>
+          <pose frame=''>10.7982 47.4951 0.299924 -1.32438 1.57067 -3.10646</pose>
+          <velocity>2.42281 2.56609 -0.009301 0.015663 0.00896 -0.581193</velocity>
+          <acceleration>2422.81 2566.09 -9.30113 -0.044713 0.464591 0.001825</acceleration>
+          <wrench>24228.1 25660.9 -93.0113 0 -0 0</wrench>
+        </link>
+        <link name='gps'>
+          <pose frame=''>9.99996 48 1 -0.000119 1.3e-05 -0.00017</pose>
+          <velocity>-0.021593 -0.361922 -0.010008 -0.041692 -0.051562 0.147235</velocity>
+          <acceleration>-21.5926 -361.922 -10.0082 2.29021 -1.29683 2.72162</acceleration>
+          <wrench>-21.5926 -361.922 -10.0082 0 -0 0</wrench>
+        </link>
+        <link name='side_left_sensors'>
+          <pose frame=''>10.0004 48.55 0.39995 -0.000129 6e-05 -0.001164</pose>
+          <velocity>-3.36322 -0.368643 -0.025803 -0.046412 -0.028953 -0.328256</velocity>
+          <acceleration>-3363.22 -368.643 -25.8027 0.711488 0.678973 1.61159</acceleration>
+          <wrench>-3363.22 -368.643 -25.8027 0 -0 0</wrench>
+        </link>
+        <link name='side_right_sensors'>
+          <pose frame=''>9.99919 47.4499 0.400079 -0.000173 6.9e-05 -0.001919</pose>
+          <velocity>3.22234 -0.367814 0.019464 -0.067614 -0.024558 -0.68927</velocity>
+          <acceleration>3222.34 -367.814 19.4643 1.50148 0.575056 1.88026</acceleration>
+          <wrench>3222.34 -367.814 19.4643 0 -0 0</wrench>
+        </link>
+        <link name='top_laser'>
+          <pose frame=''>10 48 1.1 -0.000159 7.4e-05 -0.002577</pose>
+          <velocity>-0.007881 -0.329947 -0.010102 -0.061 -0.022116 -1.00378</velocity>
+          <acceleration>-7.88124 -329.947 -10.1017 -1.30926 0.124549 -1.60918</acceleration>
+          <wrench>-7.88124 -329.947 -10.1017 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='car_0_clone'>
+        <pose frame=''>48 90 0 0 0 -1.56237</pose>
+        <link name='back_left_wheel'>
+          <pose frame=''>48.4976 90.8721 0.300129 1.24486 1.57066 1.24706</pose>
+          <velocity>-1.64466 1.22957 -0.01077 0.008735 0.010027 0.91996</velocity>
+          <acceleration>-1644.66 1229.57 -10.7704 -0.689569 -0.601922 -0.527015</acceleration>
+          <wrench>-16446.6 12295.7 -107.704 0 -0 0</wrench>
+        </link>
+        <link name='back_lidar'>
+          <pose frame=''>47.9921 91.2 0.400018 -7.1e-05 2.5e-05 -1.56469</pose>
+          <velocity>-6.26082 -0.160401 -0.124334 -0.086955 0.107668 -1.84274</velocity>
+          <acceleration>-6260.82 -160.401 -124.334 1.00987 0.854213 -1.76476</acceleration>
+          <wrench>-6260.82 -160.401 -124.334 0 -0 0</wrench>
+        </link>
+        <link name='back_right_wheel'>
+          <pose frame=''>47.4973 90.869 0.30008 -0.995749 1.57064 2.14946</pose>
+          <velocity>-1.90775 -0.5373 -0.011018 0.010173 0.114542 2.18765</velocity>
+          <acceleration>-1907.75 -537.3 -11.0178 -2.39306 1.4445 1.10574</acceleration>
+          <wrench>-19077.5 -5373 -110.178 0 -0 0</wrench>
+        </link>
+        <link name='camera::link'>
+          <pose frame=''>48.0054 89.35 0.850007 -4e-05 0.007995 -1.56268</pose>
+          <velocity>3.74979 -0.096809 0.066221 -0.113293 0.079539 -0.041777</velocity>
+          <acceleration>3749.79 -96.8095 66.2205 2.94608 -0.99935 -0.936488</acceleration>
+          <wrench>3749.79 -96.8095 66.2205 0 -0 0</wrench>
+        </link>
+        <link name='chassis'>
+          <pose frame=''>48 90 0.35 0 0 -1.56237</pose>
+          <velocity>-0.411497 -0.167682 -0.010299 -0.108824 0.043809 0.240506</velocity>
+          <acceleration>-411.497 -167.682 -10.2995 -2.00986 -0.173081 1.745</acceleration>
+          <wrench>-41149.7 -16768.2 -1029.95 0 -0 0</wrench>
+        </link>
+        <link name='front_left_wheel'>
+          <pose frame=''>48.5067 89.2039 0.29993 1.47568 1.57066 1.37304</pose>
+          <velocity>4.74674 2.76187 -0.008405 0.011482 0.025663 0.770194</velocity>
+          <acceleration>4746.74 2761.88 -8.40483 -1.08462 0.529961 -2.63784</acceleration>
+          <wrench>47467.4 27618.8 -84.0483 0 -0 0</wrench>
+        </link>
+        <link name='front_lidar'>
+          <pose frame=''>48.0056 89 0.399965 -5e-05 4.9e-05 -1.56562</pose>
+          <velocity>3.58643 -0.1521 0.067201 -0.064717 0.088858 -2.68173</velocity>
+          <acceleration>3586.43 -152.1 67.2015 -1.88513 0.893112 1.18975</acceleration>
+          <wrench>3586.43 -152.1 67.2015 0 -0 0</wrench>
+        </link>
+        <link name='front_right_wheel'>
+          <pose frame=''>47.5047 89.1977 0.299881 -1.65201 1.57066 1.38545</pose>
+          <velocity>2.97552 -1.70504 -0.008216 0.008383 0.016134 -0.585831</velocity>
+          <acceleration>2975.52 -1705.04 -8.21589 -1.04169 -0.426088 1.64692</acceleration>
+          <wrench>29755.2 -17050.4 -82.1589 0 -0 0</wrench>
+        </link>
+        <link name='gps'>
+          <pose frame=''>48 90 1 -6.6e-05 -6e-06 -1.56245</pose>
+          <velocity>-0.386779 -0.085688 -0.010249 -0.114619 0.10345 0.163248</velocity>
+          <acceleration>-386.779 -85.6879 -10.2493 1.61983 0.222354 3.02692</acceleration>
+          <wrench>-386.779 -85.6879 -10.2493 0 -0 0</wrench>
+        </link>
+        <link name='side_left_sensors'>
+          <pose frame=''>48.55 90.0044 0.399975 -5.5e-05 8e-06 -1.56297</pose>
+          <velocity>-0.436175 3.23526 -0.057328 -0.101609 0.093124 -0.301882</velocity>
+          <acceleration>-436.175 3235.26 -57.3281 -1.07805 -1.12407 -0.288799</acceleration>
+          <wrench>-436.175 3235.26 -57.3281 0 -0 0</wrench>
+        </link>
+        <link name='side_right_sensors'>
+          <pose frame=''>47.45 89.9958 0.400031 -6e-05 8e-06 -1.56336</pose>
+          <velocity>-0.428226 -3.38191 0.042239 -0.101938 0.097665 -0.652719</velocity>
+          <acceleration>-428.226 -3381.91 42.2387 1.7349 -0.276055 -2.40882</acceleration>
+          <wrench>-428.226 -3381.91 42.2387 0 -0 0</wrench>
+        </link>
+        <link name='top_laser'>
+          <pose frame=''>48 90 1.1 -4.4e-05 7e-06 -1.56371</pose>
+          <velocity>-0.372979 -0.081207 -0.010311 -0.102545 0.083522 -0.964848</velocity>
+          <acceleration>-372.979 -81.207 -10.3115 1.12775 1.30072 -0.378828</acceleration>
+          <wrench>-372.979 -81.207 -10.3115 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='car_clone'>
+        <pose frame=''>90 52.5 0 0 0 -3.12446</pose>
+        <link name='back_left_wheel'>
+          <pose frame=''>90.872 52.0052 0.300096 1.6203 1.57065 0.052945</pose>
+          <velocity>0.549884 2.01726 -0.009758 -0.00971 -0.010072 0.917485</velocity>
+          <acceleration>549.884 2017.26 -9.75809 -0.285605 0.647158 -3.00184</acceleration>
+          <wrench>5498.84 20172.6 -97.5809 0 -0 0</wrench>
+        </link>
+        <link name='back_lidar'>
+          <pose frame=''>91.2 52.5157 0.400161 -0.000273 0.00018 -3.12957</pose>
+          <velocity>-0.017514 6.16909 -0.010865 0.097098 -0.017679 -1.86092</velocity>
+          <acceleration>-17.5136 6169.09 -10.8647 2.84982 1.17069 -1.09916</acceleration>
+          <wrench>-17.5136 6169.09 -10.8647 0 -0 0</wrench>
+        </link>
+        <link name='back_right_wheel'>
+          <pose frame=''>90.867 53.0043 0.300133 -0.576691 1.57054 1.00068</pose>
+          <velocity>-0.997486 1.66159 -0.009646 0.070917 -0.009707 2.19404</velocity>
+          <acceleration>-997.486 1661.59 -9.64625 -1.33942 0.282425 -1.93093</acceleration>
+          <wrench>-9974.86 16615.9 -96.4624 0 -0 0</wrench>
+        </link>
+        <link name='camera::link'>
+          <pose frame=''>89.3501 52.4892 0.849996 -8.4e-05 0.00803 -3.12519</pose>
+          <velocity>0.019245 -3.76679 0.024387 0.019462 0.04355 -0.069676</velocity>
+          <acceleration>19.2451 -3766.79 24.3869 0.612407 -0.432451 -0.560495</acceleration>
+          <wrench>19.2451 -3766.79 24.3869 0 -0 0</wrench>
+        </link>
+        <link name='chassis'>
+          <pose frame=''>90 52.5 0.35 0 0 -3.12446</pose>
+          <velocity>-0.030432 0.334138 -0.010054 -0.014891 0.055398 0.227684</velocity>
+          <acceleration>-30.4322 334.138 -10.0537 -2.32433 -1.15023 1.4889</acceleration>
+          <wrench>-3043.22 33413.8 -1005.37 0 -0 0</wrench>
+        </link>
+        <link name='front_left_wheel'>
+          <pose frame=''>89.2084 51.9873 0.29988 1.41474 1.57066 -0.38259</pose>
+          <velocity>3.17378 -4.45876 -0.009057 -0.033929 -0.009406 0.758293</velocity>
+          <acceleration>3173.78 -4458.76 -9.05657 0.628423 -0.018406 1.16925</acceleration>
+          <wrench>31737.8 -44587.6 -90.5657 0 -0 0</wrench>
+        </link>
+        <link name='front_lidar'>
+          <pose frame=''>89 52.4891 0.39978 -0.000252 0.000266 -3.13166</pose>
+          <velocity>-0.008405 -3.61968 -0.044637 0.088501 -0.052801 -2.71647</velocity>
+          <acceleration>-8.4048 -3619.68 -44.637 -2.60528 -0.606505 1.01158</acceleration>
+          <wrench>-8.4048 -3619.68 -44.637 0 -0 0</wrench>
+        </link>
+        <link name='front_right_wheel'>
+          <pose frame=''>89.1935 52.9919 0.299915 -1.29369 1.57066 0.047337</pose>
+          <velocity>-2.43903 -2.58305 -0.009311 -0.014864 -0.010263 -0.586727</velocity>
+          <acceleration>-2439.03 -2583.05 -9.31133 0.843667 0.838303 0.751099</acceleration>
+          <wrench>-24390.3 -25830.5 -93.1133 0 -0 0</wrench>
+        </link>
+        <link name='gps'>
+          <pose frame=''>90 52.5 1 -0.000139 1.5e-05 -3.12466</pose>
+          <velocity>0.023136 0.362982 -0.010001 0.042181 0.049772 0.147263</velocity>
+          <acceleration>23.1358 362.982 -10.0008 -1.80135 -0.493256 2.7499</acceleration>
+          <wrench>23.1358 362.982 -10.0008 0 -0 0</wrench>
+        </link>
+        <link name='side_left_sensors'>
+          <pose frame=''>90.009 51.9501 0.399941 -0.000151 7e-05 -3.12582</pose>
+          <velocity>3.36619 0.374039 -0.026165 0.047085 0.027179 -0.327453</velocity>
+          <acceleration>3366.18 374.039 -26.1647 -0.03851 1.09519 2.41387</acceleration>
+          <wrench>3366.18 374.039 -26.1647 0 -0 0</wrench>
+        </link>
+        <link name='side_right_sensors'>
+          <pose frame=''>89.9915 53.0501 0.400093 -0.000203 8.1e-05 -3.1267</pose>
+          <velocity>-3.22019 0.365321 0.019867 0.068349 0.022791 -0.688266</velocity>
+          <acceleration>-3220.2 365.321 19.867 2.37548 -0.799711 -0.25759</acceleration>
+          <wrench>-3220.2 365.321 19.867 0 -0 0</wrench>
+        </link>
+        <link name='top_laser'>
+          <pose frame=''>90 52.5 1.1 -0.000187 8.7e-05 -3.12747</pose>
+          <velocity>0.009282 0.330781 -0.010094 0.061743 0.02034 -1.00269</velocity>
+          <acceleration>9.28188 330.781 -10.0942 -1.08854 1.49007 2.61754</acceleration>
+          <wrench>9.28188 330.781 -10.0942 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='car_clone_0'>
+        <pose frame=''>52.5 10 0 0 -0 1.60501</pose>
+        <link name='back_left_wheel'>
+          <pose frame=''>52.0155 9.11902 0.300409 1.28503 1.57038 -1.84037</pose>
+          <velocity>1.659 -1.17908 -0.010875 -0.007577 -0.006482 0.945078</velocity>
+          <acceleration>1659 -1179.08 -10.8749 -1.29383 -0.198688 2.60058</acceleration>
+          <wrench>16590 -11790.8 -108.749 0 -0 0</wrench>
+        </link>
+        <link name='back_lidar'>
+          <pose frame=''>52.5346 8.80032 0.400054 -0.0002 7.4e-05 1.59826</pose>
+          <velocity>6.22059 0.257572 -0.14216 0.103015 -0.101405 -1.86494</velocity>
+          <acceleration>6220.59 257.572 -142.16 2.48355 -0.874328 1.16958</acceleration>
+          <wrench>6220.59 257.572 -142.16 0 -0 0</wrench>
+        </link>
+        <link name='back_right_wheel'>
+          <pose frame=''>53.0163 9.13792 0.300276 -1.05234 1.57033 -1.032</pose>
+          <velocity>1.91791 0.600081 -0.011157 -0.008253 -0.110479 2.22191</velocity>
+          <acceleration>1917.91 600.081 -11.1574 1.17214 0.523257 0.80755</acceleration>
+          <wrench>19179.1 6000.81 -111.574 0 -0 0</wrench>
+        </link>
+        <link name='camera::link'>
+          <pose frame=''>52.4781 10.6497 0.850019 -0.000113 0.007988 1.60408</pose>
+          <velocity>-3.74 0.070477 0.075808 0.128991 -0.074616 -0.069941</velocity>
+          <acceleration>-3740 70.4771 75.8078 -2.95592 0.782011 -0.825581</acceleration>
+          <wrench>-3740 70.4771 75.8078 0 -0 0</wrench>
+        </link>
+        <link name='chassis'>
+          <pose frame=''>52.5 10 0.35 0 -0 1.60501</pose>
+          <velocity>0.401119 0.1982 -0.010358 0.124434 -0.039776 0.216478</velocity>
+          <acceleration>401.119 198.2 -10.3583 1.91218 -1.06432 -0.292229</acceleration>
+          <wrench>40111.9 19820 -1035.83 0 -0 0</wrench>
+        </link>
+        <link name='front_left_wheel'>
+          <pose frame=''>51.9728 10.7828 0.299761 1.71926 1.57038 -1.71013</pose>
+          <velocity>-4.74613 -3.04872 -0.008274 -0.00816 -0.023409 0.749417</velocity>
+          <acceleration>-4746.13 -3048.72 -8.27449 1.26464 1.41793 -1.4241</acceleration>
+          <wrench>-47461.3 -30487.2 -82.7449 0 -0 0</wrench>
+        </link>
+        <link name='front_lidar'>
+          <pose frame=''>52.474 10.9997 0.399898 -0.000138 0.000145 1.59556</pose>
+          <velocity>-3.57761 0.13621 0.082046 0.080709 -0.082698 -2.69766</velocity>
+          <acceleration>-3577.61 136.21 82.0456 -0.972299 -1.01675 -2.17023</acceleration>
+          <wrench>-3577.61 136.21 82.0456 0 -0 0</wrench>
+        </link>
+        <link name='front_right_wheel'>
+          <pose frame=''>52.9788 10.8109 0.299625 -1.46703 1.57038 -1.75905</pose>
+          <velocity>-2.89128 1.55798 -0.008124 -0.006874 -0.013193 -0.589148</velocity>
+          <acceleration>-2891.28 1557.98 -8.12356 -0.590855 -0.62712 1.47137</acceleration>
+          <wrench>-28912.8 15579.8 -81.2356 0 -0 0</wrench>
+        </link>
+        <link name='gps'>
+          <pose frame=''>52.5 9.99996 1 -0.000193 -1.6e-05 1.60475</pose>
+          <velocity>0.378619 0.106169 -0.010308 0.130738 -0.099023 0.136154</velocity>
+          <acceleration>378.619 106.169 -10.3078 -1.20877 1.50825 -2.07621</acceleration>
+          <wrench>378.619 106.169 -10.3078 0 -0 0</wrench>
+        </link>
+        <link name='side_left_sensors'>
+          <pose frame=''>51.9503 9.98181 0.39993 -0.000156 2.6e-05 1.60323</pose>
+          <velocity>0.466132 -3.18931 -0.055455 0.117449 -0.087852 -0.330312</velocity>
+          <acceleration>466.132 -3189.31 -55.4555 -1.93146 0.112971 2.69682</acceleration>
+          <wrench>466.132 -3189.31 -55.4555 0 -0 0</wrench>
+        </link>
+        <link name='side_right_sensors'>
+          <pose frame=''>53.0499 10.0176 0.400088 -0.000169 2.5e-05 1.6021</pose>
+          <velocity>0.378885 3.39607 0.03997 0.117831 -0.091867 -0.680388</velocity>
+          <acceleration>378.885 3396.07 39.9705 1.59217 0.760837 1.33789</acceleration>
+          <wrench>378.885 3396.07 39.9705 0 -0 0</wrench>
+        </link>
+        <link name='top_laser'>
+          <pose frame=''>52.5 9.99999 1.1 -0.000123 2.3e-05 1.60109</pose>
+          <velocity>0.366411 0.100217 -0.010371 0.118253 -0.07757 -0.991301</velocity>
+          <acceleration>366.411 100.217 -10.3708 2.01398 -0.969997 -1.69977</acceleration>
+          <wrench>366.411 100.217 -10.3708 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='comps_road'>
+        <pose frame=''>50 50 0 0 -0 1.5707</pose>
+        <link name='link'>
+          <pose frame=''>50 50 0 0 -0 1.5707</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='comps_road_0'>
+        <pose frame=''>50 50 0 0 -0 0</pose>
+        <link name='link'>
+          <pose frame=''>50 50 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='intersection_1_1'>
+        <pose frame=''>50 50 0 0 -0 0</pose>
+        <link name='link'>
+          <pose frame=''>50 50 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+    </state>
+    <model name='asphalt_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>90 90 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 90 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://asphalt_plane/materials/scripts</uri>
+              <uri>model://asphalt_plane/materials/textures</uri>
+              <name>vrc/asphalt</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>50 50 -.1 0 -0 0</pose>
+    </model>
+    <model name='comps_road'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>90 10 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://comps_road/materials/scripts</uri>
+              <uri>model://comps_road/materials/textures</uri>
+              <name>comps_road</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>50 75.4532 0 0 -0 0</pose>
+    </model>
+    <model name='comps_road_0'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>90 10 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://comps_road/materials/scripts</uri>
+              <uri>model://comps_road/materials/textures</uri>
+              <name>comps_road</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>50 50 0 0 -0 0</pose>
+    </model>
+    <model name='car_0'>
+      <link name='chassis'>
+        <pose frame=''>0 0 0.35 0 -0 0</pose>
+        <inertial>
+          <mass>100</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='chassis_collision'>
+          <geometry>
+            <box>
+              <size>2 0.8 0.2</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='chassis_visual'>
+          <pose frame=''>0.1 0 -0.2 0 -0 1.57079</pose>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/cooper-test.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='front_left_wheel'>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <pose frame=''>0.8 0.5 0.3 0 1.57079 1.57079</pose>
+        <collision name='front_left_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='front_left_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='front_right_wheel'>
+        <pose frame=''>0.8 -0.5 0.3 0 1.57079 -1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='front_right_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='front_right_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='back_right_wheel'>
+        <pose frame=''>-0.87 -0.5 0.3 0 1.57079 -1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='back_right_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='back_right_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='back_left_wheel'>
+        <pose frame=''>-0.87 0.5 0.3 0 1.57079 1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='back_left_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='back_left_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='front_left_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>front_left_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0.232366</lower>
+            <upper>0.232366</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='front_right_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>front_right_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0.232366</lower>
+            <upper>0.232366</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='back_right_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>back_right_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='back_left_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>back_left_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <link name='front_lidar'>
+        <pose frame=''>1 0 0.4 0 -0 0</pose>
+        <visual name='front_lidar_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='front_lidar_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='front_lidar_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='front_lidar' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 -0 0</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>640</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.39626</min_angle>
+                <max_angle>1.39626</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcFrontLidarSensor' filename='build/libsdcFrontLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='front_lidar_joint' type='revolute'>
+        <child>front_lidar</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='back_lidar'>
+        <pose frame=''>-1.2 0 0.4 0 -0 0</pose>
+        <visual name='back_lidar_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='back_lidar_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='back_lidar_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='back_lidar' type='ray'>
+          <pose frame=''>0.01 0 0.0175 3.14159 -0.004307 3.14159</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>120</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.5709</min_angle>
+                <max_angle>1.5709</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>10</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcBackLidarSensor' filename='build/libsdcBackLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='back_lidar_joint' type='revolute'>
+        <child>back_lidar</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='top_laser'>
+        <pose frame=''>0 0 1.1 0 -0 0</pose>
+        <visual name='top_laser_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='top_laser_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='top_laser_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='top_left_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_forward_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 0</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_backward_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 -0 0.18 3.14159</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_right_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='top_laser_joint' type='revolute'>
+        <child>top_laser</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='side_right_sensors'>
+        <pose frame=''>0 -0.55 0.4 0 -0 0</pose>
+        <visual name='side_right_sensors_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='side_right_sensors_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='side_right_sensors_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='side_right_front_laser' type='ray'>
+          <pose frame=''>0.4 -0.02 0 0 0 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='side_right_back_laser' type='ray'>
+          <pose frame=''>-0.6 -0.02 0 0 0 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='side_right_sensor_joint' type='revolute'>
+        <child>side_right_sensors</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='side_left_sensors'>
+        <pose frame=''>0 0.55 0.4 0 -0 0</pose>
+        <visual name='side_left_sensors_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='side_left_sensors_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='side_left_sensors_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='side_left_front_laser' type='ray'>
+          <pose frame=''>0.4 0.02 0 0 -0 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='side_left_back_laser' type='ray'>
+          <pose frame=''>-0.6 0.02 0 0 -0 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='side_left_sensor_joint' type='revolute'>
+        <child>side_left_sensors</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='camera::link'>
+        <pose frame=''>0.65 0 0.85 0 0.008 0</pose>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <sensor name='camera1' type='multicamera'>
+          <always_on>1</always_on>
+          <update_rate>24</update_rate>
+          <visualize>0</visualize>
+          <topic>comps_car_camera</topic>
+          <camera name='left'>
+            <pose frame=''>0 0 0 0 -0 0</pose>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>150</far>
+            </clip>
+            <save enabled='0'>
+              <path>/Users/selfcar/Desktop/Self-Driving-Comps/comps_camera_recordings/</path>
+            </save>
+          </camera>
+          <plugin name='sdcCameraSensor' filename='build/libsdcCameraSensor.so'/>
+        </sensor>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>0.1 0.1 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <shader type='pixel'/>
+          </material>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <cast_shadows>1</cast_shadows>
+          <transparency>0</transparency>
+        </visual>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <gravity>1</gravity>
+      </link>
+      <joint name='camera' type='revolute'>
+        <parent>chassis</parent>
+        <child>camera::link</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+            <effort>-1</effort>
+            <velocity>-1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+            <suspension>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <link name='gps'>
+        <pose frame=''>0 0 1 0 -0 0</pose>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='gps_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='gps_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='gps' type='gps'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='gps_joint' type='revolute'>
+        <child>gps</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin name='sdcCar' filename='build/libsdcCar.so'>
+        <front_left>front_left_joint</front_left>
+        <front_right>front_right_joint</front_right>
+        <back_left>back_left_joint</back_left>
+        <back_right>back_right_joint</back_right>
+        <chassis>chassis</chassis>
+        <camera>camera::link</camera>
+        <frontLidar>front_lidar</frontLidar>
+        <rightSideLidar>side_right_sensors</rightSideLidar>
+        <leftSideLidar>side_left_sensors</leftSideLidar>
+        <wheel_radius>0.21</wheel_radius>
+        <front_power>10</front_power>
+        <rear_power>10</rear_power>
+        <tire_angle_range>0.5</tire_angle_range>
+        <max_speed>10</max_speed>
+        <aero_load>1.0</aero_load>
+      </plugin>
+      <plugin name='sdcGpsSensor' filename='build/libsdcGpsSensor.so'>
+        <gps>gps</gps>
+      </plugin>
+      <pose frame=''>10 48 0 0 -0 0</pose>
+    </model>
+    <model name='car_clone'>
+      <link name='chassis'>
+        <pose frame=''>0 0 0.35 0 -0 0</pose>
+        <inertial>
+          <mass>100</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='chassis_collision'>
+          <geometry>
+            <box>
+              <size>2 0.8 0.2</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='chassis_visual'>
+          <pose frame=''>0.1 0 -0.2 0 -0 1.57079</pose>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/cooper-test.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='front_left_wheel'>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <pose frame=''>0.8 0.5 0.3 0 1.57079 1.57079</pose>
+        <collision name='front_left_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='front_left_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='front_right_wheel'>
+        <pose frame=''>0.8 -0.5 0.3 0 1.57079 -1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='front_right_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='front_right_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='back_right_wheel'>
+        <pose frame=''>-0.87 -0.5 0.3 0 1.57079 -1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='back_right_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='back_right_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='back_left_wheel'>
+        <pose frame=''>-0.87 0.5 0.3 0 1.57079 1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='back_left_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='back_left_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='front_left_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>front_left_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0.271837</lower>
+            <upper>0.271837</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='front_right_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>front_right_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0.271837</lower>
+            <upper>0.271837</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='back_right_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>back_right_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='back_left_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>back_left_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <link name='front_lidar'>
+        <pose frame=''>1 0 0.4 0 -0 0</pose>
+        <visual name='front_lidar_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='front_lidar_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='front_lidar_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='front_lidar' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 -0 0</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>640</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.39626</min_angle>
+                <max_angle>1.39626</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcFrontLidarSensor' filename='build/libsdcFrontLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='front_lidar_joint' type='revolute'>
+        <child>front_lidar</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='back_lidar'>
+        <pose frame=''>-1.2 0 0.4 0 -0 0</pose>
+        <visual name='back_lidar_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='back_lidar_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='back_lidar_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='back_lidar' type='ray'>
+          <pose frame=''>0.01 0 0.0175 3.14159 -0.004307 3.14159</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>120</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.5709</min_angle>
+                <max_angle>1.5709</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>10</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcBackLidarSensor' filename='build/libsdcBackLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='back_lidar_joint' type='revolute'>
+        <child>back_lidar</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='top_laser'>
+        <pose frame=''>0 0 1.1 0 -0 0</pose>
+        <visual name='top_laser_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='top_laser_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='top_laser_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='top_left_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_forward_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 0</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_backward_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 -0 0.18 3.14159</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_right_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='top_laser_joint' type='revolute'>
+        <child>top_laser</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='side_right_sensors'>
+        <pose frame=''>0 -0.55 0.4 0 -0 0</pose>
+        <visual name='side_right_sensors_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='side_right_sensors_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='side_right_sensors_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='side_right_front_laser' type='ray'>
+          <pose frame=''>0.4 -0.02 0 0 0 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='side_right_back_laser' type='ray'>
+          <pose frame=''>-0.6 -0.02 0 0 0 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='side_right_sensor_joint' type='revolute'>
+        <child>side_right_sensors</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='side_left_sensors'>
+        <pose frame=''>0 0.55 0.4 0 -0 0</pose>
+        <visual name='side_left_sensors_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='side_left_sensors_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='side_left_sensors_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='side_left_front_laser' type='ray'>
+          <pose frame=''>0.4 0.02 0 0 -0 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='side_left_back_laser' type='ray'>
+          <pose frame=''>-0.6 0.02 0 0 -0 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='side_left_sensor_joint' type='revolute'>
+        <child>side_left_sensors</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='camera::link'>
+        <pose frame=''>0.65 0 0.85 0 0.008 0</pose>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <sensor name='camera2' type='multicamera'>
+          <always_on>1</always_on>
+          <update_rate>24</update_rate>
+          <visualize>0</visualize>
+          <topic>comps_car_camera</topic>
+          <camera name='left'>
+            <pose frame=''>0 0 0 0 -0 0</pose>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>150</far>
+            </clip>
+            <save enabled='0'>
+              <path>/Users/selfcar/Desktop/Self-Driving-Comps/comps_camera_recordings/</path>
+            </save>
+          </camera>
+          <plugin name='sdcCameraSensor' filename='build/libsdcCameraSensor.so'/>
+        </sensor>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>0.1 0.1 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <shader type='pixel'/>
+          </material>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <cast_shadows>1</cast_shadows>
+          <transparency>0</transparency>
+        </visual>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <gravity>1</gravity>
+      </link>
+      <joint name='camera' type='revolute'>
+        <parent>chassis</parent>
+        <child>camera::link</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+            <effort>-1</effort>
+            <velocity>-1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+            <suspension>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <link name='gps'>
+        <pose frame=''>0 0 1 0 -0 0</pose>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='gps_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='gps_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='gps' type='gps'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='gps_joint' type='revolute'>
+        <child>gps</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin name='sdcCar' filename='build/libsdcCar.so'>
+        <front_left>front_left_joint</front_left>
+        <front_right>front_right_joint</front_right>
+        <back_left>back_left_joint</back_left>
+        <back_right>back_right_joint</back_right>
+        <chassis>chassis</chassis>
+        <camera>camera::link</camera>
+        <frontLidar>front_lidar</frontLidar>
+        <rightSideLidar>side_right_sensors</rightSideLidar>
+        <leftSideLidar>side_left_sensors</leftSideLidar>
+        <wheel_radius>0.21</wheel_radius>
+        <front_power>10</front_power>
+        <rear_power>10</rear_power>
+        <tire_angle_range>0.5</tire_angle_range>
+        <max_speed>10</max_speed>
+        <aero_load>1.0</aero_load>
+      </plugin>
+      <plugin name='sdcGpsSensor' filename='build/libsdcGpsSensor.so'>
+        <gps>gps</gps>
+      </plugin>
+      <pose frame=''>92 51 -0.05757 1e-06 0.000926 -1.57507</pose>
+    </model>
+    <model name='car_clone_0'>
+      <link name='chassis'>
+        <pose frame=''>0 0 0.35 0 -0 0</pose>
+        <inertial>
+          <mass>100</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='chassis_collision'>
+          <geometry>
+            <box>
+              <size>2 0.8 0.2</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='chassis_visual'>
+          <pose frame=''>0.1 0 -0.2 0 -0 1.57079</pose>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/cooper-test.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='front_left_wheel'>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <pose frame=''>0.8 0.5 0.3 0 1.57079 1.57079</pose>
+        <collision name='front_left_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='front_left_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='front_right_wheel'>
+        <pose frame=''>0.8 -0.5 0.3 0 1.57079 -1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='front_right_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='front_right_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='back_right_wheel'>
+        <pose frame=''>-0.87 -0.5 0.3 0 1.57079 -1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='back_right_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='back_right_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='back_left_wheel'>
+        <pose frame=''>-0.87 0.5 0.3 0 1.57079 1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='back_left_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='back_left_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='front_left_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>front_left_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0.360327</lower>
+            <upper>0.360327</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='front_right_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>front_right_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0.360327</lower>
+            <upper>0.360327</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='back_right_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>back_right_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='back_left_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>back_left_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <link name='front_lidar'>
+        <pose frame=''>1 0 0.4 0 -0 0</pose>
+        <visual name='front_lidar_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='front_lidar_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='front_lidar_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='front_lidar' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 -0 0</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>640</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.39626</min_angle>
+                <max_angle>1.39626</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcFrontLidarSensor' filename='build/libsdcFrontLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='front_lidar_joint' type='revolute'>
+        <child>front_lidar</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='back_lidar'>
+        <pose frame=''>-1.2 0 0.4 0 -0 0</pose>
+        <visual name='back_lidar_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='back_lidar_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='back_lidar_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='back_lidar' type='ray'>
+          <pose frame=''>0.01 0 0.0175 3.14159 -0.004307 3.14159</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>120</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.5709</min_angle>
+                <max_angle>1.5709</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>10</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcBackLidarSensor' filename='build/libsdcBackLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='back_lidar_joint' type='revolute'>
+        <child>back_lidar</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='top_laser'>
+        <pose frame=''>0 0 1.1 0 -0 0</pose>
+        <visual name='top_laser_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='top_laser_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='top_laser_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='top_left_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_forward_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 0</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_backward_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 -0 0.18 3.14159</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_right_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='top_laser_joint' type='revolute'>
+        <child>top_laser</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='side_right_sensors'>
+        <pose frame=''>0 -0.55 0.4 0 -0 0</pose>
+        <visual name='side_right_sensors_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='side_right_sensors_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='side_right_sensors_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='side_right_front_laser' type='ray'>
+          <pose frame=''>0.4 -0.02 0 0 0 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='side_right_back_laser' type='ray'>
+          <pose frame=''>-0.6 -0.02 0 0 0 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='side_right_sensor_joint' type='revolute'>
+        <child>side_right_sensors</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='side_left_sensors'>
+        <pose frame=''>0 0.55 0.4 0 -0 0</pose>
+        <visual name='side_left_sensors_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='side_left_sensors_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='side_left_sensors_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='side_left_front_laser' type='ray'>
+          <pose frame=''>0.4 0.02 0 0 -0 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='side_left_back_laser' type='ray'>
+          <pose frame=''>-0.6 0.02 0 0 -0 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='side_left_sensor_joint' type='revolute'>
+        <child>side_left_sensors</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='camera::link'>
+        <pose frame=''>0.65 0 0.85 0 0.008 0</pose>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <sensor name='camera3' type='multicamera'>
+          <always_on>1</always_on>
+          <update_rate>24</update_rate>
+          <visualize>0</visualize>
+          <topic>comps_car_camera</topic>
+          <camera name='left'>
+            <pose frame=''>0 0 0 0 -0 0</pose>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>150</far>
+            </clip>
+            <save enabled='0'>
+              <path>/Users/selfcar/Desktop/Self-Driving-Comps/comps_camera_recordings/</path>
+            </save>
+          </camera>
+          <plugin name='sdcCameraSensor' filename='build/libsdcCameraSensor.so'/>
+        </sensor>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>0.1 0.1 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <shader type='pixel'/>
+          </material>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <cast_shadows>1</cast_shadows>
+          <transparency>0</transparency>
+        </visual>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <gravity>1</gravity>
+      </link>
+      <joint name='camera' type='revolute'>
+        <parent>chassis</parent>
+        <child>camera::link</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+            <effort>-1</effort>
+            <velocity>-1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+            <suspension>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <link name='gps'>
+        <pose frame=''>0 0 1 0 -0 0</pose>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='gps_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='gps_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='gps' type='gps'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='gps_joint' type='revolute'>
+        <child>gps</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin name='sdcCar' filename='build/libsdcCar.so'>
+        <front_left>front_left_joint</front_left>
+        <front_right>front_right_joint</front_right>
+        <back_left>back_left_joint</back_left>
+        <back_right>back_right_joint</back_right>
+        <chassis>chassis</chassis>
+        <camera>camera::link</camera>
+        <frontLidar>front_lidar</frontLidar>
+        <rightSideLidar>side_right_sensors</rightSideLidar>
+        <leftSideLidar>side_left_sensors</leftSideLidar>
+        <wheel_radius>0.21</wheel_radius>
+        <front_power>10</front_power>
+        <rear_power>10</rear_power>
+        <tire_angle_range>0.5</tire_angle_range>
+        <max_speed>10</max_speed>
+        <aero_load>1.0</aero_load>
+      </plugin>
+      <plugin name='sdcGpsSensor' filename='build/libsdcGpsSensor.so'>
+        <gps>gps</gps>
+      </plugin>
+      <pose frame=''>65 30 -0.05757 1e-06 0.000926 -1.57507</pose>
+    </model>
+    <model name='car_0_clone'>
+      <link name='chassis'>
+        <pose frame=''>0 0 0.35 0 -0 0</pose>
+        <inertial>
+          <mass>100</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='chassis_collision'>
+          <geometry>
+            <box>
+              <size>2 0.8 0.2</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='chassis_visual'>
+          <pose frame=''>0.1 0 -0.2 0 -0 1.57079</pose>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/cooper-test.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='front_left_wheel'>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <pose frame=''>0.8 0.5 0.3 0 1.57079 1.57079</pose>
+        <collision name='front_left_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='front_left_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='front_right_wheel'>
+        <pose frame=''>0.8 -0.5 0.3 0 1.57079 -1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='front_right_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='front_right_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='back_right_wheel'>
+        <pose frame=''>-0.87 -0.5 0.3 0 1.57079 -1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='back_right_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='back_right_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <link name='back_left_wheel'>
+        <pose frame=''>-0.87 0.5 0.3 0 1.57079 1.57079</pose>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='back_left_wheel_collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='back_left_wheel_visual'>
+          <geometry>
+            <mesh>
+              <uri>models/sdcCar/wheel.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='front_left_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>front_left_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0.123504</lower>
+            <upper>0.123504</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='front_right_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>front_right_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0.123504</lower>
+            <upper>0.123504</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='back_right_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>back_right_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='back_left_joint' type='revolute2'>
+        <parent>chassis</parent>
+        <child>back_left_wheel</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <axis2>
+          <xyz>0 1 0</xyz>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis2>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.9</erp>
+            </limit>
+            <suspension>
+              <cfm>0.01</cfm>
+              <erp>0.15</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <link name='front_lidar'>
+        <pose frame=''>1 0 0.4 0 -0 0</pose>
+        <visual name='front_lidar_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='front_lidar_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='front_lidar_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='front_lidar' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 -0 0</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>640</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.39626</min_angle>
+                <max_angle>1.39626</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcFrontLidarSensor' filename='build/libsdcFrontLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='front_lidar_joint' type='revolute'>
+        <child>front_lidar</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='back_lidar'>
+        <pose frame=''>-1.2 0 0.4 0 -0 0</pose>
+        <visual name='back_lidar_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='back_lidar_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='back_lidar_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='back_lidar' type='ray'>
+          <pose frame=''>0.01 0 0.0175 3.14159 -0.004307 3.14159</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>120</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.5709</min_angle>
+                <max_angle>1.5709</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>10</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcBackLidarSensor' filename='build/libsdcBackLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='back_lidar_joint' type='revolute'>
+        <child>back_lidar</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='top_laser'>
+        <pose frame=''>0 0 1.1 0 -0 0</pose>
+        <visual name='top_laser_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='top_laser_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='top_laser_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='top_left_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_forward_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 0</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_backward_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 -0 0.18 3.14159</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='top_right_laser' type='ray'>
+          <pose frame=''>0.01 0 0.0175 0 0.18 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.7854</min_angle>
+                <max_angle>0.7854</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>20</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcTopLidarSensor' filename='build/libsdcTopLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='top_laser_joint' type='revolute'>
+        <child>top_laser</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='side_right_sensors'>
+        <pose frame=''>0 -0.55 0.4 0 -0 0</pose>
+        <visual name='side_right_sensors_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='side_right_sensors_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='side_right_sensors_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='side_right_front_laser' type='ray'>
+          <pose frame=''>0.4 -0.02 0 0 0 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='side_right_back_laser' type='ray'>
+          <pose frame=''>-0.6 -0.02 0 0 0 -1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='side_right_sensor_joint' type='revolute'>
+        <child>side_right_sensors</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='side_left_sensors'>
+        <pose frame=''>0 0.55 0.4 0 -0 0</pose>
+        <visual name='side_left_sensors_visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='side_left_sensors_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='side_left_sensors_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='side_left_front_laser' type='ray'>
+          <pose frame=''>0.4 0.02 0 0 -0 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <sensor name='side_left_back_laser' type='ray'>
+          <pose frame=''>-0.6 0.02 0 0 -0 1.5708</pose>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>160</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.3</min_angle>
+                <max_angle>1.3</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>1</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin name='sdcSideLidarSensor' filename='build/libsdcSideLidarSensor.so'/>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>0</visualize>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='side_left_sensor_joint' type='revolute'>
+        <child>side_left_sensors</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='camera::link'>
+        <pose frame=''>0.65 0 0.85 0 0.008 0</pose>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <sensor name='camera4' type='multicamera'>
+          <always_on>1</always_on>
+          <update_rate>24</update_rate>
+          <visualize>0</visualize>
+          <topic>comps_car_camera</topic>
+          <camera name='left'>
+            <pose frame=''>0 0 0 0 -0 0</pose>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>150</far>
+            </clip>
+            <save enabled='0'>
+              <path>/Users/selfcar/Desktop/Self-Driving-Comps/comps_camera_recordings/</path>
+            </save>
+          </camera>
+          <plugin name='sdcCameraSensor' filename='build/libsdcCameraSensor.so'/>
+        </sensor>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>0.1 0.1 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <shader type='pixel'/>
+          </material>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <cast_shadows>1</cast_shadows>
+          <transparency>0</transparency>
+        </visual>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <gravity>1</gravity>
+      </link>
+      <joint name='camera' type='revolute'>
+        <parent>chassis</parent>
+        <child>camera::link</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <use_parent_model_frame>0</use_parent_model_frame>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+            <effort>-1</effort>
+            <velocity>-1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+            <suspension>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <link name='gps'>
+        <pose frame=''>0 0 1 0 -0 0</pose>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='gps_collision-base'>
+          <pose frame=''>0 0 -0.0145 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.05 0.05 0.041</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='gps_collision-top'>
+          <pose frame=''>0 0 0.0205 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.021</radius>
+              <length>0.029</length>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <sensor name='gps' type='gps'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+        </sensor>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='gps_joint' type='revolute'>
+        <child>gps</child>
+        <parent>chassis</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <upper>0</upper>
+            <lower>0</lower>
+          </limit>
+          <use_parent_model_frame>1</use_parent_model_frame>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin name='sdcCar' filename='build/libsdcCar.so'>
+        <front_left>front_left_joint</front_left>
+        <front_right>front_right_joint</front_right>
+        <back_left>back_left_joint</back_left>
+        <back_right>back_right_joint</back_right>
+        <chassis>chassis</chassis>
+        <camera>camera::link</camera>
+        <frontLidar>front_lidar</frontLidar>
+        <rightSideLidar>side_right_sensors</rightSideLidar>
+        <leftSideLidar>side_left_sensors</leftSideLidar>
+        <wheel_radius>0.21</wheel_radius>
+        <front_power>10</front_power>
+        <rear_power>10</rear_power>
+        <tire_angle_range>0.5</tire_angle_range>
+        <max_speed>10</max_speed>
+        <aero_load>1.0</aero_load>
+      </plugin>
+      <plugin name='sdcGpsSensor' filename='build/libsdcGpsSensor.so'>
+        <gps>gps</gps>
+      </plugin>
+      <pose frame=''>51 90.579 -1.1e-05 3e-06 9e-06 1e-06</pose>
+    </model>
+    <model name='car_wheel'>
+      <link name='link'>
+        <pose frame=''>0 0 0 0 0 0</pose>
+        <inertial>
+          <mass>12</mass>
+          <inertia>
+            <ixx>0.167005</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.167005</iyy>
+            <iyz>0</iyz>
+            <izz>0.282065</izz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <cylinder>
+              <radius>0.21682</radius>
+              <length>0.16116</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 1</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+            </friction>
+            <contact>
+              <ode>
+                <min_depth>0.005</min_depth>
+                <kp>1e+08</kp>
+              </ode>
+            </contact>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <pose frame=''>0 0 -0.08058 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://car_wheel/meshes/car_wheel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>0</gravity>
+      </link>
+      <pose frame=''>0 0 0 0 -0 0</pose>
+    </model>
+  </world>
+</sdf>

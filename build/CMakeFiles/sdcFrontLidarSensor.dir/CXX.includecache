@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/Accounts/trank/Desktop/SDC-Merged/instruction.hh
+/Accounts/mawbye/Desktop/SDC-Merged/instruction.hh
 iostream
 -
 
-/Accounts/trank/Desktop/SDC-Merged/manager.hh
+/Accounts/mawbye/Desktop/SDC-Merged/manager.hh
 boost/bind.hpp
 -
 gazebo/gazebo.hh
@@ -25,24 +25,18 @@ iostream
 -
 vector
 -
-request.hh
-/Accounts/trank/Desktop/SDC-Merged/request.hh
 instruction.hh
-/Accounts/trank/Desktop/SDC-Merged/instruction.hh
+/Accounts/mawbye/Desktop/SDC-Merged/instruction.hh
 sdcSensorData.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcSensorData.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcSensorData.hh
 
-/Accounts/trank/Desktop/SDC-Merged/request.hh
-iostream
--
-
-/Accounts/trank/Desktop/SDC-Merged/sdcAngle.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcAngle.hh
 math.h
 -
 iostream
 -
 
-/Accounts/trank/Desktop/SDC-Merged/sdcFrontLidarSensor.cc
+/Accounts/mawbye/Desktop/SDC-Merged/sdcFrontLidarSensor.cc
 boost/bind.hpp
 -
 gazebo/gazebo.hh
@@ -58,9 +52,9 @@ stdio.h
 vector
 -
 sdcFrontLidarSensor.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcFrontLidarSensor.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcFrontLidarSensor.hh
 
-/Accounts/trank/Desktop/SDC-Merged/sdcFrontLidarSensor.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcFrontLidarSensor.hh
 boost/bind.hpp
 -
 gazebo/gazebo.hh
@@ -76,21 +70,21 @@ stdio.h
 vector
 -
 manager.hh
-/Accounts/trank/Desktop/SDC-Merged/manager.hh
+/Accounts/mawbye/Desktop/SDC-Merged/manager.hh
 sdcSensorData.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcSensorData.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcSensorData.hh
 
-/Accounts/trank/Desktop/SDC-Merged/sdcLidarRay.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcLidarRay.hh
 gazebo/common/common.hh
 -
 sdcAngle.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcAngle.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcAngle.hh
 
-/Accounts/trank/Desktop/SDC-Merged/sdcLidarSensorInfo.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcLidarSensorInfo.hh
 sdcAngle.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcAngle.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcAngle.hh
 
-/Accounts/trank/Desktop/SDC-Merged/sdcSensorData.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcSensorData.hh
 boost/bind.hpp
 -
 gazebo/gazebo.hh
@@ -108,21 +102,21 @@ vector
 map
 -
 sdcAngle.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcAngle.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcAngle.hh
 sdcLidarSensorInfo.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcLidarSensorInfo.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcLidarSensorInfo.hh
 sdcLidarRay.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcLidarRay.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcLidarRay.hh
 sdcVisibleObject.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcVisibleObject.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcVisibleObject.hh
 
-/Accounts/trank/Desktop/SDC-Merged/sdcVisibleObject.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcVisibleObject.hh
 gazebo/common/common.hh
 -
 sdcAngle.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcAngle.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcAngle.hh
 sdcLidarRay.hh
-/Accounts/trank/Desktop/SDC-Merged/sdcLidarRay.hh
+/Accounts/mawbye/Desktop/SDC-Merged/sdcLidarRay.hh
 
 /usr/local/Cellar/gazebo6/6.6.0/include/gazebo-6.6/gazebo/Master.hh
 string

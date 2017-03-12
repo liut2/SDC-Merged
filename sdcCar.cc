@@ -25,6 +25,14 @@
  * Physics parameters and Gazebo interfacing are based on UtilityCart.
  */
 
+ /*
+ 2017 Carleton SDC comps group
+ This file controls the car, which can drive in 3 main scenarios.
+ The car can use camera sensors to follow curved on straight roads with clear lanes,
+ It can use lidar sensors to pass cars in its lane,
+ and multiple cars can drive through intersections using an intersection manager.
+ */
+
 #include "gazebo/physics/physics.hh"
 #include "gazebo/transport/transport.hh"
 #include "sdcCar.hh"

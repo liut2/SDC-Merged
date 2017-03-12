@@ -1,5 +1,21 @@
 #include "sdcManager.hh"
+/*
 
+
+This class is the brain of the intersection. It implements an algorithm based on
+the one described in the following paper:
+Dresner, Kurt, and Peter Stone.
+"A Multiagent Approach to Autonomous Intersection Management."
+Journal of Artificial Intelligence Research 31 (March 2008): 591-656.
+https://www.aaai.org/Papers/JAIR/Vol31/JAIR-3117.pdf.
+
+It is used to schedule cars through an intersection that is divided into an nxn
+grid (in our case 10x10). Cars get "reservations" in the intersection grid that is
+represented by the time at which they will occupy the grid spots. The manager takes in
+a cars request to get through the intersection and predicts its path to determine if it is clear.
+If so it will allow the car to enter the intersection and record the time that the car will occupy
+each grid spot on its path. If not it will reject the cars request.
+*/
 int sdcManager::gridSize = 10;
 float sdcManager::maxTurnLeft = 6;
 float sdcManager::maxTurnRight = 4;
@@ -449,8 +465,6 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
-            //sdcManager::printGrid();
-            sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -596,8 +610,6 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
-            //sdcManager::printGrid();
-            sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -748,7 +760,6 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
-            sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }
@@ -902,7 +913,6 @@ instruction sdcManager::leftTurnRequest(int carId, float x, float y, float speed
             }
             prioritized = 0;
             priorityList[carId] = 0.0;
-            sdcManager::printGrid();
             return instruction::instruction(carId, speedIntent, 1);
         }
     }

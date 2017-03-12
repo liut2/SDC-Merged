@@ -11,12 +11,11 @@
 
 #include <iostream>
 #include <vector>
-#include "request.hh"
 #include "instruction.hh"
 #include "sdcSensorData.hh"
 /***
 *
-* The manager class implenets the stop sign protocol and policy
+* The manager class implements the stop sign protocol and policy
 * It also is used to connect cars with their sensors through sensorData objects
 ***/
 class manager{
