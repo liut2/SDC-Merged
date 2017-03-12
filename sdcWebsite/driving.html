@@ -53,29 +53,51 @@
                 <div class="imageprocessing"><img width="320" height="160" src="images/OriginalImage-StraightRoad.png"/></div>
                 <div class="imageprocessing"><img width="320" height="160" src="images/EdgeImage-StraightRoad.png"/></div>
               </div>
+              <br><br><br>
 
               <p>Step 2: Divide the image into five sections</p>
               <div>
                 <div class="imageprocessing"><img width="320" height="160" src="images/NEW_FiveSections_StraightRoad.png"/></div>
               </div>
-              <p>By dividing the image into five sections, it enables us to distinguish between straight and curved roads. The dark blue and light blue represent lane boundaries from different sections. And the lane boundaries in each section intersect at certain point, a and b. In the image below on the left, a and b are almost the same. The reason is pretty obvious, on a straight road, the lane boundary segment all lie on the same line, so they always intersect at the same point. While in the image below on the right, since its a curved road, lane boundaries intersect at different points a and b because of the curvature. These different patterns tell us the road shape. Note that further image processing all takes place in each section independently. And we only care about the second and third section counting from the top, because change in road shapes in these two sections is enough for us to predict curves.</p>
+              <p>After dividing the image into five sections, we are only interested in image processing in the second and third sections counting from the top. As seen from below, detecting lane boundaries and calculating midlines from these two sections is enough for us to distinguish between straight and curved road.</p>
+              <!--<p>By dividing the image into five sections, it enables us to distinguish between straight and curved roads. The dark blue and light blue represent lane boundaries from different sections. And the lane boundaries in each section intersect at certain point, a and b. In the image below on the left, a and b are almost the same. The reason is pretty obvious, on a straight road, the lane boundary segment all lie on the same line, so they always intersect at the same point. While in the image below on the right, since its a curved road, lane boundaries intersect at different points a and b because of the curvature. These different patterns tell us the road shape. Note that further image processing all takes place in each section independently. And we only care about the second and third section counting from the top, because change in road shapes in these two sections is enough for us to predict curves.</p>-->
               <div>
                 <div class="imageprocessing"><img width="320" height="160" src="images/NEW_VanishingPoint_StraightRoad_Crop.jpg"/></div>
                 <div class="imageprocessing"><img width="320" height="160" src="images/VanishingPoint.jpg"/></div>
               </div>
+              <br><br><br>
 
               <p>Step 3: Find straight lines with Hough Transform</p>
               <div>
                 <div class="imageprocessing"><img width="320" height="160" src="images/EdgeImage-StraightRoad.png"/></div>
                 <div class="imageprocessing"><img width="320" height="160" src="images/NEW_StraightLines_StraightRoad.png"/></div>
               </div>
+              <br><br><br>
 
               <p>Step 4: Identify lane boundaries out of straight lines</p>
               <div>
                 <div class="imageprocessing"><img width="320" height="150" src="images/NEW_StraightLines_StraightRoad_Circle.jpg"/></div>
                 <div class="imageprocessing"><img width="320" height="150" src="images/LaneBoundaries-StraightRoad.png"/></div>
               </div>
+              <p>Here we used clustering and merging technique. First, we clusterize lines that represent same lane boundaries in the real world. Then we merge lines in the same cluster into one single line. Finally, we find the nearest two lines relative to our camera as lane boundaries.</p>
+              <br><br><br>
 
+              <p>Step 5: Calculate the midline from two lane boundaries</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="150" src="images/Midline-StraightRoad.png"/></div>
+                <div class="imageprocessing"><img width="320" height="150" src="images/Midline-VanishingPoint.jpg"/></div>
+              </div>
+              <br><br><br>
+
+              <p>Step 6: Extract additional information from midlines</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="150" src="images/Midlines-Angle.jpg"/></div>
+                <div class="imageprocessing"><img width="320" height="150" src="images/VerticalDifference.jpg"/></div>
+              </div>
+              <p>First, we can calculate the angle between two midlines from adjacent sections, as seen from image on the left. Later we will use a "state system" to determine if we are in straight or curved road state based on the angle between two midlines.</p>
+              <br>
+              <p>Second, we can calculate the angle between the midline and the vertical line. This is useful in lane centering because it tells us whether our car is pointing straight.</p>
+              <br><br><br>
 
               <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elit sapien, tempus sit amet hendrerit volutpat, euismod vitae risus. Etiam consequat, sem et vulputate dapibus, diam enim tristique est, vitae porta eros mauris ut orci. Praesent sed velit odio. Ut massa arcu, suscipit viverra molestie at, aliquet a metus. Nullam sit amet tellus dui, ut tincidunt justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec iaculis egestas laoreet. Nunc non ipsum metus, non laoreet urna. Vestibulum quis risus quis diam mattis tempus. Vestibulum suscipit pretium tempor. </p>-->
 	        </div><!--close content_item-->
