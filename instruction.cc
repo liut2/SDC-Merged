@@ -1,11 +1,14 @@
 #include "instruction.hh"
 
+/**
+Class used by intersection managers to communicate with cars
+**/
 
-instruction::instruction(int id, int inputSpeed, bool inputHasReservation){
+instruction::instruction(int id, float inputSpeed, bool inputHasReservation){
     this->id = id;
     this->speed = inputSpeed;
     this->hasReservation = inputHasReservation;
-    
+
 }
 
 void instruction::printid(){

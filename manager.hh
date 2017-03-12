@@ -11,21 +11,28 @@
 
 #include <iostream>
 #include <vector>
-#include "request.hh"
 #include "instruction.hh"
 #include "sdcSensorData.hh"
-
+/***
+*
+* The manager class implements the stop sign protocol and policy
+* It also is used to connect cars with their sensors through sensorData objects
+***/
 class manager{
-    public: 
+    public:
+        //id incase you add more than 1 intersection
         manager(int id);
         int id;
-        void printid();
         static void registerCar(int carId, int turning, int direction);
+        //Used in stop sign policy to prevent cars from hitting each other before the intersection
         static void laneStopRequest(int fromDir);
+        //Gives reservations to cars in the stop sign protocol
         static bool stopSignHandleRequest(int carId, int turning, int direction, int fromDir);
+        //Called when a car left the intersection
         static void stopSignCarLeft(int carId);
         static bool stopSignQueue(int carId, int fromDir);
         static bool shouldStop(int carId, int fromDir);
+        //Connects cars and sensors to their shared sensorData objects
         static gazebo::sdcSensorData *getSensorData(int cameraId);
     private:
         static int carAmt;
@@ -42,8 +49,8 @@ class manager{
         static bool eStop;
         static bool sStop;
         static bool wStop;
-    
 
-    
+
+
 };
 #endif

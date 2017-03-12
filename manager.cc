@@ -1,5 +1,18 @@
 #include "manager.hh"
 
+/*
+
+The class implements a "stop sign" protocol of intersection management. Cars that
+want to go through the intersection will pull up to the intersection and send a request
+to manager. If it is allowed into the intersection based on a stop-sign-like policy, the manager
+will return true, otherwise it will return false and the car will wait.
+
+A secondary function of this class is to connect gazebo sensors to their respective cars
+using sensordata objects. The sensors and their cars send in information and the manager
+gives them both the same sensorData object so that the car can access the data the sensor gathers.
+
+*/
+
 int manager::carAmt = 0;
 int manager::currentDir = 0;
 int manager::currentTurn = 0;
@@ -14,21 +27,18 @@ std::vector<int> manager::carSouthQueue = std::vector<int>();
 std::vector<int> manager::carWestQueue = std::vector<int>();
 std::vector<gazebo::sdcSensorData> manager::sensorDataList = std::vector<gazebo::sdcSensorData>();
 std::map<int, gazebo::sdcSensorData> manager::sensorManager = std::map<int, gazebo::sdcSensorData>();
+
 manager::manager(int id){
 }
 
-void manager:: printid(){
-}
-
+//Adds a car to the carList and updates carAmt
 void manager::registerCar(int carId, int turning, int direction) {
     carAmt++;
     currentDir = direction;
     currentTurn = turning;
-    fflush(stdout);
     carList.push_back(carId);
-    fflush(stdout);
-
 }
+//When a car reaches the intersection it tells all other cars in its lane to stop
 void manager::laneStopRequest(int fromDir){
     switch (fromDir) {
         case 0:
@@ -46,15 +56,29 @@ void manager::laneStopRequest(int fromDir){
     }
 }
 
+//Checks if the car can get in the intersection based on its direction and turn type.
+//If there is already a car in the intersection it can only go on non colliding paths with that car
 bool manager::stopSignHandleRequest(int carId, int turning, int direction, int fromDir) {
-    fflush(stdout);
-
     if (carAmt == 0) { //no car at intersection
         registerCar(carId, turning, direction);
         carNorthQueue.erase(std::remove(carNorthQueue.begin(), carNorthQueue.end(), carId), carNorthQueue.end());
         carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
         carSouthQueue.erase(std::remove(carSouthQueue.begin(), carSouthQueue.end(), carId), carSouthQueue.end());
         carWestQueue.erase(std::remove(carWestQueue.begin(), carWestQueue.end(), carId), carWestQueue.end());
+        switch (fromDir) {
+            case 0:
+                nStop = false;
+                break;
+            case 1:
+                eStop = false;
+                break;
+            case 2:
+                sStop = false;
+                break;
+            case 3:
+                wStop = false;
+                break;
+        }
         return true;
     }else if(carAmt == 1) { //one car already in intersection
         switch(currentTurn){
@@ -68,6 +92,22 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
                     carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
                     carSouthQueue.erase(std::remove(carSouthQueue.begin(), carSouthQueue.end(), carId), carSouthQueue.end());
                     carWestQueue.erase(std::remove(carWestQueue.begin(), carWestQueue.end(), carId), carWestQueue.end());
+                    //Tells all queues they can go again. This is fine since cars constantly make requests if they haven't gotten into
+                    // the intersection yet.
+                    switch (fromDir) {
+                        case 0:
+                            nStop = false;
+                            break;
+                        case 1:
+                            eStop = false;
+                            break;
+                        case 2:
+                            sStop = false;
+                            break;
+                        case 3:
+                            wStop = false;
+                            break;
+                    }
                     return true;
                 }
                 else if (turning == 2 && ((direction + 2)%4 == currentDir || (direction + 3)%4 == currentDir)) {
@@ -76,6 +116,20 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
                     carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
                     carSouthQueue.erase(std::remove(carSouthQueue.begin(), carSouthQueue.end(), carId), carSouthQueue.end());
                     carWestQueue.erase(std::remove(carWestQueue.begin(), carWestQueue.end(), carId), carWestQueue.end());
+                    switch (fromDir) {
+                        case 0:
+                            nStop = false;
+                            break;
+                        case 1:
+                            eStop = false;
+                            break;
+                        case 2:
+                            sStop = false;
+                            break;
+                        case 3:
+                            wStop = false;
+                            break;
+                    }
                     return true;
                 }
                 else{
@@ -97,6 +151,20 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
                     carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
                     carSouthQueue.erase(std::remove(carSouthQueue.begin(), carSouthQueue.end(), carId), carSouthQueue.end());
                     carWestQueue.erase(std::remove(carWestQueue.begin(), carWestQueue.end(), carId), carWestQueue.end());
+                    switch (fromDir) {
+                        case 0:
+                            nStop = false;
+                            break;
+                        case 1:
+                            eStop = false;
+                            break;
+                        case 2:
+                            sStop = false;
+                            break;
+                        case 3:
+                            wStop = false;
+                            break;
+                    }
                     return true;
                 }else{
                     if (!(direction == currentDir)) {
@@ -105,6 +173,20 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
                         carEastQueue.erase(std::remove(carEastQueue.begin(), carEastQueue.end(), carId), carEastQueue.end());
                         carSouthQueue.erase(std::remove(carSouthQueue.begin(), carSouthQueue.end(), carId), carSouthQueue.end());
                         carWestQueue.erase(std::remove(carWestQueue.begin(), carWestQueue.end(), carId), carWestQueue.end());
+                        switch (fromDir) {
+                            case 0:
+                                nStop = true;
+                                break;
+                            case 1:
+                                eStop = true;
+                                break;
+                            case 2:
+                                sStop = true;
+                                break;
+                            case 3:
+                                wStop = true;
+                                break;
+                        }
                         return true;
                     }
                     return false;
@@ -114,22 +196,13 @@ bool manager::stopSignHandleRequest(int carId, int turning, int direction, int f
 
         }
     }
-
+    //We allow at most 2 cars in the interscection at once
     else { //more than 1 car
         return false;
     }
     return false;
 }
-/*
- turn right case:
- destdirection = 0
- if(!nextcar turn left && ! nextcar straight north):
- give reservation
 
- straight case:
- destdirection = 0
- if(nextcar straight 2 || nextcar right east || nextcar right south
- */
 bool manager::stopSignQueue(int carId, int fromDir) {
     switch (fromDir) {
         case 0:
@@ -148,6 +221,7 @@ bool manager::stopSignQueue(int carId, int fromDir) {
     return false;
 
 }
+//Stops cars in the same lane
 bool manager::shouldStop(int carId, int fromDir) {
     switch (fromDir) {
         case 0:
@@ -211,15 +285,21 @@ bool manager::shouldStop(int carId, int fromDir) {
     return false;
 
 }
+//Called when a car leaves the intersection. Removes it from the carList
 void manager::stopSignCarLeft(int carId) {
     carList.erase(std::remove(carList.begin(), carList.end(), carId), carList.end());
     carAmt--;
 }
 
-gazebo::sdcSensorData *manager::getSensorData(int cameraId) {
-    //HOW TO FIX: USE A MAP OF sdcSensorDatas WHERE THE KEY IS THE cameraId
-    // If its not in the map then make a new sensor data. Otherwise return it.
+//This method links the sdcCar objects with their corresponding sensors.
+//Since the cars cannot directly access their sensors we go through the manager.
+//Each sensor sends its id, and each car sends its sensorlink id for that sensor
+// (which is slightly different but we adjust depending on the sensor type)
+//A sensorData object is created once for the pair and is returned.
 
+gazebo::sdcSensorData *manager::getSensorData(int cameraId) {
+
+    // If its not in the map then make a new sensor data. Otherwise return it.
     if (sensorManager.count(cameraId) > 0){
         return &sensorManager[cameraId];
     }
@@ -227,6 +307,4 @@ gazebo::sdcSensorData *manager::getSensorData(int cameraId) {
         sensorManager.insert(std::pair<int, gazebo::sdcSensorData>(cameraId, gazebo::sdcSensorData(cameraId)));
         return &sensorManager[cameraId];
     }
-
-
 }

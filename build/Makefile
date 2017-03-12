@@ -48,10 +48,10 @@ RM = /usr/local/Cellar/cmake/3.6.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Accounts/liut2/Desktop/SDC-Merged
+CMAKE_SOURCE_DIR = /Accounts/mawbye/Desktop/SDC-Merged
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Accounts/liut2/Desktop/SDC-Merged/build
+CMAKE_BINARY_DIR = /Accounts/mawbye/Desktop/SDC-Merged/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles /Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/liut2/Desktop/SDC-Merged/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Accounts/mawbye/Desktop/SDC-Merged/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -202,19 +202,6 @@ sdcGpsSensor/fast:
 .PHONY : sdcGpsSensor/fast
 
 #=============================================================================
-# Target rules for targets named sdcVisibleObject
-
-# Build rule for target.
-sdcVisibleObject: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 sdcVisibleObject
-.PHONY : sdcVisibleObject
-
-# fast build rule for target.
-sdcVisibleObject/fast:
-	$(MAKE) -f CMakeFiles/sdcVisibleObject.dir/build.make CMakeFiles/sdcVisibleObject.dir/build
-.PHONY : sdcVisibleObject/fast
-
-#=============================================================================
 # Target rules for targets named sdcFlyingBox
 
 # Build rule for target.
@@ -241,6 +228,32 @@ sdcIntersection/fast:
 .PHONY : sdcIntersection/fast
 
 #=============================================================================
+# Target rules for targets named sdcVisibleObject
+
+# Build rule for target.
+sdcVisibleObject: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcVisibleObject
+.PHONY : sdcVisibleObject
+
+# fast build rule for target.
+sdcVisibleObject/fast:
+	$(MAKE) -f CMakeFiles/sdcVisibleObject.dir/build.make CMakeFiles/sdcVisibleObject.dir/build
+.PHONY : sdcVisibleObject/fast
+
+#=============================================================================
+# Target rules for targets named sdcLidarRay
+
+# Build rule for target.
+sdcLidarRay: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcLidarRay
+.PHONY : sdcLidarRay
+
+# fast build rule for target.
+sdcLidarRay/fast:
+	$(MAKE) -f CMakeFiles/sdcLidarRay.dir/build.make CMakeFiles/sdcLidarRay.dir/build
+.PHONY : sdcLidarRay/fast
+
+#=============================================================================
 # Target rules for targets named sdcBackLidarSensor
 
 # Build rule for target.
@@ -265,19 +278,6 @@ sdcTopLidarSensor: cmake_check_build_system
 sdcTopLidarSensor/fast:
 	$(MAKE) -f CMakeFiles/sdcTopLidarSensor.dir/build.make CMakeFiles/sdcTopLidarSensor.dir/build
 .PHONY : sdcTopLidarSensor/fast
-
-#=============================================================================
-# Target rules for targets named request
-
-# Build rule for target.
-request: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 request
-.PHONY : request
-
-# fast build rule for target.
-request/fast:
-	$(MAKE) -f CMakeFiles/request.dir/build.make CMakeFiles/request.dir/build
-.PHONY : request/fast
 
 #=============================================================================
 # Target rules for targets named sdcAngle
@@ -357,19 +357,6 @@ instruction/fast:
 	$(MAKE) -f CMakeFiles/instruction.dir/build.make CMakeFiles/instruction.dir/build
 .PHONY : instruction/fast
 
-#=============================================================================
-# Target rules for targets named sdcLidarRay
-
-# Build rule for target.
-sdcLidarRay: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 sdcLidarRay
-.PHONY : sdcLidarRay
-
-# fast build rule for target.
-sdcLidarRay/fast:
-	$(MAKE) -f CMakeFiles/sdcLidarRay.dir/build.make CMakeFiles/sdcLidarRay.dir/build
-.PHONY : sdcLidarRay/fast
-
 instruction.o: instruction.cc.o
 
 .PHONY : instruction.o
@@ -423,33 +410,6 @@ manager.s: manager.cc.s
 manager.cc.s:
 	$(MAKE) -f CMakeFiles/manager.dir/build.make CMakeFiles/manager.dir/manager.cc.s
 .PHONY : manager.cc.s
-
-request.o: request.cc.o
-
-.PHONY : request.o
-
-# target to build an object file
-request.cc.o:
-	$(MAKE) -f CMakeFiles/request.dir/build.make CMakeFiles/request.dir/request.cc.o
-.PHONY : request.cc.o
-
-request.i: request.cc.i
-
-.PHONY : request.i
-
-# target to preprocess a source file
-request.cc.i:
-	$(MAKE) -f CMakeFiles/request.dir/build.make CMakeFiles/request.dir/request.cc.i
-.PHONY : request.cc.i
-
-request.s: request.cc.s
-
-.PHONY : request.s
-
-# target to generate assembly for a file
-request.cc.s:
-	$(MAKE) -f CMakeFiles/request.dir/build.make CMakeFiles/request.dir/request.cc.s
-.PHONY : request.cc.s
 
 sdcAngle.o: sdcAngle.cc.o
 
@@ -925,28 +885,24 @@ help:
 	@echo "... sdcFrontLidarSensor"
 	@echo "... sdcSensorData"
 	@echo "... sdcGpsSensor"
-	@echo "... sdcVisibleObject"
 	@echo "... sdcFlyingBox"
 	@echo "... sdcIntersection"
+	@echo "... sdcVisibleObject"
+	@echo "... sdcLidarRay"
 	@echo "... sdcBackLidarSensor"
 	@echo "... sdcTopLidarSensor"
-	@echo "... request"
 	@echo "... sdcAngle"
 	@echo "... manager"
 	@echo "... sdcBox"
 	@echo "... sdcManager"
 	@echo "... sdcLidarSensorInfo"
 	@echo "... instruction"
-	@echo "... sdcLidarRay"
 	@echo "... instruction.o"
 	@echo "... instruction.i"
 	@echo "... instruction.s"
 	@echo "... manager.o"
 	@echo "... manager.i"
 	@echo "... manager.s"
-	@echo "... request.o"
-	@echo "... request.i"
-	@echo "... request.s"
 	@echo "... sdcAngle.o"
 	@echo "... sdcAngle.i"
 	@echo "... sdcAngle.s"

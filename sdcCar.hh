@@ -21,7 +21,6 @@
 #include <string>
 #include <vector>
 #include <exception>
-
 #include <stdlib.h>
 #include <time.h>
 #include <random>
@@ -39,7 +38,6 @@
 #include "sdcFrontLidarSensor.hh"
 #include "manager.hh"
 #include "sdcManager.hh"
-#include "request.hh"
 #include "instruction.hh"
 
 
@@ -60,53 +58,59 @@ namespace gazebo {
         // Bound to Gazebo's world update, gets called every tick of the simulation
         private: void OnUpdate();
 
-        int crudeSwitch;
-        bool combined;
+        int crudeSwitch; //Variable used to determine the modules we use
+        bool combined; //Boolean to determine if we are in the combined (intersection + lanedriving) worlds
+        float moduleSwitch; //Gets the position of a model in the world that sets crudeSwitch
+
+        //Used to get performance info on intersection management
         static int numCarPass;
         static float carsPerMinute;
+        static int carAmountRight;
+        static int carAmountLeft;
+        static int carAmountStraight;
+        static float totalRightTimeAmount;
+        static float totalLeftTimeAmount;
+        static float totalStraightTimeAmount;
+        float carStartTime;
+        static bool twoMinCheck;
+
         // Holds the bound connection to Gazebo's update, necessary in order to properly
         // receive updates
         std::vector<event::ConnectionPtr> connections;
         std::chrono::milliseconds msStartTime;
         // The Gazebo model representation of the car
         physics::ModelPtr model;
-        float moduleSwitch;
+        // Contains attribute of the world we are running
         physics::WorldPtr world;
 
         // Contains the wheel joints that get operated on each tick for movement
         std::vector<physics::JointPtr> joints;
-        // A link to the chassis of the car, mainly used for access to physics variables
-        // related to the car's state
-        physics::LinkPtr chassis;
-        physics::LinkPtr camera;
+        //Links to various parts of the car
+        physics::LinkPtr chassis; //Used to get the car's pose and apply force
+        physics::LinkPtr camera; //gets camera data
+        //Lidar sensors used to detect objects
         physics::LinkPtr frontLidar;
         physics::LinkPtr leftSideLidar;
         physics::LinkPtr rightSideLidar;
-        common::Time  simStartTime;
-        bool setRate;
         int cameraId;
         int frontLidarId;
         int leftLidarId;
         int rightLidarId;
-        // The velocity of the car
-        math::Vector3 velocity;
-
-
-        //WAYPOINTS for intersection driving
-        std::vector<sdcWaypoint> WAYPOINT_VEC;
-        std::vector<sdcWaypoint> STOP_SIGN_WAYPOINT_VEC;
-        std::vector<sdcIntersection> intersections;
         //sensorData object
         sdcSensorData *cameraSensorData;
         sdcSensorData *lidarSensorData;
         sdcSensorData *rightLidarSensorData;
         sdcSensorData *leftLidarSensorData;
+        //Used to determine the speed the simulation is running
+        common::Time  simStartTime;
+        bool setRate;
+        // The velocity of the car
+        math::Vector3 velocity;
 
-        //sdcFrontLidarSensor frontSensor;
-
-        // These variables are mostly set in the SDF for the car and relate to the
-        // physical parameters of the vehicle
-
+        //WAYPOINTS for intersection driving
+        std::vector<sdcWaypoint> WAYPOINT_VEC; //List of waypoints for intersection cars
+        std::vector<sdcWaypoint> STOP_SIGN_WAYPOINT_VEC;
+        std::vector<sdcIntersection> intersections;
 
         // These variables are mostly set in the SDF for the car and relate to the
         // physical parameters of the vehicle
@@ -122,29 +126,14 @@ namespace gazebo {
         double aeroLoad;
         double swayForce;
 
-        //////////////////////////////////////////
-        // Begin Non-Gazebo Related Definitions //
-        //////////////////////////////////////////
-
         // The different states the car can be in. The logic and behavior of
         // the car will change depending on which state it's in, with various
         // sensor readings affecting the decision to transition states
-        enum CarState { stop, waypoint, intersection, follow, laneDriving};
-
-        // The different states the car can be in while performing a back
-        // perpendicular park
-        enum PerpendicularParkingState { stopPark, frontPark, straightPark, backPark, donePark };
-
-        // The different states the car can be in while performing a back
-        // parallel park
-        enum ParallelParkingState { rightBack, leftBack, rightForward, straightForward, doneParallel };
+        enum CarState { stop, waypoint, laneDriving};
 
         enum Direction { north, south, east, west };
 
         enum RelativeDirection { forward, aligned, backward, right, left };
-
-        // The different states available when attempting to avoid objects
-        enum AvoidanceState {emergencyStop, emergencySwerve, navigation, notAvoiding};
 
         ///////////////////////////
         // SDC-defined variables //
@@ -154,11 +143,7 @@ namespace gazebo {
         CarState DEFAULT_STATE;
         CarState currentState;
         Direction currentDir;
-        RelativeDirection destDir;
-        RelativeDirection destDirSide;
-        PerpendicularParkingState currentPerpendicularState;
-        ParallelParkingState currentParallelState;
-        AvoidanceState currentAvoidanceState;
+
 
         //For reseting the car
         math::Pose resetPose;
@@ -181,25 +166,17 @@ namespace gazebo {
         int waypointProgress;
 
         // Intersection variables
-
         bool inIntersection;
         int destDirection;
-        bool stoppedAtSign;
-        int ignoreStopSignsCounter;
-        int atIntersection;
+        bool laneStopped;
+        int carId;
+        int fromDir;
+        bool toldToStop;
+        static int carIdCount;
+        static bool teleport;
 
-
+        //Direction the car will turn once reaching the intersection
         int turnType;
-        //vars for efficiency testing
-        static int carAmountRight;
-        static int carAmountLeft;
-        static int carAmountStraight;
-        static float totalRightTimeAmount;
-        static float totalLeftTimeAmount;
-        static float totalStraightTimeAmount;
-        float carStartTime;
-        static bool twoMinCheck;
-
 
         // Car limit variables
         int maxCarSpeed;
@@ -217,19 +194,12 @@ namespace gazebo {
         double steeringAmount;
         double targetSpeed;
 
-        // Parking variables
-        sdcAngle targetParkingAngle;
-        bool parkingAngleSet;
-        bool isFixingParking;
-        bool parkingSpotSet;
 
         // Follow variables
         bool isTrackingObject;
         int stationaryCount;
 
-        // Avodiance variables
-        math::Vector2d navWaypoint;
-        bool trackingNavWaypoint;
+        // Avodiance variable
         bool obstacleInFront;
 
         // Variables relating to tracking objects in front of the car
@@ -237,16 +207,12 @@ namespace gazebo {
         int frontLidarLastUpdate;
 
         // The x and y position of the car
-
-        bool laneStopped;
-        int carId;
-        int fromDir;
-        bool toldToStop;
-        static int carIdCount;
-        static bool teleport;
-
         double x;
         double y;
+
+
+
+
 
         /////////////////////////
         // SDC-defined methods //
@@ -271,10 +237,6 @@ namespace gazebo {
         void WaypointDriving();
         void StopSignWaypointDriving();
         void StopSignGridTurning(int turn);
-        void Follow();
-        void Avoidance();
-        void PerpendicularPark();
-        void ParallelPark();
 
         // Helper methods
         int genRand(int max);
