@@ -127,6 +127,28 @@
               <p>Same as before, we reserve the spots for the car.</p>
               <br><br><br>
               <br><br><br>
+              <p>Technical details</p>
+              <br />
+              <p>1. Prioritize</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_t0.png"/></div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_t01.png"/></div>
+              </div>
+              <p>It is possible to have deadlock for some certain cars, so we have a prioritize policy. If a car has waited for too long, we reject all newly incoming cars, and let the car pass through.</p>
+              <br><br><br>
+              <p>2. Turning path</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_t1.png"/></div>
+              </div>
+              <p>To find the length of the turning path, we used the coordinates of grid spots and calculate the tangent value to obtain the angle.</p>
+              <br><br><br>
+              <p>3. buffer</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_3.png"/></div>
+              </div>
+              <p>Since cars are not just single spots, the manager will reserve more space for them based on their speeds.</p>
+              <br><br><br>
+              <br><br><br>
               <h3>2.2 Stop Sign Intersection</h3>
               <p>The goal of this algorithm is to simulate human driving behavior with certain policies.</p>
               <p>1. At most 2 car can be in the intersection at a time.</p>
@@ -175,7 +197,7 @@
                     <p>Time per car is the average time for a car to go straight, turn left, turn right in each intersection.</p>
                 </div>
               </div>
-              <p></p>
+              <p>Explanation</p>
               <br><br><br>
               
 
