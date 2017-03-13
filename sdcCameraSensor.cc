@@ -60,7 +60,7 @@ double roadUpdateCounter = 0;
 
 /*Helper methods for Improved CHEVP algorithm*/
 
-/*get the slope of a line */
+/* get the slope of a line */
 double getSlope(cv::Vec4i l){
 	double vertSlope = 1000000000.00;
 	if(l[2]-l[0] == 0){
@@ -137,8 +137,7 @@ double *convertVectorToArray(vector<double> vec) {
 	return arr;
 }
 
-/* calculate line segment with slope and intercept, cut by horizon lines
-we need to catch the case when the slope is 0 */
+/* calculate line segment with slope and intercept, cut by horizon lines we need to catch the case when the slope is 0 */
 int *getLineSegment(double slope, double intercept, double upperY, double lowerY) {
 	int *quad = new int[4];
 	if (slope == 0) {
@@ -155,12 +154,12 @@ int *getLineSegment(double slope, double intercept, double upperY, double lowerY
 	return quad;
 }
 
-/* get the intercept value of a given line */
+/* get the intercept of a line */
 double getIntercept(cv::Vec4i l, double slope) {
 	return l[1] - slope*l[0];
 }
 
-/* Given a point, return the index of the nearest line */
+/*get the index of the closest line */
 int getIndexOfClosestLine(std::vector<Vec4i> lines, Point sectionMidPoint) {
 	double minDistance = infinityDouble;
 	int minIndex = infinityInt;
@@ -177,6 +176,7 @@ int getIndexOfClosestLine(std::vector<Vec4i> lines, Point sectionMidPoint) {
  		}
 		return minIndex;
 }
+
 
 sdcCameraSensor::sdcCameraSensor(){
     this->cameraCnt ++;
@@ -219,6 +219,7 @@ void sdcCameraSensor::OnUpdate() {
 	// Pull raw data from camera sensor object as an unsigned character array with 3 channels.
 	const unsigned char* img = this->parentSensor->GetImageData(0);
 	Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
+
 	//Select Region of Interest (ROI) for lane detection - currently this is the bottom half of the image.
 	//set area for ROI as a rectangle
 	Rect ROI = cv::Rect(0, image.rows/2, image.cols, image.rows/2);
@@ -239,11 +240,13 @@ void sdcCameraSensor::OnUpdate() {
 	sections.push_back(section4);
 	sections.push_back(section5);
 
+
 	int colors[5][3] = {{255, 0, 0}, {255, 255, 0}, {0, 255, 0}, {0, 0, 255}, {255, 0, 255}};
 	double offset[5] = {0, 1.0, 3.0, 6.0, 10.0};
 	double horizons[5] = {1.0, 3.0, 6.0, 10.0, 15.0};
 
 	// iterate through each of the five sections of the ROI
+	// we should use section 2,3 which are indexed at 1,2
 	std::vector<Vec4i> twoMidlines;
 	for(size_t i = 1; i < 3; i++) {
 		Rect section;
@@ -257,7 +260,6 @@ void sdcCameraSensor::OnUpdate() {
 		vector<Vec4i> lines;
  		HoughLinesP(sectionImage, lines, 1, CV_PI/180, 15, 15, 10);
 
-		// we should use section 2,3,4, which are indexed at 1,2,3
 		if (this->cameraId == 6238 || this->cameraId == 6268) {
 			// START OF THE NEW CHEVP algorithm
 			// apply partition fuction to clusterize lines of the same one
@@ -299,7 +301,8 @@ void sdcCameraSensor::OnUpdate() {
 				segment[2] = segmentArr[2];
 				segment[3] = segmentArr[3];
 
-				if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.03) {
+				// check if the line is horizontal or near horizontal. if so, filter them out
+				if (segment[0] != infinityInt && abs(getSlope(segment)) > 0.1) {
 					mergedLines.push_back(segment);
 				}
 			}
@@ -373,7 +376,6 @@ void sdcCameraSensor::OnUpdate() {
 		previousMidlineInVector[3] = previousMidline.at(3);
 
 		double degreeBetweenSameMidlines = std::abs(getAngleDifference(twoMidlines.at(0), previousMidlineInVector));
-
 		if (previousMidlineInVector[0] == infinityInt) {
 			previousMidline.clear();
 			previousMidline.push_back(twoMidlines.at(0)[0]);
@@ -399,7 +401,6 @@ void sdcCameraSensor::OnUpdate() {
 
 		double verticalDifference = getAngleDifference(twoMidlines.at(1), verticalLine);
 		this->sensorData->setVerticalDifference(verticalDifference);
-
 		// draw two midlines
 		line(imageROI, Point(twoMidlines.at(0)[0], twoMidlines.at(0)[1] + offset[1]*row/15), Point(twoMidlines.at(0)[2], twoMidlines.at(0)[3] + offset[1]*row/15), Scalar(colors[4][0],colors[4][1],colors[4][2]), 3, CV_AA);
 		line(imageROI, Point(twoMidlines.at(1)[0], twoMidlines.at(1)[1] + offset[2]*row/15), Point(twoMidlines.at(1)[2], twoMidlines.at(1)[3] + offset[2]*row/15), Scalar(colors[2][0],colors[2][1],colors[2][2]), 3, CV_AA);
@@ -428,10 +429,6 @@ void sdcCameraSensor::OnUpdate() {
 		line(imageROI, Point(twoMidlines.at(0)[0], twoMidlines.at(0)[1] + offset[2]*row/15), Point(twoMidlines.at(0)[2], twoMidlines.at(0)[3] + offset[2]*row/15), Scalar(colors[2][0],colors[2][1],colors[2][2]), 3, CV_AA);
 	}
 
-
-
-	// assume we have the three midlines from section 2,3,4, we need to change the accelaration and direction based the angle
-	// here we will try to use the midlines from section 2 and 3 first
 	// Display results to GUI
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
 	if (this->cameraId == 6238 || this->cameraId == 6268) {
@@ -440,7 +437,7 @@ void sdcCameraSensor::OnUpdate() {
 	waitKey(4);
 }
 
-/*Get the point of intersection of two lines */
+/*get the intersection of two lines */
 Point sdcCameraSensor::getIntersectionPoint(cv::Vec4i l1, cv::Vec4i l2){
 	double l1Slope = getSlope(l1);
 	double l2Slope = getSlope(l2);
@@ -459,7 +456,7 @@ Point sdcCameraSensor::getIntersectionPoint(cv::Vec4i l1, cv::Vec4i l2){
 	return Point(std::round(xVal), std::round(yVal));
 }
 
-/* determine if two lines are two close to each other */
+/*see if two lines are too close */
 bool sdcCameraSensor::isTooClose(cv::Vec4i leftLine, cv::Vec4i rightLine, int i, double row, double col) {
 	double threshold = col / 8;
 	double dis1 = std::abs(leftLine[0] - rightLine[0]);
