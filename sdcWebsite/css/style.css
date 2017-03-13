@@ -360,3 +360,12 @@ footer a:hover
 .intersection {
   display:inline-block;
 }
+
+.post-container {
+  margin-left: 400px;
+  margin-right: 400px;
+}
+
+.welcome_page {
+  margin-top: -100px;
+}

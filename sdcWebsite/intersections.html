@@ -35,8 +35,8 @@
     </header>
 
     <div id="slideshow_container">
-	  <div class="slideshow" align="center">
-      <div> 
+	  <div class="slideshow">
+      <div>
           <h2>1. Video demo of cars passing through intersections</h2>
           <div style="display: inline-block">
               <p> Stop Sign Intersection</p>
@@ -63,18 +63,18 @@
               <p> Protocols for reservation: when at certain distance and no cars ahead waiting (use lidar to detect), cars will tell manager their IDs, position, speed, acceleration, and direction. Manager will tell cars if they can enter the intersection and the sped they should drive at.</p>
               <p> Protocols for stop sign: Cars wait if there is a car ahead in the same lane. When stoppig before the intersection, cars will sned in direction to manager, manager will tell if the car can go.</p>
               <br><br><br>
-              
+
               <h3>2.1 Reservation Intersection</h3>
               <p>The goal of this algorithm is to create a central manager that can let autonomous vehicles drive through the intersection safely and efficiently.</p>
-              
-              
+
+
               <p>Step 0: Build a grid</p>
               <div>
                 <div class="imageprocessing"><img width="320" height="320" src="images/grid_0.png"/></div>
               </div>
               <p>Upon initializing a reservation manager, we build a grid (2D list) that stores time (float). The time stored represents the time a grid spot will be available. Hence, we fill in current time in step 0.</p>
               <br><br><br>
-              
+
               <p>Step 1: Check the grid spots that the car is going to pass through is available</p>
               <div>
                 <div class="imageprocessing"><img width="320" height="320" src="images/grid_1.png"/></div>
@@ -154,9 +154,9 @@
               <p>1. At most 2 car can be in the intersection at a time.</p>
               <p>2. If a car is turning left, there must not be any car before it, and no car can enter the intersection either. There can be only one car left turning.</p>
               <p>3. Based on the first car's request, we block directions and, depending on cases, may allow one more car to come in.</p>
-              
-              
-              
+
+
+
               <p>Case 1: if the first car is going straight</p>
               <div>
                 <div class="imageprocessing"><img width="320" height="320" src="images/stopsign_1.png"/></div>
@@ -199,9 +199,9 @@
               </div>
               <p>Cars going straight or turning right can go significant faster in reservation intersection.</p>
               <br><br><br>
-              
 
-              
+
+
 
               <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elit sapien, tempus sit amet hendrerit volutpat, euismod vitae risus. Etiam consequat, sem et vulputate dapibus, diam enim tristique est, vitae porta eros mauris ut orci. Praesent sed velit odio. Ut massa arcu, suscipit viverra molestie at, aliquet a metus. Nullam sit amet tellus dui, ut tincidunt justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec iaculis egestas laoreet. Nunc non ipsum metus, non laoreet urna. Vestibulum quis risus quis diam mattis tempus. Vestibulum suscipit pretium tempor. </p>-->
 	        </div><!--close content_item-->
