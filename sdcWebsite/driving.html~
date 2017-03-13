@@ -101,7 +101,7 @@
 
 
 		<h3>2.2 The State System</h3>
-              <p>We use the image processing algorithm to determine how our car should behave given the circumstances. We split this behavior into four distinct states.</p>
+              <p>We use the image processing algorithm to determine how our car should behave given the cicumstances. We split this behavior into four distinct states.</p>
 
               <p>Diagram of the state system:</p>
               <div>
@@ -113,14 +113,9 @@
               <p>If we are currently in a straight road, but the camera detects that the angle between the two midlines is greater than 55 degrees in the upcoming segment, then we know the car is about to enter a curve. In this case, we want the car to start turning. However, since the midlines are actually looking ahead of the car, we want to make sure the car only turns a little bit in order to position itself in the center of lane when it begins to turn around the curved road. If we start turning to the same degree as in the body of the curve, the car will drive off the road.</p>
               <br><br><br>
 
-
               <p>State Two: In a curved road</p>
               <p>If  the camera continues to detect that the angle between the two midlines is greater than 55 degrees in the upcoming segment, then we know the car is currently in a curved road segment. When the car is in a curved road, we want to make direction adjustments based on the angle between the two midlines we find during image processing. These midlines give a good estimation of the shape of the road, and therefore, adjusting the cars direction based on the degree difference allows the car to smoothly take the turn.</p>            
-              <br>
-		<div>
-                <div class="imageprocessing"><img width="320" height="240" src="images/curve.png"/></div>
-              	</div>
-              <br><br><br><br><br>
+              <br><br><br>
 
               <p>State Three: About to exit a curve</p>
               <p>If we are currently in a curve, but the camera detects that the angle between the two midlines is less than 15 degrees in the upcoming segment, then we know the car is about to exit the curve. In this case, we want the car to continue acting the way it does in the body of the curve. However, we also want to make sure that we turn more in order to maintain a good position at the end of the curve.</p>

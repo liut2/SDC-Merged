@@ -3,7 +3,7 @@
 
 <head>
   <title>Self Driving Car 2017 Comps</title>
-  <meta name="SDC17" content="comps website" />
+  <meta name="description" content="website description" />
   <meta name="keywords" content="website keywords, website keywords" />
   <meta http-equiv="content-type" content="text/html; charset=windows-1252" />
   <link rel="stylesheet" type="text/css" href="css/style.css" />
@@ -16,19 +16,19 @@
 
     <header>
 	  <div id="strapline">
-	    <div id="welcome_slogan">
+      <div id="welcome_slogan">
 	      <h3>Self Driving Car 2017 Comps</h3> <span>Carleton College</span>
 	    </div><!--close welcome_slogan-->
       </div><!--close strapline-->
 	  <nav>
-	    <div id="menubar">
+      <div id="menubar">
           <ul id="nav">
-            <li class="current"><a href="index.html">Home</a></li>
+            <li><a href="index.html">Home</a></li>
             <li><a href="intersections.html">Intersections</a></li>
             <li><a href="driving.html">Lane Driving</a></li>
             <li><a href="overtaking.html">Overtaking</a></li>
             <li><a href="resources.html">Resources</a></li>
-            <li><a href="aboutus.html">About Us</a></li>
+            <li class="current"><a href="aboutus.html">About Us</a></li>
           </ul>
         </div><!--close menubar-->
       </nav>
@@ -37,29 +37,29 @@
     <div id="slideshow_container">
 	  <div class="slideshow">
 	    <ul class="slideshow">
-          <li class="show"><img width="900" height="300" src="images/car.png" alt="&quot;Autonomous Car&quot;" /></li>
-          <li><img width="900" height="300" src="images/car.png" alt="&quot;Autonomous Car&quot;" /></li>
+          <li class="show"><img width="940" height="250" src="images/home_1.jpg" alt="&quot;Enter your caption here&quot;" /></li>
+          <li><img width="940" height="250" src="images/home_2.jpg" alt="&quot;Enter your caption here&quot;" /></li>
         </ul>
 	  </div><!--close slideshow-->
 	</div><!--close slideshow_container-->
 
 	<div id="site_content">
+
+
+		 
+
 	  <div id="content">
         <div class="content_item">
-		  <h1>Welcome To Fast and Futuristic: Intersection Management and Lane Navigation for Autonomous Vehicles!</h1>
-          <p>The future of transportation is Autonomous. Autonomous vehicles, more commonly known as self-driving cars, are one of the biggest technological innovations under development today. Taking the human component out of transportation allows for safer and more efficient travel.</p>
-          <p> Over the course of a few months, our team of Carleton College seniors developed a simulation of a self driving car. Our system includes much of the functionality required of a car travelling in the real world. Our vehicle can make decisions independently, and react to a number of different situations. These situations include driving on straight and curved roads, overtaking another vehicle in the same lane, and traversing an intersection while coordinating with other autonomous vehicles.</p>
-		  <p>To learn more about our algorithms and implementation, click on the buttons at the top of the page.</p>
-
+		  <div class="form_settings">
+            <h2>Contact Us</h2>
+            <p >A contact form requires some method of emailing the contents of the form to an email address. The most common way to do this is to use some kind of server script (PHP for example). I would be happy to send you the PHP code for the contact form for your chosen template, I charge &pound;20.00GBP for this.
 		</div><!--close content_item-->
       </div><!--close content-->
 	</div><!--close site_content-->
-
     <footer>
 	  <a href="index.html">Home</a> | <a href="ourwork.html">Our Work</a> | <a href="testimonials.html">Testimonials</a> | <a href="projects.html">Projects</a> | <a href="contact.html">Contact</a><br/><br/>
 	  <a href="http://fotogrph.com">Images</a> |  <a href="http://www.heartinternet.co.uk/vps/">Virtual Server</a>  | website template by <a href="http://www.freehtml5templates.co.uk">Free HTML5 Templates</a>
     </footer>
-
   </div><!--close main-->
 
   <!-- javascript at the bottom for fast page loading -->

@@ -47,7 +47,7 @@
 	  <div id="content">
         <div class="content_item">
 		  <h1>Welcome To Fast and Futuristic: Intersection Management and Lane Navigation for Autonomous Vehicles!</h1>
-          <p>The future of transportation is Autonomous. Autonomous vehicles, more commonly known as self-driving cars, are one of the biggest technological innovations under development today. Taking the human component out of transportation allows for safer and more efficient travel.</p>
+          <p>The future of transportation is Autonomous. Autonomous vehicles, more commonly known as self-driving cars, are one of the biggest technological innovations under development today. Taking the human componenet out of transportation allows for safer and more efficient travel.</p>
           <p> Over the course of a few months, our team of Carleton College seniors developed a simulation of a self driving car. Our system includes much of the functionality required of a car travelling in the real world. Our vehicle can make decisions independently, and react to a number of different situations. These situations include driving on straight and curved roads, overtaking another vehicle in the same lane, and traversing an intersection while coordinating with other autonomous vehicles.</p>
 		  <p>To learn more about our algorithms and implementation, click on the buttons at the top of the page.</p>
 
