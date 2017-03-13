@@ -1072,15 +1072,13 @@ void sdcCar::combinedDriving2017() {
   }
 }
 
-//This is the Lane Driving portion
+/* This is the Lane Driving portion */
 void sdcCar::laneDriving2017(){
-
   if (nonCurvedTurnCounter > 1000) {
     curvedTurnCounter = 0;
     averageDegree = 0;
     nonCurvedTurnCounter = 0;
   }
-
   if (curvedTurnCounter > 4000) {
     curvedTurnCounter = 0;
     averageDegree = 0;
@@ -1091,7 +1089,6 @@ void sdcCar::laneDriving2017(){
   if(std::abs(degree) < 30){
     isInStraightRoad = true;
   }
-
   else if (std::abs(degree) >= 30) {
     isInCurveRoad = true;
     nonCurvedTurnCounter = 0;
@@ -1106,6 +1103,7 @@ void sdcCar::laneDriving2017(){
     averageDegree *= (curvedTurnCounter - 1);
     averageDegree += degree/60;
     averageDegree /= curvedTurnCounter;
+
     if(degree < 0){
       this->cameraSensorData->UpdateSteeringMagnitude(degree/60);
     }
@@ -1130,8 +1128,11 @@ void sdcCar::laneDriving2017(){
       } else {
         adjustAmount = fmin(adjustAmount, MAX_ADJUST);
       }
-    }
-    if (0.4*averageDegree) {
+      if (nonCurvedTurnCounter < 2) {
+        //printf("starting follow through %f\n", adjustAmount);
+      }
+
+      if (0.4*averageDegree)
       this->cameraSensorData->UpdateSteeringMagnitude(adjustAmount);
     } else {
       laneCenter();
@@ -1149,6 +1150,7 @@ void sdcCar::laneDriving2017(){
         this->brake = 0.0;
       }
       double verticalDifference = this->cameraSensorData->getVerticalDifference();
+
       if(degree < 0){
         this->cameraSensorData->UpdateSteeringMagnitude(-2);
       }
@@ -1158,7 +1160,6 @@ void sdcCar::laneDriving2017(){
       this->steeringAmount = this->cameraSensorData->GetNewSteeringMagnitude();
     }
     else if(std::abs(degree) >= 25){
-      //About to enter the curve
       if (brakeTimes >= 10) {
         isInStraightRoad = false;
         isInCurveRoad = true;
