@@ -35,74 +35,147 @@
     </header>
 
     <div id="slideshow_container">
-	  <div class="slideshow">
-	    <ul class="slideshow">
-          <li class="show"><img width="940" height="250" src="images/home_1.jpg" alt="&quot;Enter your caption here&quot;" /></li>
-          <li><img width="940" height="250" src="images/home_2.jpg" alt="&quot;Enter your caption here&quot;" /></li>
-        </ul>
+	  <div class="slideshow" align="center">
+      <div> 
+          <h2>1. Video demo of cars passing through intersections</h2>
+          <div style="display: inline-block">
+              <p> Reservation Intersection</p>
+              <iframe width="280" height="315" src="https://www.youtube.com/embed/Mj8G8K4yHqY" frameborder="0" allowfullscreen></iframe>
+          </div>
+	      <div  style="display: inline-block">
+              <p> Reservation Intersection</p>
+              <iframe width="280" height="315" src="https://www.youtube.com/embed/Mj8G8K4yHqY" frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div><!--block1-->
 	  </div><!--close slideshow-->
 	</div><!--close slideshow_container-->
 
 	<div id="site_content">
+      <div id="content">
+          <div class="content_item">
+              <h2>2. Description of the algorithms</h2>
+              <p> In general, we have two algorithms serving different puposes. Reservation manager is designed for autonmous vehicles. Stop sign manager is designed to mimic human driving behvior, so we can compare if the reservation algorithm is more effiecient than what we already have in the real world.</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="280" src="images/protocol_1.png"/></div>
+                <div class="imageprocessing"><img width="320" height="280" src="images/protocol_2.png"/></div>
+              </div>
+              <p> Protocols:</p>
+              <p> Protocols for reservation: when at certain distance and no cars ahead waiting (use lidar to detect), cars will tell manager their IDs, position, speed, acceleration, and direction. Manager will tell cars if they can enter the intersection and the sped they should drive at.</p>
+              <p> Protocols for stop sign: Cars wait if there is a car ahead in the same lane. When stoppig before the intersection, cars will sned in direction to manager, manager will tell if the car can go.</p>
+              <br><br><br>
+              
+              <h3>2.1 Reservation Intersection</h3>
+              <p>The goal of this algorithm is to create a central manager that can let autonomous vehicles drive through the intersection safely and efficiently.</p>
+              
+              
+              <p>Step 0: Build a grid</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_0.png"/></div>
+              </div>
+              <p>Upon initializing a reservation manager, we build a grid (2D list) that stores time (float). The time stored represents the time a grid spot will be available. Hence, we fill in current time in step 0.</p>
+              <br><br><br>
+              
+              <p>Step 1: Check the grid spots that the car is going to pass through is available</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_1.png"/></div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_2.png"/></div>
+              </div>
+              <p>Based on the position, direction, speed, and the acceleration sent in, we can calcualte the time the car is going to arrive.</p>
+              <br><br><br>
 
-	  <div class="sidebar_container">
-		<div class="sidebar">
-          <div class="sidebar_item">
-            <h2>New Website</h2>
-            <p>Welcome to our new website. Please have a look around, any feedback is much appreciated.</p>
-          </div><!--close sidebar_item-->
-        </div><!--close sidebar-->
-		<div class="sidebar">
-          <div class="sidebar_item">
-            <h2>Latest Update</h2>
-            <h3>March 2013</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim.</p>
-		  </div><!--close sidebar_item-->
-        </div><!--close sidebar-->
-		<div class="sidebar">
-          <div class="sidebar_item">
-            <h3>February 2013</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim.</p>
-		  </div><!--close sidebar_item-->
-        </div><!--close sidebar-->
-        <div class="sidebar">
-          <div class="sidebar_item">
-            <h2>Contact</h2>
-            <p>Phone: +44 (0)1234 567891</p>
-            <p>Email: <a href="mailto:info@youremail.co.uk">info@youremail.co.uk</a></p>
-          </div><!--close sidebar_item-->
-        </div><!--close sidebar-->
-       </div><!--close sidebar_container-->
+              <p>Step 2: Optimize speed</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_3.png"/></div>
+              </div>
+              <p>Based on the reservation time we have, we can find the fastest speed to pass through safely, potentially letting more cars to get in.</p>
+              <br><br><br>
 
-	  <div id="content">
-        <div class="content_item">
-          <h2>Our Work</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam ullamcorper, massa eu iaculis imperdiet, turpis nunc aliquam augue, eget condimentum lectus velit vitae urna. Curabitur eu feugiat erat. Nam et arcu sit amet magna facilisis accumsan vel nec mauris. Vivamus interdum adipiscing molestie. Vestibulum sollicitudin massa eget turpis cursus eget ullamcorper odio pharetra. Sed dictum lacus sed erat molestie id aliquet enim vestibulum.</p>
-		    <div class="content_container">
-		      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim. Aliquam facilisis neque non nunc posuere eget volutpat metus tincidunt.</p>
-		    	<div class="button_small">
-		        <a href="#">Read more</a>
-		      </div><!--close button_small-->
-		    </div><!--close content_container-->
-            <div class="content_container">
-		      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim. Aliquam facilisis neque non nunc posuere eget volutpat metus tincidunt.</p>
-		    	<div class="button_small">
-		        <a href="#">Read more</a>
-		        </div><!--close button_small-->
-		    </div><!--close content_container-->
-		    <div class="content_container">
-		      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim. Aliquam facilisis neque non nunc posuere eget volutpat metus tincidunt.</p>
-		    	<div class="button_small">
-		        <a href="#">Read more</a>
-		      </div><!--close button_small-->
-		    </div><!--close content_container-->
-            <div class="content_container">
-		      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque cursus tempor enim. Aliquam facilisis neque non nunc posuere eget volutpat metus tincidunt.</p>
-		    	<div class="button_small">
-		        <a href="#">Read more</a>
-		        </div><!--close button_small-->
-		    </div><!--close content_container-->
-		</div><!--close content_item-->
+              <p>Step 3: Reserve the grid based on the result of optimization</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_4.png"/></div>
+              </div>
+              <p>Now we reserve the spots for the car so other cars won't hit it.</p>
+              <br><br><br>
+              <p>Now we have a second incoming car</p>
+              <br><br><br>
+              <p>Multi-car Step 1: Check the grid spots that the car is going to pass through is available</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_m1.png"/></div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_m3.png"/></div>
+              </div>
+              <p>Based on the position, direction, speed, and the acceleration sent in, again, we can calcualte the time the car is going to arrive. However, this time, we can see a conflict as the red circle suggests. Hence, the manager will rejet the car's request. </p>
+              <br><br><br>
+
+              <p>Multi-car Step 1: Check the grid spots that the car is going to pass through is available</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_m4.png"/></div>
+              </div>
+              <p>This time, the car doesn't have any conflict because it is slower. </p>
+              <br><br><br>
+
+              <p>Multi-car Step 2: Optimize speed</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_m5.png"/></div>
+              </div>
+              <p>Same as before, based on the reservation time we have, we can find the fastest speed to pass through safely, potentially letting more cars to get in.</p>
+              <br><br><br>
+
+              <p>Multi-car Step 3: Reserve the grid based on the result of optimization</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/grid_m6.png"/></div>
+              </div>
+              <p>Same as before, we reserve the spots for the car.</p>
+              <br><br><br>
+              <br><br><br>
+              <h3>2.2 Stop Sign Intersection</h3>
+              <p>The goal of this algorithm is to simulate human driving behavior with certain policies.</p>
+              <p>1. At most 2 car can be in the intersection at a time.</p>
+              <p>2. If a car is turning left, there must not be any car before it, and no car can enter the intersection either. There can be only one car left turning.</p>
+              <p>3. Based on the first car's request, we block directions and, depending on cases, may allow one more car to come in.</p>
+              
+              
+              
+              <p>Case 1: if the first car is going straight</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/stopsign_1.png"/></div>
+              </div>
+              <p>Manager block these directions</p>
+              <br><br><br>
+              <p>Case 2: if the first car is turning right</p>
+              <div>
+                <div><img width="320" height="320" src="images/stopsign_2.png"/></div>
+              </div>
+              <p>Manager block these directions</p>
+              <br><br><br>
+              <p>Case 3: if the first car is turning left</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/stopsign_3.png"/></div>
+              </div>
+              <p>Manager block all directions</p>
+              <br><br><br>
+              <br><br><br>
+              <h4>3. Result</h4>
+              <p>Car per minute</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/cpmGraph.png"/>
+                    <p></p>
+                </div>
+              </div>
+              <br><br><br>
+
+              <p>Time per car</p>
+              <div>
+                <div class="imageprocessing"><img width="320" height="320" src="images/tpcGraph.png"/>
+                    <p></p>
+                </div>
+              </div>
+              <br><br><br>
+              
+
+              
+
+              <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elit sapien, tempus sit amet hendrerit volutpat, euismod vitae risus. Etiam consequat, sem et vulputate dapibus, diam enim tristique est, vitae porta eros mauris ut orci. Praesent sed velit odio. Ut massa arcu, suscipit viverra molestie at, aliquet a metus. Nullam sit amet tellus dui, ut tincidunt justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec iaculis egestas laoreet. Nunc non ipsum metus, non laoreet urna. Vestibulum quis risus quis diam mattis tempus. Vestibulum suscipit pretium tempor. </p>-->
+	        </div><!--close content_item-->
       </div><!--close content-->
 	</div><!--close site_content-->
     <footer>
